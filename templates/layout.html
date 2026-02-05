@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Netflix</title>
+        <link href="static\styles.css" rel="stylesheet">
+        </head>
+    <body>
+
+        <nav class="navbar">
+            <div class="nav-left">
+                <img src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
+                
+                <ul class="nav-links">
+                    <li><a href="/" class="active">Home</a></li>
+                    <li><a href="#">TV Shows</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">New & Popular</a></li>
+                    <li><a href="#">My List</a></li>
+                </ul>
+            </div>
+
+            <div class="nav-right">
+                <img src="/static/images/search_icon.svg" alt="Search" class="nav-icon">
+                <img src="/static/images/bell_icon.svg" alt="Notifications" class="nav-icon">
+                <img src="/static/images/user_avatar.png" alt="User" class="nav-avatar">
+            </div>
+        </nav>
+
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+
+        <footer>
+            <div class="footer-content">
+                <p>Questions? Call 1-844-505-2993</p>
+                <p>© 2026 Netflix Clone - A CS50 Project</p>
+            </div>
+        </footer>
+
+        <script src="/static/script.js"></script>
+    </body>
+</html>
