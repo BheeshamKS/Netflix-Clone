@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">
+    <div class="hero-content">
+        <h1 class="hero-title">{{ featured_movie.title }}</h1>
+        <p class="hero-desc">{{ featured_movie.overview }}</p>
+        
+        <div class="hero-buttons">
+                <button class="btn btn-play">▶ Play</button>
+                <button class="btn btn-info">ⓘ More Info</button>
+        </div>
+    </div>
+    <div class="hero-fade"></div>
+</header>
+
+<div class="rows-container">
+    
+    <h3 class="row-header">US TV Dramas</h3>
+    <div class="row">
+        {% for show in us_tv_shows %}
+        <div class="movie-card">
+            <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+            <p class="movie-title">{{ show.title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="row-header">K-Dramas</h3>
+    <div class="row">
+        {% for show in kdramas %}
+        <div class="movie-card">
+            <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+            <p class="movie-title">{{ show.title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="row-header">Anime Series</h3>
+    <div class="row">
+        {% for show in anime_shows %}
+        <div class="movie-card">
+            <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+            <p class="movie-title">{{ show.title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <h3 class="row-header">Sci-Fi & Horror</h3>
+    <div class="row">
+        {% for show in scifi_shows %}
+        <div class="movie-card">
+            <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+            <p class="movie-title">{{ show.title }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
