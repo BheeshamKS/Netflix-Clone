@@ -6,9 +6,19 @@
         <div class="hero-content">
             <h1 class="hero-title">{{ featured_movie.title }}</h1>
             <p class="hero-desc">{{ featured_movie.overview }}</p>
+            
             <div class="hero-buttons">
-                <button class="btn btn-play">▶ Play</button>
-                <button class="btn btn-info">ⓘ More Info</button>
+                <button class="btn btn-play"><span class="play-icon">▶</span> Play</button>
+                <button class="btn btn-info"><span class="info-icon">ⓘ</span> More Info</button>
+            </div>
+        </div>
+
+        <div class="hero-actions">
+            <button class="mute-btn">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <div class="age-rating">
+                <span class="age-number">{{ featured_movie.age_rating }}</span>
             </div>
         </div>
         <div class="hero-fade-bottom"></div>
@@ -21,16 +31,39 @@
             {% for movie in popular_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">98% Match • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
 
         <h3 class="row-header">Continue Watching</h3>
         <div class="row">
-            {% for movie in action_movies[:5] %} <div class="movie-card">
+            {% for movie in action_movies[:5] %} 
+            <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Resume • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -40,7 +73,18 @@
             {% for movie in trending_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Trending • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -50,7 +94,18 @@
             {% for movie in new_releases %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">New • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -60,7 +115,18 @@
             {% for movie in anime_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Anime • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -70,7 +136,18 @@
             {% for movie in us_tv_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+    
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">TV Drama • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -80,7 +157,18 @@
             {% for movie in bollywood_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -90,7 +178,18 @@
             {% for movie in scifi_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Sci-Fi • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -100,7 +199,18 @@
             {% for movie in kdrama_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">K-Drama • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -110,7 +220,18 @@
             {% for movie in action_movies %}
             <div class="movie-card">
                 <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                <p class="movie-title">{{ movie.title }}</p>
+                
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Action • {{ movie.age_rating }}</p>
+                </div>
             </div>
             {% endfor %}
         </div>

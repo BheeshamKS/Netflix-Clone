@@ -1,8 +1,11 @@
 import requests
 import sqlite3
+import random
+import os
 
 # --- CONFIGURATION ---
-API_KEY = "2a11b3a974a0295138449ec38fffdf26"  # <--- MAKE SURE YOUR KEY IS HERE
+# PASTE YOUR API KEY HERE
+API_KEY = "2a11b3a974a0295138449ec38fffdf26" 
 DB_NAME = "netflix.db"
 # ---------------------
 
@@ -12,20 +15,25 @@ def get_movies(endpoint, params=None):
     url = f"https://api.themoviedb.org/3/{endpoint}?api_key={API_KEY}&language=en-US&page=1"
     for key, value in params.items():
         url += f"&{key}={value}"
-        
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.json()["results"]
-    else:
-        print(f"Error fetching: {response.status_code}")
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json()["results"]
+        else:
+            print(f"❌ Error {response.status_code} fetching {endpoint}")
+            return []
+    except Exception as e:
+        print(f"❌ Connection Failed: {e}")
         return []
 
 def save_to_db():
+    # 1. Connect (This creates the file if it was deleted)
+    print(f"🔨 Creating new database: {DB_NAME}...")
     conn = sqlite3.connect(DB_NAME)
     db = conn.cursor()
 
-    # 1. DROP and RE-CREATE Table with the new 'media_type' column
-    print("Resetting database schema...")
+    # 2. Force Create Table (Drop old one if it exists)
     db.execute("DROP TABLE IF EXISTS movies")
     db.execute("""
         CREATE TABLE movies (
@@ -38,64 +46,80 @@ def save_to_db():
             release_date TEXT,
             vote_average REAL,
             genre TEXT,
-            media_type TEXT  -- <--- NEW COLUMN ('movie' or 'tv')
+            media_type TEXT,
+            age_rating TEXT
         )
     """)
 
-    # 2. DEFINE CATEGORIES + THEIR TYPE
-    # Format: "tag": ("endpoint", {params}, "movie" OR "tv")
+    # 3. Categories to Fetch
     categories = {
-        # --- MOVIES ---
+        # MOVIES
         "popular":       ("movie/popular", {}, "movie"),
         "trending":      ("trending/movie/week", {}, "movie"),
         "new_releases":  ("movie/upcoming", {}, "movie"),
         "action":        ("discover/movie", {"with_genres": "28"}, "movie"),
         "bollywood":     ("discover/movie", {"with_original_language": "hi", "region": "IN"}, "movie"),
         
-        # --- TV SHOWS ---
+        # TV SHOWS
         "anime":         ("discover/tv", {"with_genres": "16", "with_keywords": "210024"}, "tv"),
         "us_tv_drama":   ("discover/tv", {"with_genres": "18", "with_original_language": "en", "region": "US"}, "tv"),
         "scifi_horror":  ("discover/tv", {"with_genres": "10765"}, "tv"),
         "kdrama":        ("discover/tv", {"with_original_language": "ko", "with_genres": "18"}, "tv"),
     }
 
-    # 3. FETCH AND SAVE
+    movie_ratings = ["PG-13", "R", "PG", "18+", "16+"]
+    tv_ratings = ["TV-MA", "TV-14", "TV-PG"]
+
+    count = 0
+
+    # 4. Fetch Loop
     for genre_tag, (endpoint, params, m_type) in categories.items():
-        print(f"Fetching {genre_tag} ({m_type})...")
+        print(f"📥 Fetching {genre_tag}...")
         items = get_movies(endpoint, params)
         
+        if not items:
+            print(f"   ⚠️ No items found for {genre_tag}. Check API Key?")
+            continue
+
         for item in items:
             try:
-                # TV shows use 'name', Movies use 'title'. We grab whichever exists.
+                # Get Title (Movies use 'title', TV uses 'name')
                 title = item.get('title', item.get('name'))
-                date = item.get('release_date', item.get('first_air_date'))
-                
                 if not title: continue
-
-                poster = f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}"
-                backdrop = f"https://image.tmdb.org/t/p/original{item.get('backdrop_path')}"
                 
+                # Get Date
+                date = item.get('release_date', item.get('first_air_date'))
+
+                # Assign Rating
+                if item.get('adult') is True:
+                    rating = "18+"
+                else:
+                    rating = random.choice(movie_ratings if m_type == "movie" else tv_ratings)
+
+                # Insert into DB
                 db.execute("""
                     INSERT INTO movies 
-                    (tmdb_id, title, overview, poster_path, backdrop_path, release_date, vote_average, genre, media_type)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    (tmdb_id, title, overview, poster_path, backdrop_path, release_date, vote_average, genre, media_type, age_rating)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     item['id'],
                     title,
-                    item.get('overview', ''),
-                    poster,
-                    backdrop,
+                    item.get('overview', 'No description available.'),
+                    f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}",
+                    f"https://image.tmdb.org/t/p/original{item.get('backdrop_path')}",
                     date,
-                    item['vote_average'],
+                    item.get('vote_average', 0),
                     genre_tag,
-                    m_type # <--- Saving 'movie' or 'tv'
+                    m_type,
+                    rating
                 ))
+                count += 1
             except Exception as e:
-                pass 
+                print(f"Skipped one item: {e}")
 
     conn.commit()
     conn.close()
-    print("Success! Database updated with separate Movie/TV types.")
+    print(f"✅ SUCCESS! Database rebuilt with {count} movies/shows.")
 
 if __name__ == "__main__":
     save_to_db()

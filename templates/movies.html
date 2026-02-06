@@ -1,72 +1,136 @@
 {% extends "layout.html" %} 
 
-{% block content %}
+{% block main %}
 
-<header class="hero" style="background-image: url('{{ featured_movie.backdrop_path;}}');">
-    <div class="hero-content">
-        <h1 class="hero-title">{{ featured_movie.title}}</h1>
-        <p class="hero-desc">{{ featured_movie.overview }}</p>
+    <header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">
+        <div class="hero-content">
+            <h1 class="hero-title">{{ featured_movie.title}}</h1>
+            <p class="hero-desc">{{ featured_movie.overview }}</p>
 
-        <div class="hero-buttons">
-                <button class="btn btn-play">▶ Play</button>
-                <button class="btn btn-info">ⓘ More Info</button>
+            <div class="hero-buttons">
+                    <button class="btn btn-play"><span class="play-icon">▶</span> Play</button>
+                    <button class="btn btn-info"><span class="info-icon">ⓘ</span> More Info</button>
+            </div>
         </div>
-    </div>
-    <div class="hero-fade"></div>
-</header>
 
-<div class="rows-container">
-    
-    <h3 class="row-header">Trending Now</h3>
-    <div class="row">
-        {% for movie in trending_movies %}
-        <div class="movie-card">
-            <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-            <p class="movie-title">{{ movie.title }}</p>
+        <div class="hero-actions">
+            <button class="mute-btn">
+                <i class="fas fa-volume-up"></i> </button>
+            <div class="age-rating">
+                <span class="age-number">{{ featured_movie.age_rating }}</span>
+            </div>
         </div>
-        {% endfor %}
-    </div>
 
-    <h3 class="row-header">Bollywood Movies</h3>
-    <div class="row">
-        {% for movie in bollywood_movies %}
-        <div class="movie-card">
-            <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-            <p class="movie-title">{{ movie.title }}</p>
+        <div class="hero-fade"></div>
+    </header>
+
+    <div class="rows-container">
+
+        <h3 class="row-header">Trending Now</h3>
+        <div class="row">
+            {% for movie in trending_movies %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Movie • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <h3 class="row-header">Action Movies</h3>
-    <div class="row">
-        {% for movie in action_movies %}
-        <div class="movie-card">
-            <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-            <p class="movie-title">{{ movie.title }}</p>
+        <h3 class="row-header">Bollywood Movies</h3>
+        <div class="row">
+            {% for movie in bollywood_movies %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <h3 class="row-header">New Releases</h3>
-    <div class="row">
-        {% for movie in new_releases %}
-        <div class="movie-card">
-            <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-            <p class="movie-title">{{ movie.title }}</p>
+        <h3 class="row-header">Action Movies</h3>
+        <div class="row">
+            {% for movie in action_movies %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                
+                <p class="default-title">{{ movie.title }}</p>  
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Action • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-    <h3 class="row-header">Popular on Stream50</h3>
-    <div class="row">
-        {% for movie in popular_movies %}
-        <div class="movie-card">
-            <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-            <p class="movie-title">{{ movie.title }}</p>
+        <h3 class="row-header">New Releases</h3>
+        <div class="row">
+            {% for movie in new_releases %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">New • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
 
-</div>
+        <h3 class="row-header">Popular on Stream50</h3>
+        <div class="row">
+            {% for movie in popular_movies %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                
+                <p class="default-title">{{ movie.title }}</p>
+                
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play"><i class="fas fa-play"></i></button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Popular • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
 
 {% endblock %}

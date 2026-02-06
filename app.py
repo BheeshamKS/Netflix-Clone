@@ -71,7 +71,7 @@ def tv_shows():
     conn.close()
 
     # 3. Send all these lists to the 'tvshows.html' template
-    return render_template('tvshows.html', 
+    return render_template('tv_shows.html', 
                            featured_movie=featured,
                            us_tv_shows=us_tv,
                            kdramas=kdrama,

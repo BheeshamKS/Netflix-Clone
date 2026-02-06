@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Netflix</title>
         <link href="static\styles.css" rel="stylesheet">
-        </head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    </head>
     <body>
 
         <nav class="navbar">
@@ -22,9 +23,21 @@
             </div>
 
             <div class="nav-right">
-                <img src="/static/images/search_icon.svg" alt="Search" class="nav-icon">
-                <img src="/static/images/bell_icon.svg" alt="Notifications" class="nav-icon">
-                <img src="/static/images/user_avatar.png" alt="User" class="nav-avatar">
+                <i class="fas fa-search nav-icon"></i>
+                <i class="fas fa-bell nav-icon"></i>
+                        
+                <div class="profile-menu">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="User" class="profile-img">
+                    <i class="fas fa-caret-down profile-arrow"></i>
+                    
+                    <div class="dropdown-content">
+                        <a href="#">Manage Profiles</a>
+                        <a href="#">Account</a>
+                        <a href="#">Help Center</a>
+                        <hr>
+                        <a href="#">Sign out of Netflix</a>
+                    </div>
+                </div>
             </div>
         </nav>
 
@@ -34,39 +47,46 @@
 
         <footer class="site-footer">
             <div class="footer-content">
-                <p class="footer-top">Questions? Call <a href="#">000-800-919-1694</a></p>
 
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            
                 <div class="footer-links">
                     <div class="footer-column">
-                        <a href="#">FAQ</a>
-                        <a href="#">Investor Relations</a>
+                        <a href="#">Audio and Subtitles</a>
+                        <a href="#">Media Centre</a>
                         <a href="#">Privacy</a>
-                        <a href="#">Speed Test</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <a href="#">Help Center</a>
-                        <a href="#">Jobs</a>
-                        <a href="#">Cookie Preferences</a>
-                        <a href="#">Legal Notices</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <a href="#">Account</a>
-                        <a href="#">Ways to Watch</a>
-                        <a href="#">Corporate Information</a>
-                        <a href="#">Netflix Originals</a>
-                    </div>
-
-                    <div class="footer-column">
-                        <a href="#">Media Center</a>
-                        <a href="#">Terms of Use</a>
                         <a href="#">Contact Us</a>
                     </div>
+                
+                    <div class="footer-column">
+                        <a href="#">Audio Description</a>
+                        <a href="#">Investor Relations</a>
+                        <a href="#">Legal Notices</a>
+                    </div>
+                
+                    <div class="footer-column">
+                        <a href="#">Help Centre</a>
+                        <a href="#">Jobs</a>
+                        <a href="#">Cookie Preferences</a>
+                    </div>
+                
+                    <div class="footer-column">
+                        <a href="#">Gift Cards</a>
+                        <a href="#">Terms of Use</a>
+                        <a href="#">Corporate Information</a>
+                    </div>
                 </div>
+            
+                <button class="service-code-btn">Service Code</button>
 
-                <button class="lang-btn">English</button>
-                <p class="copyright">Netflix Clone</p>
+                <div class="copyright-text">
+                    &copy; 2026 Netflix Clone, Inc.
+                </div>
             </div>
         </footer>
 
