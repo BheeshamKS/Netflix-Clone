@@ -886,3 +886,42 @@ body {
         grid-template-columns: repeat(2, 1fr); /* 2 columns on phones */
     }
 }
+
+/* --- TOP 10 ROW STYLING --- */
+.top10-card {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-right: -20px; /* Pull them closer to overlap slightly */
+    cursor: pointer;
+    min-width: 200px; /* Wider to fit number + image */
+    height: 160px;
+    transition: transform 0.3s;
+}
+
+.top10-card:hover {
+    transform: scale(1.1);
+    z-index: 100;
+}
+
+/* The Big Number (1, 2, 3...) */
+.rank-number {
+    font-size: 160px;
+    font-weight: 900;
+    color: black;
+    -webkit-text-stroke: 4px #595959; /* The outline effect */
+    position: relative;
+    line-height: 1;
+    margin-right: -15px; /* Tuck it behind the image */
+    z-index: 1;
+    font-family: 'Arial Black', sans-serif;
+    letter-spacing: -10px;
+}
+
+/* The Image (Sits next to number) */
+.top10-img {
+    width: 110px;
+    height: 160px;
+    object-fit: cover;
+    z-index: 2; /* Sits ON TOP of the number */
+}

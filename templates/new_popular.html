@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <div style="padding-top: 100px; padding-bottom: 50px;">
+
+        <h3 class="row-header">New on Netflix</h3>
+        <div class="row">
+            {% for movie in new_releases %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play" onclick="playTrailer('movie', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">New • {{ movie.age_rating }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="row-header">Top 10 Movies</h3>
+        <div class="row">
+            {% for movie in trending_movies[:10] %}
+            <div class="top10-card" onclick="playTrailer('movie', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                <span class="rank-number">{{ loop.index }}</span>
+                <img class="top10-img" src="{{ movie.poster_path }}" alt="{{ movie.title }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="row-header">Top 10 TV Shows</h3>
+        <div class="row">
+            {% for show in top_tv_shows[:10] %}
+            <div class="top10-card" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                <span class="rank-number">{{ loop.index }}</span>
+                <img class="top10-img" src="{{ show.poster_path }}" alt="{{ show.title }}">
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="row-header">Coming This Week</h3>
+        <div class="row">
+            {% for movie in coming_soon %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play" onclick="playTrailer('movie', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Coming Soon</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <h3 class="row-header">Worth the Wait</h3>
+        <div class="row">
+            {% for movie in worth_wait %}
+            <div class="movie-card">
+                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <p class="default-title">{{ movie.title }}</p>
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play" onclick="playTrailer('movie', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
+                        <button class="mini-btn"><i class="fas fa-bell"></i></button> </div>
+                    <p class="movie-title">{{ movie.title }}</p>
+                    <p class="card-info">Worth the Wait</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}

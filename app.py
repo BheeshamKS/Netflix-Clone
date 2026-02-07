@@ -164,5 +164,31 @@ def get_trailer(media_type, tmdb_id):
 
     return jsonify({'error': 'No trailer found'}), 404
 
+@app.route('/new-popular')
+def new_popular():
+    conn = get_db_connection()
+
+    # 1. Fetch categories
+    new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
+    trending_movies = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
+    
+    # "Top 10 TV" proxy
+    top_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
+    
+    # "Coming Soon" proxy
+    coming_soon = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
+
+    # "Worth the Wait" proxy (Using Action movies)
+    worth_wait = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
+
+    conn.close()
+
+    # 2. Send everything to the template
+    return render_template('new_popular.html', 
+                           new_releases=new_releases,
+                           trending_movies=trending_movies,
+                           top_tv_shows=top_tv,
+                           coming_soon=coming_soon,
+                           worth_wait=worth_wait)
 if __name__ == '__main__':
     app.run(debug=True)
