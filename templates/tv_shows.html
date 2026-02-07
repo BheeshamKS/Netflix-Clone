@@ -2,8 +2,12 @@
 
 {% block main %}
 
-    <header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">
+    <span class="category-header">TV Shows</span>
+
+    <header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">        
+        
         <div class="hero-content">
+
             <h1 class="hero-title">{{ featured_movie.title }}</h1>
             <p class="hero-desc">{{ featured_movie.overview }}</p>
             
@@ -122,4 +126,5 @@
         </div>
 
     </div>
+
 {% endblock %}

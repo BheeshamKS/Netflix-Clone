@@ -126,27 +126,43 @@ def movies():
 @app.route('/get_trailer/<media_type>/<int:tmdb_id>')
 def get_trailer(media_type, tmdb_id):
     """
-    Fetches the YouTube trailer ID for a specific movie or TV show.
+    Smart Fetch: Tries the requested media_type first. 
+    If not found, it automatically checks the other type (Movie <-> TV).
     """
-    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}/videos?api_key={TMDB_API_KEY}&language=en-US"
     
-    try:
-        response = requests.get(url)
-        data = response.json()
-        
-        # Look for an official Trailer on YouTube
-        for video in data.get('results', []):
+    # 1. Helper function to hit the API
+    def fetch_videos_from_tmdb(m_type, m_id):
+        url = f"https://api.themoviedb.org/3/{m_type}/{m_id}/videos?api_key={TMDB_API_KEY}&language=en-US"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                return data.get('results', [])
+            return []
+        except:
+            return []
+
+    # 2. Attempt 1: Try with the original requested type (e.g., 'movie')
+    results = fetch_videos_from_tmdb(media_type, tmdb_id)
+
+    # 3. Attempt 2: If empty, try the OTHER type (Fallback)
+    if not results:
+        # Swap: If it was 'movie', try 'tv'. If 'tv', try 'movie'.
+        fallback_type = 'tv' if media_type == 'movie' else 'movie'
+        results = fetch_videos_from_tmdb(fallback_type, tmdb_id)
+
+    # 4. Search for the best video (Trailer > Teaser)
+    if results:
+        # Priority: Look for an official "Trailer"
+        for video in results:
             if video['site'] == 'YouTube' and video['type'] == 'Trailer':
                 return jsonify({'key': video['key']})
         
-        # If no "Trailer" found, try "Teaser" or "Clip" as backup
-        if data.get('results'):
-             return jsonify({'key': data['results'][0]['key']})
+        # Fallback: Use the first available video (Teaser, Clip, etc.)
+        if results[0]['site'] == 'YouTube':
+             return jsonify({'key': results[0]['key']})
 
-        return jsonify({'error': 'No trailer found'}), 404
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    return jsonify({'error': 'No trailer found'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
