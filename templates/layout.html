@@ -25,11 +25,11 @@
             <div class="nav-right">
                 <i class="fas fa-search nav-icon"></i>
                 <i class="fas fa-bell nav-icon"></i>
-                        
+
                 <div class="profile-menu">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="User" class="profile-img">
                     <i class="fas fa-caret-down profile-arrow"></i>
-                    
+
                     <div class="dropdown-content">
                         <a href="#">Manage Profiles</a>
                         <a href="#">Account</a>
@@ -89,6 +89,15 @@
                 </div>
             </div>
         </footer>
+
+        <div id="video-modal" class="video-modal" onclick="closeVideo()">
+            <div class="video-container">
+                <span class="close-video-btn" onclick="closeVideo()">&times;</span>
+                <iframe id="youtube-player" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
 
         <script src="/static/script.js"></script>
     </body>

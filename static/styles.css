@@ -603,6 +603,50 @@ body {
     margin-top: 10px;
 }
 
+/* --- VIDEO TRAILER MODAL --- */
+.video-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 9999; /* On top of everything */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95); /* Deep black background */
+    align-items: center;
+    justify-content: center;
+}
+
+.video-container {
+    position: relative;
+    width: 80%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9; /* Enforce cinematic ratio */
+    background: black;
+    box-shadow: 0 0 50px rgba(0,0,0,1);
+}
+
+#youtube-player {
+    width: 100%;
+    height: 100%;
+}
+
+.close-video-btn {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10001;
+    transition: color 0.2s;
+}
+
+.close-video-btn:hover {
+    color: #E50914; /* Netflix Red */
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .footer-links {

@@ -1,1 +1,4 @@
-seed.py
+plan.md
+config.py
+__pycache__/
+*.db

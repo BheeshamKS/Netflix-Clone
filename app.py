@@ -1,6 +1,9 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, render_template
 import sqlite3
 import random
+import requests
+
+from config import TMDB_API_KEY
 
 app = Flask(__name__)
 
@@ -107,6 +110,31 @@ def movies():
                            bollywood_movies=bollywood,
                            new_releases=new_releases,
                            trending_movies=trending)
+
+@app.route('/get_trailer/<media_type>/<int:tmdb_id>')
+def get_trailer(media_type, tmdb_id):
+    """
+    Fetches the YouTube trailer ID for a specific movie or TV show.
+    """
+    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}/videos?api_key={TMDB_API_KEY}&language=en-US"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        
+        # Look for an official Trailer on YouTube
+        for video in data.get('results', []):
+            if video['site'] == 'YouTube' and video['type'] == 'Trailer':
+                return jsonify({'key': video['key']})
+        
+        # If no "Trailer" found, try "Teaser" or "Clip" as backup
+        if data.get('results'):
+             return jsonify({'key': data['results'][0]['key']})
+
+        return jsonify({'error': 'No trailer found'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

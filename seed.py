@@ -3,16 +3,15 @@ import sqlite3
 import random
 import os
 
-# --- CONFIGURATION ---
-# PASTE YOUR API KEY HERE
-API_KEY = "2a11b3a974a0295138449ec38fffdf26" 
+from config import TMDB_API_KEY
+
 DB_NAME = "netflix.db"
-# ---------------------
+
 
 def get_movies(endpoint, params=None):
     if params is None:
         params = {}
-    url = f"https://api.themoviedb.org/3/{endpoint}?api_key={API_KEY}&language=en-US&page=1"
+    url = f"https://api.themoviedb.org/3/{endpoint}?api_key={TMDB_API_KEY}&language=en-US&page=1"
     for key, value in params.items():
         url += f"&{key}={value}"
     
