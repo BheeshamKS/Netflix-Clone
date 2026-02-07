@@ -1,4 +1,3 @@
-
 /* --- 1. NAVBAR SCROLL EFFECT --- */
 const navbar = document.querySelector(".navbar");
 
@@ -15,46 +14,48 @@ let player;
 let updateInterval;
 
 /* --- 3. YOUTUBE API SETUP --- */
-// This function is automatically called by the YouTube API script when it loads
 function onYouTubeIframeAPIReady() {
     console.log("YouTube API Ready");
 }
 
-/* --- 4. PLAY VIDEO FUNCTION --- */
-function playTrailer(mediaType, tmdbId) {
-    // Fetch the trailer key from our Flask backend
+/* --- 4. PLAY VIDEO FUNCTION (FIXED: Accepts Title) --- */
+function playTrailer(mediaType, tmdbId, title) {
+    // 1. UPDATE THE TITLE
+    const titleElement = document.getElementById('player-title');
+    if (titleElement) {
+        titleElement.innerText = title || "Now Playing";
+    }
+
+    // 2. Fetch the trailer
     fetch(`/get_trailer/${mediaType}/${tmdbId}`)
         .then(response => response.json())
         .then(data => {
             if (data.key) {
                 const modal = document.getElementById('video-modal');
                 
-                // Show modal with Flexbox
+                // Show modal
                 modal.style.display = 'flex';
-                
-                // Force browser reflow (needed for transition)
-                void modal.offsetWidth; 
-                
-                // Add class to trigger CSS fade-in
+                void modal.offsetWidth; // Trigger reflow
                 modal.classList.add('show');
 
-                // If a player already exists, destroy it so we can make a new one
+                // Destroy old player to prevent duplicates
                 if (player) {
                     player.destroy();
                 }
 
-                // Create the new YouTube Player with Custom Settings
+                // Create new player
                 player = new YT.Player('youtube-player', {
                     height: '100%',
                     width: '100%',
                     videoId: data.key,
                     playerVars: {
-                        'autoplay': 1,       // Auto-play
-                        'controls': 0,       // HIDE default YouTube controls
-                        'showinfo': 0,       // Hide title
-                        'modestbranding': 1, // Minimal logo
-                        'rel': 0,            // No related videos
-                        'enablejsapi': 1     // Enable JS control
+                        'autoplay': 1,
+                        'controls': 0,       // Hide default controls
+                        'showinfo': 0,
+                        'modestbranding': 1,
+                        'rel': 0,
+                        'enablejsapi': 1,
+                        'origin': window.location.origin
                     },
                     events: {
                         'onReady': onPlayerReady,
@@ -73,64 +74,50 @@ function toggleFullscreen() {
     const videoContainer = document.querySelector('.video-container');
     
     if (!document.fullscreenElement) {
-        // Enter Fullscreen
-        if (videoContainer.requestFullscreen) {
-            videoContainer.requestFullscreen();
-        } else if (videoContainer.mozRequestFullScreen) { /* Firefox */
-            videoContainer.mozRequestFullScreen();
-        } else if (videoContainer.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
-            videoContainer.webkitRequestFullscreen();
-        } else if (videoContainer.msRequestFullscreen) { /* IE/Edge */
-            videoContainer.msRequestFullscreen();
-        }
+        if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
+        else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
+        else if (videoContainer.msRequestFullscreen) videoContainer.msRequestFullscreen();
     } else {
-        // Exit Fullscreen
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.mozCancelFullScreen) { 
-            document.mozCancelFullScreen();
-        } else if (document.webkitExitFullscreen) { 
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { 
-            document.msExitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        else if (document.msExitFullscreen) document.msExitFullscreen();
     }
 }
 
 /* --- 5. PLAYER EVENT HANDLERS --- */
-
-// Called when video is ready to play
 function onPlayerReady(event) {
     event.target.playVideo();
-    startProgressLoop(); // Start updating the red progress bar
+    startProgressLoop();
 }
 
-// Called when video pauses or plays (updates our custom icon)
+// Handles the Play/Pause Icon and Dark Overlay
 function onPlayerStateChange(event) {
     const btn = document.querySelector('#play-pause-btn i');
+    const container = document.getElementById('video-container');
     
     if (event.data == YT.PlayerState.PLAYING) {
-        btn.className = 'fas fa-pause'; // Show Pause icon
+        btn.className = 'fas fa-pause';
+        container.classList.remove('paused'); // Remove dark overlay
     } else {
-        btn.className = 'fas fa-play';  // Show Play icon
+        btn.className = 'fas fa-play';
+        container.classList.add('paused');    // Add dark overlay
     }
 }
 
 /* --- 6. CUSTOM CONTROL FUNCTIONS --- */
-
-// Toggle Play/Pause
 function togglePlay() {
-    if (player && player.getPlayerState() == YT.PlayerState.PLAYING) {
-        player.pauseVideo();
-    } else if (player) {
-        player.playVideo();
+    if (player) {
+        const state = player.getPlayerState();
+        if (state == YT.PlayerState.PLAYING) {
+            player.pauseVideo();
+        } else {
+            player.playVideo();
+        }
     }
 }
 
-// Toggle Mute/Unmute
 function toggleMute() {
     if (!player) return;
-    
     const btn = document.querySelector('#mute-btn i');
     if (player.isMuted()) {
         player.unMute();
@@ -141,15 +128,11 @@ function toggleMute() {
     }
 }
 
-// Close the Video Modal
 function closeVideo() {
     const modal = document.getElementById('video-modal');
-    modal.classList.remove('show'); // Trigger fade-out
-    
-    // Stop the progress bar loop
+    modal.classList.remove('show');
     clearInterval(updateInterval);
 
-    // Wait 300ms for animation, then hide and destroy player
     setTimeout(() => {
         modal.style.display = 'none';
         if (player) {
@@ -157,52 +140,35 @@ function closeVideo() {
             player.destroy();
             player = null;
         }
-        
-        // Reset the inner HTML to prepare for next time
-        // We preserve the 'custom-controls' div so it's not lost
+        // Reset controls for next time
         const controlsHTML = document.getElementById('custom-controls').outerHTML;
         document.querySelector('.video-container').innerHTML = 
             '<div id="youtube-player"></div>' + controlsHTML;
-            
     }, 300);
 }
 
-// Close on Escape Key
 document.addEventListener('keydown', function(event) {
-    if (event.key === "Escape") {
-        closeVideo();
-    }
+    if (event.key === "Escape") closeVideo();
 });
 
 /* --- 7. PROGRESS BAR LOGIC --- */
-
-// Update the red bar width every 500ms
 function startProgressLoop() {
-    // Clear any existing loop first
     if (updateInterval) clearInterval(updateInterval);
-    
     updateInterval = setInterval(() => {
         if (player && player.getCurrentTime) {
             const duration = player.getDuration();
             const current = player.getCurrentTime();
-            
             if (duration > 0) {
                 const percent = (current / duration) * 100;
-                const progressBar = document.getElementById('progress-bar');
-                if (progressBar) {
-                    progressBar.style.width = percent + '%';
-                }
+                document.getElementById('progress-bar').style.width = percent + '%';
             }
         }
     }, 500);
 }
 
-// Click on the bar to seek (skip) to that time
 function seekVideo(event) {
     if (!player) return;
-    
     const container = document.querySelector('.progress-container');
     const newTime = (event.offsetX / container.offsetWidth) * player.getDuration();
-    
     player.seekTo(newTime, true);
 }
