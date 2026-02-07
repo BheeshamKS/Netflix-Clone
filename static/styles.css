@@ -162,6 +162,10 @@ body {
     position: relative;
     color: white;
     margin-bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .hero::after {
@@ -186,7 +190,7 @@ body {
     position: relative; 
     z-index: 2; 
 
-    padding-top: 140px;
+    padding-top: 0px;
     margin-left: 4%;
     max-width: 500px;
 }
@@ -428,7 +432,7 @@ body {
     box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 10px 10px rgba(0,0,0,0.4);
     
     /* Remove delay on hover enter so it pops instantly */
-    transition-delay: 0.1s;
+    transition-delay: 0.07s;
 }
 
 /* 2. The Image itself */
@@ -664,6 +668,7 @@ body {
     gap: 20px;
     opacity: 0; /* Hidden until you hover */
     transition: opacity 0.3s;
+    z-index: 20;
 }
 
 /* Show controls when mouse is over the video */
@@ -714,9 +719,38 @@ body {
 #youtube-player {
     width: 100%;
     height: 100%;
-    transform: scale(1.35); /* Zoom in to crop edges */
+    
+    /* CHANGE: Remove the zoom */
+    transform: scale(1); 
+    
     transform-origin: center center;
-    pointer-events: none; /* Optional: Stops user from clicking YouTube links */
+    pointer-events: none; 
+}
+
+/* --- CINEMATIC BARS (Masking YouTube UI) --- */
+.video-container::before,
+.video-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    
+    /* Height: 70px is usually perfect to hide YouTube's top/bottom bars */
+    height: 67px; 
+    
+    background: black;
+    z-index: 5; /* Sit ABOVE the video, but BELOW your controls */
+    pointer-events: none; /* Let clicks pass through */
+}
+
+/* Top Bar */
+.video-container::before {
+    top: 0;
+}
+
+/* Bottom Bar */
+.video-container::after {
+    bottom: 0;
 }
 
 /* --- VIDEO HEADER (Title Only) --- */
@@ -770,6 +804,27 @@ body {
     color: black;
     transform: rotate(90deg);
     border-color: white;
+}
+
+/* --- LOADING SPINNER --- */
+.loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid #E50914; /* Netflix Red */
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 5; /* Below controls, above background */
+    display: none; /* Hidden by default */
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 /* Mobile Responsiveness */

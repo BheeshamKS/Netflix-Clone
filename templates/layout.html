@@ -11,7 +11,7 @@
 
         <nav class="navbar">
             <div class="nav-left">
-                <img src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
+                <img href="/" src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
                 
                 <ul class="nav-links">
                     <li><a href="/" class="active">Home</a></li>
@@ -104,6 +104,8 @@
                 <div id="click-shield" onclick="togglePlay()">
                     <i class="fas fa-play big-play-icon"></i>
                 </div>
+
+                <div id="loading-spinner" class="loading-spinner"></div>
             
                 <div id="youtube-player"></div>
             
@@ -119,7 +121,7 @@
                     <button class="control-btn" id="mute-btn" onclick="toggleMute()">
                         <i class="fas fa-volume-up"></i>
                     </button>
-                    
+
                     <button class="control-btn" onclick="toggleFullscreen()">
                         <i class="fas fa-expand"></i>
                     </button>
