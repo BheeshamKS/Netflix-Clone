@@ -90,14 +90,44 @@
             </div>
         </footer>
 
-        <div id="video-modal" class="video-modal" onclick="closeVideo()">
-            <div class="video-container">
-                <span class="close-video-btn" onclick="closeVideo()">&times;</span>
-                <iframe id="youtube-player" src="" frameborder="0" allowfullscreen></iframe>
+        <div id="video-modal" class="video-modal">
+            <div class="video-container" id="video-container">
+    
+                <div class="video-header">
+                    <h2 id="player-title">Movie Title</h2>
+                </div>
+            
+                <div class="close-video-btn" onclick="closeVideo()">
+                    <i class="fas fa-times"></i>
+                </div>
+            
+                <div id="click-shield" onclick="togglePlay()">
+                    <i class="fas fa-play big-play-icon"></i>
+                </div>
+            
+                <div id="youtube-player"></div>
+            
+                <div class="custom-controls" id="custom-controls">
+                    <button class="control-btn" id="play-pause-btn" onclick="togglePlay()">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                
+                    <div class="progress-container" onclick="seekVideo(event)">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                
+                    <button class="control-btn" id="mute-btn" onclick="toggleMute()">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    
+                    <button class="control-btn" onclick="toggleFullscreen()">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <script src="{{ url_for('static', filename='script.js') }}"></script>
+        <script src="https://www.youtube.com/iframe_api"></script>
 
         <script src="/static/script.js"></script>
     </body>

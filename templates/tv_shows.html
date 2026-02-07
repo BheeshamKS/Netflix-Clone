@@ -8,7 +8,7 @@
             <p class="hero-desc">{{ featured_movie.overview }}</p>
             
             <div class="hero-buttons">
-                <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', '{{ featured_movie.tmdb_id }}')">
+                <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
                     <span class="play-icon">▶</span> Play
                 </button>
 
@@ -39,7 +39,7 @@
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', '{{ show.tmdb_id }}')">
+                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <button class="mini-btn"><i class="fas fa-plus"></i></button>
@@ -62,7 +62,7 @@
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', '{{ show.tmdb_id }}')">
+                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <button class="mini-btn"><i class="fas fa-plus"></i></button>
@@ -85,7 +85,7 @@
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', '{{ show.tmdb_id }}')">
+                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <button class="mini-btn"><i class="fas fa-plus"></i></button>
@@ -108,7 +108,7 @@
                 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', '{{ show.tmdb_id }}')">
+                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <button class="mini-btn"><i class="fas fa-plus"></i></button>

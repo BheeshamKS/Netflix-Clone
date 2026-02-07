@@ -16,6 +16,18 @@ def get_db_connection():
 @app.route('/')
 def index():
     conn = get_db_connection()
+
+    featured_movie = conn.execute('SELECT * FROM movies ORDER BY RANDOM() LIMIT 1').fetchone()
+
+    if featured_movie is None:
+        featured_movie = {
+            'title': 'No Movies Found',
+            'overview': 'Please run python seed.py to load movies.',
+            'backdrop_path': 'https://wallpapers.com/images/hd/netflix-background-gs7hjuwvv2g0e9fj.jpg',
+            'tmdb_id': 0,
+            'media_type': 'movie',
+            'age_rating': 'N/A'
+        }
     
     # 1. Fetch every category we just saved
     popular = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()

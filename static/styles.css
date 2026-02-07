@@ -603,48 +603,173 @@ body {
     margin-top: 10px;
 }
 
-/* --- VIDEO TRAILER MODAL --- */
+/* --- VIDEO TRAILER MODAL (Animated) --- */
 .video-modal {
     display: none; /* Hidden by default */
     position: fixed;
-    z-index: 9999; /* On top of everything */
+    z-index: 9999;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.95); /* Deep black background */
+    
+    /* 1. GLASS BACKGROUND: See the site behind the video */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+    backdrop-filter: blur(8px);           /* Blurs the page behind it */
+    -webkit-backdrop-filter: blur(8px);   /* For Safari support */
+    
     align-items: center;
     justify-content: center;
+    
+    /* Animation Initial State */
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
 }
 
+/* This class is added by JS to trigger the fade-in */
+.video-modal.show {
+    opacity: 1;
+}
+
+/* --- CUSTOM PLAYER CONTROLS --- */
+/* --- CLEAN VIDEO PLAYER --- */
 .video-container {
     position: relative;
-    width: 80%;
-    max-width: 1000px;
-    aspect-ratio: 16 / 9; /* Enforce cinematic ratio */
+    width: 90%; 
+    max-width: 1400px;
+    aspect-ratio: 16 / 9;
+    
     background: black;
-    box-shadow: 0 0 50px rgba(0,0,0,1);
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    border-radius: 8px;
+    
+    /* TRICK: Hides the zoomed-out parts (Logos/Share buttons) */
+    overflow: hidden; 
+    
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* The invisible layer that holds buttons */
+.custom-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent 100%);
+    
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0; /* Hidden until you hover */
+    transition: opacity 0.3s;
+}
+
+/* Show controls when mouse is over the video */
+.video-container:hover .custom-controls {
+    opacity: 1;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.control-btn:hover {
+    transform: scale(1.2);
+    color: #E50914; /* Red hover */
+}
+
+.close-btn {
+    margin-left: auto; /* Pushes Close button to the far right */
+}
+
+/* --- PROGRESS BAR --- */
+.progress-container {
+    flex-grow: 1; /* Takes up all remaining space */
+    height: 5px;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    border-radius: 2px;
+    position: relative;
+}
+
+.progress-bar {
+    width: 0%; /* JS will update this */
+    height: 100%;
+    background-color: #E50914; /* Netflix Red */
+    border-radius: 2px;
+}
+
+/* When modal is open, zoom to full size */
+.video-modal.show .video-container {
+    transform: scale(1);
 }
 
 #youtube-player {
     width: 100%;
     height: 100%;
+    transform: scale(1.35); /* Zoom in to crop edges */
+    transform-origin: center center;
+    pointer-events: none; /* Optional: Stops user from clicking YouTube links */
 }
 
+/* --- VIDEO HEADER (Title Only) --- */
+.video-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 30px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+    z-index: 10002;
+    pointer-events: none; /* Let clicks pass through */
+    
+    /* FADE LOGIC: Hidden by default, visible on hover */
+    opacity: 0; 
+    transition: opacity 0.3s;
+}
+
+.video-container:hover .video-header,
+.video-container.paused .video-header {
+    opacity: 1;
+}
+
+/* --- CLOSE BUTTON (Always Visible) --- */
 .close-video-btn {
     position: absolute;
-    top: -40px;
-    right: 0;
+    top: 20px;
+    right: 25px;
+    z-index: 10005; /* Higher than everything else */
+    
+    /* FIX: Make it visible immediately */
+    opacity: 1; 
+    
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.3);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
     color: white;
-    font-size: 40px;
-    font-weight: bold;
     cursor: pointer;
-    z-index: 10001;
-    transition: color 0.2s;
+    transition: all 0.2s;
 }
 
 .close-video-btn:hover {
-    color: #E50914; /* Netflix Red */
+    background: white;
+    color: black;
+    transform: rotate(90deg);
+    border-color: white;
 }
 
 /* Mobile Responsiveness */
