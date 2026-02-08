@@ -4,13 +4,11 @@
 
     <span class="category-header">TV Shows</span>
 
-    <header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">        
-        
+    <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
         <div class="hero-content">
-
             <h1 class="hero-title">{{ featured_movie.title }}</h1>
             <p class="hero-desc">{{ featured_movie.overview }}</p>
-            
+
             <div class="hero-buttons">
                 <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
                     <span class="play-icon">▶</span> Play
@@ -23,14 +21,13 @@
         </div>
 
         <div class="hero-actions">
-            <button class="mute-btn">
-                <i class="fas fa-volume-up"></i>
-            </button>
+            <button class="mute-btn"><i class="fas fa-volume-up"></i></button>
             <div class="age-rating">
                 <span class="age-number">{{ featured_movie.age_rating }}</span>
             </div>
         </div>
-        <div class="hero-fade"></div>
+
+        <div class="hero-fade-bottom"></div>
     </header>
 
     <div class="rows-container">
@@ -40,7 +37,7 @@
             {% for show in us_tv_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
                 
-                <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
@@ -69,7 +66,7 @@
         <div class="row">
             {% for show in kdramas %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
@@ -98,7 +95,7 @@
         <div class="row">
             {% for show in anime_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
@@ -127,7 +124,7 @@
         <div class="row">
             {% for show in scifi_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
                 

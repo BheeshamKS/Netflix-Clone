@@ -8,7 +8,7 @@
         <div class="row">
             {% for movie in new_releases %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                 <p class="default-title">{{ movie.title }}</p>
 
                 <div class="card-overlay">
@@ -37,7 +37,7 @@
             {% for movie in trending_movies[:10] %}
             <div class="top10-card" onclick="openMoreInfo('movie', {{ movie.tmdb_id }})">
                 <span class="rank-number">{{ loop.index }}</span>
-                <img class="top10-img" src="{{ movie.poster_path }}" alt="{{ movie.title }}">
+                <img class="top10-img" src="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}" alt="{{ movie.title }}">
             </div>
             {% endfor %}
         </div>
@@ -47,7 +47,7 @@
             {% for show in top_tv_shows[:10] %}
             <div class="top10-card" onclick="openMoreInfo('tv', {{ show.tmdb_id }})">
                 <span class="rank-number">{{ loop.index }}</span>
-                <img class="top10-img" src="{{ show.poster_path }}" alt="{{ show.title }}">
+                <img class="top10-img" src="https://image.tmdb.org/t/p/w300{{ show.poster_path }}" alt="{{ show.title }}">
             </div>
             {% endfor %}
         </div>
@@ -56,7 +56,7 @@
         <div class="row">
             {% for movie in coming_soon %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                 <p class="default-title">{{ movie.title }}</p>
 
                 <div class="card-overlay">
@@ -84,7 +84,7 @@
         <div class="row">
             {% for movie in worth_wait %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                 <p class="default-title">{{ movie.title }}</p>
 
                 <div class="card-overlay">

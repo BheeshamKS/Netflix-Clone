@@ -265,38 +265,26 @@ window.onclick = function(event) {
 }
 
 
-/* --- TOGGLE MY LIST (Final Fix: Handles Cross & Removes Card) --- */
-function toggleMyList(event, btn, mediaType, tmdbId) {
-    // 1. Stop click from opening the popup
+/* --- TOGGLE MY LIST (With Undo & Empty State) --- */
+function toggleMyList(event, btn, mediaType, tmdbId, title) {
     if (event) {
         event.stopPropagation();
         event.preventDefault();
     }
 
     const icon = btn.querySelector('i');
-    const isModalButton = btn.classList.contains('btn-list');
-
-    // --- VISUAL TOGGLE ---
+    
+    // 1. Visual Icon Toggle (Immediate Feedback)
     if (icon.classList.contains('fa-plus')) {
-        // CASE: Add to List
         icon.classList.remove('fa-plus');
         icon.classList.add('fa-check');
-        
-        if (isModalButton) btn.innerHTML = '<i class="fas fa-check"></i> Added';
     } else {
-        // CASE: Remove from List
-        // FIX: We must remove BOTH 'fa-check' AND 'fa-times' to be safe
         icon.classList.remove('fa-check');
-        icon.classList.remove('fa-times'); 
-        
+        icon.classList.remove('fa-times'); // Handle cross too
         icon.classList.add('fa-plus');
-        
-        if (isModalButton) btn.innerHTML = '<i class="fas fa-plus"></i> My List';
     }
 
-    // --- BACKEND SAVE & REMOVE CARD ---
-    if (!tmdbId) return;
-
+    // 2. Backend Call
     fetch(`/add_to_list/${mediaType}/${tmdbId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -306,23 +294,93 @@ function toggleMyList(event, btn, mediaType, tmdbId) {
         return response.json();
     })
     .then(data => {
-        console.log("Status:", data.status);
-
-        // EXTRA FEATURE: If we are on the "My List" page, remove the card visually!
+        // 3. Special Logic for "My List" Page
         if (window.location.pathname === '/my-list' && data.status === 'removed') {
-            const card = btn.closest('.movie-card');
+            const card = document.getElementById(`card-${tmdbId}`);
             if (card) {
-                // Fade out animation
-                card.style.transition = "opacity 0.3s, transform 0.3s";
-                card.style.opacity = "0";
-                card.style.transform = "scale(0.9)";
-                
-                // Remove from HTML after animation
-                setTimeout(() => card.remove(), 300);
+                // A. Hide the card (don't delete yet, so we can undo)
+                card.style.display = 'none';
+
+                // B. Check if list is now empty
+                checkEmptyState();
+
+                // C. Show Undo Toast
+                showUndoToast(title || "Movie", mediaType, tmdbId, card);
             }
         }
     })
     .catch(error => console.error('Error:', error));
+}
+
+/* Helper: Toggle Empty State Message */
+function checkEmptyState() {
+    const container = document.getElementById('my-list-container');
+    const emptyState = document.getElementById('empty-state');
+    
+    // Count visible cards
+    const visibleCards = Array.from(container.children).filter(card => card.style.display !== 'none');
+
+    if (visibleCards.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+    } else {
+        container.style.display = 'flex';
+        emptyState.style.display = 'none';
+    }
+}
+
+/* Helper: Show Undo Toast */
+function showUndoToast(title, mediaType, tmdbId, cardElement) {
+    // Remove existing toast if present
+    const existing = document.querySelector('.toast-notification');
+    if (existing) existing.remove();
+
+    // Create Toast HTML
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.innerHTML = `
+        <span class="toast-text">Removed ${title}</span>
+        <button class="toast-undo">Undo</button>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Animate In
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    let isUndone = false;
+
+    // Undo Click Handler
+    toast.querySelector('.toast-undo').onclick = () => {
+        isUndone = true;
+        
+        // Add back to database
+        fetch(`/add_to_list/${mediaType}/${tmdbId}`, { method: 'POST' })
+            .then(() => {
+                // Show card again
+                cardElement.style.display = 'block';
+                
+                // Reset Icon
+                const icon = cardElement.querySelector('.card-buttons .mini-btn i');
+                icon.className = 'fas fa-times';
+
+                // Check empty state (to hide "Browse" message)
+                checkEmptyState();
+                
+                // Remove Toast
+                removeToast();
+            });
+    };
+
+    // Auto Remove after 5 seconds
+    setTimeout(() => {
+        if (!isUndone) removeToast();
+    }, 5000);
+
+    function removeToast() {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }
 }
 
 /* --- CARD ICON TOGGLES (Visual Only) --- */

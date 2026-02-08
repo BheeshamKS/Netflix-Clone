@@ -2,11 +2,11 @@
 
 {% block main %}
 
-    <header class="hero" style="background-image: url('{{ featured_movie.backdrop_path }}');">
+    <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
         <div class="hero-content">
             <h1 class="hero-title">{{ featured_movie.title }}</h1>
             <p class="hero-desc">{{ featured_movie.overview }}</p>
-            
+
             <div class="hero-buttons">
                 <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
                     <span class="play-icon">▶</span> Play
@@ -19,13 +19,12 @@
         </div>
 
         <div class="hero-actions">
-            <button class="mute-btn">
-                <i class="fas fa-volume-up"></i>
-            </button>
+            <button class="mute-btn"><i class="fas fa-volume-up"></i></button>
             <div class="age-rating">
                 <span class="age-number">{{ featured_movie.age_rating }}</span>
             </div>
         </div>
+
         <div class="hero-fade-bottom"></div>
     </header>
 
@@ -36,7 +35,7 @@
             {% for movie in popular_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -67,7 +66,7 @@
             {% for movie in action_movies[:5] %} 
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -98,7 +97,7 @@
             {% for movie in trending_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -129,7 +128,7 @@
             {% for movie in new_releases %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -160,7 +159,7 @@
             {% for movie in anime_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -191,7 +190,7 @@
             {% for movie in us_tv_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -222,7 +221,7 @@
             {% for movie in bollywood_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -253,7 +252,7 @@
             {% for movie in scifi_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -284,7 +283,7 @@
             {% for movie in kdrama_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">
@@ -315,7 +314,7 @@
             {% for movie in action_movies %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                             
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
                     <p class="default-title">{{ movie.title }}</p>
                             
                     <div class="card-overlay">

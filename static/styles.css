@@ -1100,6 +1100,52 @@ body {
     /* REMOVED: transform: scale(1.05); -> No more zoom */
 }
 
+/* --- TOAST NOTIFICATION (Undo) --- */
+.toast-notification {
+    position: fixed;
+    top: 100px;
+    right: 4%;
+    background-color: white;
+    color: black;
+    padding: 15px 25px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 10000;
+    
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    
+    /* Animation: Slide down and fade in */
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.toast-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-text {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.toast-undo {
+    background: none;
+    border: none;
+    color: #E50914; /* Netflix Red */
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.toast-undo:hover {
+    text-decoration: underline;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
     .info-grid { flex-direction: column; }

@@ -5,34 +5,35 @@
     <div style="padding-top: 100px; padding-left: 4%; padding-right: 4%;">
         <h1 style="color: white; font-size: 2rem; margin-bottom: 20px;">My List</h1>
 
-        {% if saved_items %}
-            <div class="row" style="flex-wrap: wrap; gap: 10px;">
-                {% for movie in saved_items %}
-                <div class="movie-card" onclick="openMoreInfo('{{ movie.saved_type }}', {{ movie.tmdb_id }})">
-                    <img src="{{ movie.backdrop_path.replace('original', 'w300') }}" alt="{{ movie.title }}">
-                    <p class="default-title">{{ movie.title }}</p>
+        <div id="my-list-container" class="row" style="flex-wrap: wrap; gap: 10px; {% if not saved_items %}display: none;{% endif %}">
+            {% for movie in saved_items %}
+            <div class="movie-card" id="card-{{ movie.tmdb_id }}" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                
+                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
+                <p class="default-title">{{ movie.title }}</p>
 
-                    <div class="card-overlay">
-                        <div class="card-buttons">
+                <div class="card-overlay">
+                    <div class="card-buttons">
 
-                            <button class="mini-btn play" onclick="playTrailer('{{ movie.saved_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}'); event.stopPropagation();">
-                                <i class="fas fa-play"></i>
-                            </button>
-                        
-                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.saved_type | lower }}', {{ movie.tmdb_id }})">
-                                <i class="fas fa-times"></i> 
-                            </button>
-                        
-                        </div>
-                        <p class="movie-title">{{ movie.title }}</p>
+                        <button class="mini-btn play" onclick="playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}'); event.stopPropagation();">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    
+                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                            <i class="fas fa-times"></i> 
+                        </button>
+                    
                     </div>
+                    <p class="movie-title">{{ movie.title }}</p>
                 </div>
-                {% endfor %}
             </div>
-        {% else %}
+            {% endfor %}
+        </div>
+
+        <div id="empty-state" style="{% if saved_items %}display: none;{% endif %}">
             <p style="color: grey; font-size: 1.2rem;">You haven't added any movies to your list yet.</p>
-            <a href="/" class="btn btn-play" style="text-decoration: none; width: 200px; display: inline-flex; justify-content: center; margin-top: 20px;">Browse Movies</a>
-        {% endif %}
+            <a href="/" class="btn btn-play" style="text-decoration: none; width: 200px; display: inline-flex; justify-content: center; margin-top: 20px;">Browse</a>
+        </div>
     </div>
 
 {% endblock %}
