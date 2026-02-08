@@ -14,11 +14,25 @@
                 <img href="/" src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
                 
                 <ul class="nav-links">
-                    <li><a href="/" class="active">Home</a></li>
-                    <li><a href="{{ url_for('tv_shows') }}" class="nav-link">TV Shows</a></li>
-                    <li><a href="{{ url_for('movies') }}" class="nav-link">Movies</a></li>
-                    <li><a href="{{ url_for('new_popular') }}" class="nav-link">New & Popular</a></li>
-                    <li><a href="#">My List</a></li>
+                    <li>
+                        <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
+                    </li>
+                    
+                    <li>
+                        <a href="{{ url_for('tv_shows') }}" class="{{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
+                    </li>
+                    
+                    <li>
+                        <a href="{{ url_for('movies') }}" class="{{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
+                    </li>
+                    
+                    <li>
+                        <a href="{{ url_for('new_popular') }}" class="{{ 'active' if request.endpoint == 'new_popular' else '' }}">New & Popular</a>
+                    </li>
+                    
+                    <li>
+                        <a href="#">My List</a>
+                    </li>
                 </ul>
             </div>
 
@@ -125,6 +139,60 @@
                     <button class="control-btn" onclick="toggleFullscreen()">
                         <i class="fas fa-expand"></i>
                     </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="info-modal" class="info-modal">
+            <div class="info-content">
+                
+                <div class="close-info-btn" onclick="closeMoreInfo()">
+                    <i class="fas fa-times"></i>
+                </div>
+            
+                <div class="info-header">
+                    <img id="info-backdrop" src="" alt="">
+
+                    <div class="info-header-overlay">
+                        <h1 id="info-title">Movie Title</h1>
+
+                        <div class="info-buttons">
+
+                            <button id="info-play-btn" class="btn btn-play" onclick="">
+                                <span class="play-icon">▶</span> Play
+                            </button>
+                        
+                            <button id="info-list-btn" class="btn btn-list" onclick="toggleMyList(this)">
+                                <i class="fas fa-plus"></i> My List
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="info-grid">
+                    
+                    <div class="info-left">
+                        <div class="info-meta">
+                            <span id="info-match" class="match-score">98% Match</span>
+                            <span id="info-year">2024</span>
+                            <span id="info-age" class="age-box">12+</span>
+                            <span id="info-runtime">2h 15m</span>
+                        </div>
+                        <p id="info-overview">Description goes here...</p>
+                    </div>
+                
+                    <div class="info-right">
+                        <div class="info-row">
+                            <span class="label">Cast:</span>
+                            <span id="info-cast" class="value">Actor 1, Actor 2</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Genres:</span>
+                            <span id="info-genres" class="value">Action, Sci-Fi</span>
+                        </div>
+                    </div>
+                
                 </div>
             </div>
         </div>

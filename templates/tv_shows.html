@@ -16,7 +16,9 @@
                     <span class="play-icon">▶</span> Play
                 </button>
 
-                <button class="btn btn-info"><span class="info-icon">ⓘ</span> More Info</button>
+                <button class="btn btn-info" onclick="openMoreInfo('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }})">
+                    <span class="info-icon">ⓘ</span> More Info
+                </button>
             </div>
         </div>
 
@@ -36,18 +38,25 @@
         <h3 class="row-header">US TV Dramas</h3>
         <div class="row">
             {% for show in us_tv_shows %}
-            <div class="movie-card">
+            <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
+                
                 <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
-                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'plus')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'like')">
+                            <i class="far fa-thumbs-up"></i> </button>
+                        
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
                     <p class="card-info">Series • {{ show.age_rating }}</p>
@@ -59,18 +68,24 @@
         <h3 class="row-header">K-Dramas</h3>
         <div class="row">
             {% for show in kdramas %}
-            <div class="movie-card">
+            <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
                 <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
-                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'plus')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'like')">
+                            <i class="far fa-thumbs-up"></i> </button>
+                        
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
                     <p class="card-info">Kdrama • {{ show.age_rating }}</p>
@@ -82,18 +97,24 @@
         <h3 class="row-header">Anime Series</h3>
         <div class="row">
             {% for show in anime_shows %}
-            <div class="movie-card">
+            <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
                 <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
-                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'plus')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'like')">
+                            <i class="far fa-thumbs-up"></i> </button>
+                        
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
                     <p class="card-info">Anime • {{ show.age_rating }}</p>
@@ -105,18 +126,24 @@
         <h3 class="row-header">Sci-Fi & Horror</h3>
         <div class="row">
             {% for show in scifi_shows %}
-            <div class="movie-card">
+            <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
                 <img src="{{ show.backdrop_path.replace('original', 'w300') }}" alt="{{ show.title }}">
                 
                 <p class="default-title">{{ show.title }}</p>
                 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="playTrailer('tv', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                        <button class="mini-btn"><i class="fas fa-plus"></i></button>
-                        <button class="mini-btn"><i class="fas fa-thumbs-up"></i></button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'plus')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    
+                        <button class="mini-btn" onclick="toggleCardIcon(this, 'like')">
+                            <i class="far fa-thumbs-up"></i> </button>
+                        
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
                     <p class="card-info">Sci-Fi • {{ show.age_rating }}</p>

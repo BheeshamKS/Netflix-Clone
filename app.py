@@ -190,5 +190,23 @@ def new_popular():
                            top_tv_shows=top_tv,
                            coming_soon=coming_soon,
                            worth_wait=worth_wait)
+
+@app.route('/get_info/<media_type>/<int:tmdb_id>')
+def get_info(media_type, tmdb_id):
+    """
+    Fetches detailed metadata (Cast, Genres, Runtime) from TMDB.
+    """
+    # We use 'append_to_response=credits' to get the Cast/Actors in one request
+    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&language=en-US&append_to_response=credits"
+    
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return jsonify(response.json())
+        return jsonify({'error': 'Not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 if __name__ == '__main__':
     app.run(debug=True)

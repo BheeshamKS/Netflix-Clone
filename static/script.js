@@ -193,3 +193,110 @@ function seekVideo(event) {
     const newTime = (event.offsetX / container.offsetWidth) * player.getDuration();
     player.seekTo(newTime, true);
 }
+
+/* --- MORE INFO MODAL LOGIC --- */
+function openMoreInfo(mediaType, tmdbId) {
+    const modal = document.getElementById('info-modal');
+    modal.style.display = 'block';
+    
+    // Slight delay for animation
+    setTimeout(() => { modal.classList.add('show'); }, 10);
+
+    // 1. Fetch Details from Backend
+    fetch(`/get_info/${mediaType}/${tmdbId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) return;
+
+            // 2. Populate Data
+            document.getElementById('info-backdrop').src = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
+            document.getElementById('info-title').innerText = data.title || data.name;
+            document.getElementById('info-overview').innerText = data.overview;
+            document.getElementById('info-year').innerText = (data.release_date || data.first_air_date || "").substring(0,4);
+            
+            // Runtime (Handle minutes -> Xh Ym)
+            const runtime = data.runtime || (data.episode_run_time ? data.episode_run_time[0] : 0);
+            const hours = Math.floor(runtime / 60);
+            const minutes = runtime % 60;
+            document.getElementById('info-runtime').innerText = `${hours}h ${minutes}m`;
+
+            // Genres
+            const genres = data.genres.map(g => g.name).join(', ');
+            document.getElementById('info-genres').innerText = genres;
+
+            // Cast (Top 3)
+            if (data.credits && data.credits.cast) {
+                const cast = data.credits.cast.slice(0, 3).map(c => c.name).join(', ');
+                document.getElementById('info-cast').innerText = cast;
+            }
+
+            // 3. Configure the "Play" button inside the modal
+            const playBtn = document.getElementById('info-play-btn');
+            const title = (data.title || data.name).replace(/'/g, ""); // Remove apostrophes
+            playBtn.setAttribute('onclick', `closeMoreInfo(); playTrailer('${mediaType}', ${tmdbId}, '${title}')`);
+        })
+        .catch(err => console.error(err));
+}
+
+function closeMoreInfo() {
+    const modal = document.getElementById('info-modal');
+    modal.classList.remove('show');
+    setTimeout(() => { modal.style.display = 'none'; }, 300);
+}
+
+// Close on clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('info-modal');
+    if (event.target == modal) {
+        closeMoreInfo();
+    }
+}
+
+/* --- TOGGLE MY LIST (Checkmark Effect) --- */
+function toggleMyList(btn) {
+    const icon = btn.querySelector('i');
+    
+    // Toggle between Plus (+) and Check (✔)
+    if (icon.classList.contains('fa-plus')) {
+        icon.classList.remove('fa-plus');
+        icon.classList.add('fa-check');
+        btn.innerHTML = '<i class="fas fa-check"></i> Added';
+    } else {
+        icon.classList.remove('fa-check');
+        icon.classList.add('fa-plus');
+        btn.innerHTML = '<i class="fas fa-plus"></i> My List';
+    }
+}
+
+/* --- CARD ICON TOGGLES (Visual Only) --- */
+function toggleCardIcon(btn, type) {
+    // STOP the click from bubbling up to the card (prevents opening More Info)
+    event.stopPropagation();
+
+    const icon = btn.querySelector('i');
+
+    if (type === 'plus') {
+        // Toggle between Plus (+) and Check (✔)
+        if (icon.classList.contains('fa-plus')) {
+            icon.classList.remove('fa-plus');
+            icon.classList.add('fa-check');
+            btn.style.borderColor = "white"; // Optional: Highlight border
+        } else {
+            icon.classList.remove('fa-check');
+            icon.classList.add('fa-plus');
+            btn.style.borderColor = ""; // Reset
+        }
+    } 
+    else if (type === 'like') {
+        // Toggle between Outline and Solid/Colored
+        if (icon.classList.contains('far') || !icon.style.color) {
+            icon.classList.remove('far');
+            icon.classList.add('fas'); // Solid filled
+            icon.style.color = "#46d369"; // Netflix Green match
+        } else {
+            icon.classList.remove('fas');
+            icon.classList.add('far'); // Back to outline
+            icon.style.color = ""; // Reset
+        }
+    }
+}
