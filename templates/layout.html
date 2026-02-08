@@ -17,41 +17,43 @@
                     <li>
                         <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
                     </li>
-                    
+
                     <li>
                         <a href="{{ url_for('tv_shows') }}" class="{{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
                     </li>
-                    
+
                     <li>
                         <a href="{{ url_for('movies') }}" class="{{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
                     </li>
-                    
+
                     <li>
                         <a href="{{ url_for('new_popular') }}" class="{{ 'active' if request.endpoint == 'new_popular' else '' }}">New & Popular</a>
                     </li>
-                    
+
                     <li>
-                        <a href="#">My List</a>
+                        <a href="{{ url_for('my_list') }}" class="{{ 'active' if request.endpoint == 'my_list' else '' }}">My List</a>
                     </li>
                 </ul>
             </div>
 
             <div class="nav-right">
                 <i class="fas fa-search nav-icon"></i>
-                <i class="fas fa-bell nav-icon"></i>
 
-                <div class="profile-menu">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="User" class="profile-img">
-                    <i class="fas fa-caret-down profile-arrow"></i>
-
-                    <div class="dropdown-content">
-                        <a href="#">Manage Profiles</a>
-                        <a href="#">Account</a>
-                        <a href="#">Help Center</a>
-                        <hr>
-                        <a href="#">Sign out of Netflix</a>
+                {% if current_user.is_authenticated %}
+                    <i class="fas fa-bell nav-icon"></i>
+                    <div class="profile-menu">
+                        <img src="/static/images/user_avatar.png" alt="User" class="profile-img">
+                        <i class="fas fa-caret-down profile-arrow"></i>
+                        <div class="dropdown-content">
+                            <a href="#">Account: {{ current_user.name }}</a>
+                            <a href="{{ url_for('my_list') }}">My List</a>
+                            <hr>
+                            <a href="{{ url_for('logout') }}">Sign out</a>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-play" style="width: 100px; height: 35px; font-size: 14px; text-decoration: none;">Sign In</a>
+                {% endif %}
             </div>
         </nav>
 
@@ -162,7 +164,7 @@
                                 <span class="play-icon">▶</span> Play
                             </button>
                         
-                            <button id="info-list-btn" class="btn btn-list" onclick="toggleMyList(this)">
+                            <button id="info-list-btn" class="btn btn-list">
                                 <i class="fas fa-plus"></i> My List
                             </button>
 

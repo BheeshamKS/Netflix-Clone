@@ -1,17 +1,172 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
 import sqlite3
 import random
 import requests
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from config import TMDB_API_KEY
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_key'  # Needed for sessions
+
+# --- LOGIN SETUP ---
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login' # Redirect here if not logged in
+
+# User Class for Flask-Login
+class User(UserMixin):
+    def __init__(self, id, email, name):
+        self.id = id
+        self.email = email
+        self.name = name
+
+@login_manager.user_loader
+def load_user(user_id):
+    conn = get_db_connection()
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    if user:
+        return User(id=user['id'], email=user['email'], name=user['name'])
+    return None
 
 # Helper function to connect to the database
 def get_db_connection():
     conn = sqlite3.connect('netflix.db')
     conn.row_factory = sqlite3.Row  # Crucial: allows us to use movie['title']
     return conn
+
+# --- AUTH ROUTES ---
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        name = request.form.get('name', 'User')
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+
+        if user:
+            flash('Email already exists')
+            return redirect(url_for('signup'))
+
+        # Create new user
+        hashed_pw = generate_password_hash(password, method='scrypt')
+        conn.execute('INSERT INTO users (email, password, name) VALUES (?, ?, ?)', 
+                     (email, hashed_pw, name))
+        conn.commit()
+        conn.close()
+        
+        return redirect(url_for('login'))
+
+    return render_template('signup.html')
+
+# --- LOGIN ROUTE (Updated with specific messages) ---
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        conn.close()
+
+        # CASE 1: Email does not exist
+        if not user:
+            flash("Account not found. This is a free clone! Please Sign Up first.")
+            return redirect(url_for('login'))
+        
+        # CASE 2: Wrong Password
+        if not check_password_hash(user['password'], password):
+            flash("Incorrect password. Please try again.")
+            return redirect(url_for('login'))
+
+        # CASE 3: Success
+        user_obj = User(id=user['id'], email=user['email'], name=user['name'])
+        login_user(user_obj)
+        return redirect(url_for('index'))
+
+    return render_template('login.html')
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+# --- MY LIST API ---
+
+@app.route('/add_to_list/<media_type>/<int:tmdb_id>', methods=['POST'])
+@login_required
+def add_to_list(media_type, tmdb_id):
+    conn = get_db_connection()
+    
+    # 1. Force lowercase to ensure matches (e.g., 'Movie' -> 'movie')
+    media_type = media_type.lower()
+    
+    # 2. Check if it exists
+    exists = conn.execute('SELECT * FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?', 
+                          (current_user.id, tmdb_id, media_type)).fetchone()
+    
+    if exists:
+        # DELETE
+        conn.execute('DELETE FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?',
+                     (current_user.id, tmdb_id, media_type))
+        status = 'removed'
+    else:
+        # ADD
+        # (Same logic as before to fetch details if missing locally)
+        local_movie = conn.execute('SELECT * FROM movies WHERE tmdb_id = ? AND media_type = ?', 
+                                   (tmdb_id, media_type)).fetchone()
+        
+        if not local_movie:
+            url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&language=en-US"
+            response = requests.get(url)
+            if response.status_code == 200:
+                data = response.json()
+                title = data.get('title') or data.get('name')
+                poster = data.get('poster_path')
+                backdrop = data.get('backdrop_path')
+                date = data.get('release_date') or data.get('first_air_date')
+                overview = data.get('overview')
+                rating = data.get('vote_average')
+                
+                conn.execute("""
+                    INSERT INTO movies (tmdb_id, title, overview, poster_path, backdrop_path, 
+                                      release_date, vote_average, media_type, genre)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user_saved')
+                """, (tmdb_id, title, overview, poster, backdrop, date, rating, media_type))
+        
+        conn.execute('INSERT INTO mylist (user_id, tmdb_id, media_type) VALUES (?, ?, ?)',
+                     (current_user.id, tmdb_id, media_type))
+        status = 'added'
+        
+    conn.commit()
+    conn.close()
+    return jsonify({'status': status})
+
+
+@app.route('/my-list')
+@login_required
+def my_list():
+    conn = get_db_connection()
+    
+    # We add "GROUP BY tmdb_id" to merge duplicates.
+    # If 'Inception' is in DB 3 times (Action, Sci-Fi, Popular), this forces it to show ONCE.
+    saved_items = conn.execute("""
+        SELECT movies.* FROM mylist 
+        JOIN movies ON mylist.tmdb_id = movies.tmdb_id AND mylist.media_type = movies.media_type
+        WHERE mylist.user_id = ?
+        GROUP BY movies.tmdb_id
+    """, (current_user.id,)).fetchall()
+    
+    conn.close()
+    return render_template('my_list.html', saved_items=saved_items)
 
 @app.route('/')
 def index():

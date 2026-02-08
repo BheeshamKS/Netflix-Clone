@@ -1,124 +1,126 @@
-import requests
 import sqlite3
-import random
-import os
-
+import requests
+import time
 from config import TMDB_API_KEY
 
-DB_NAME = "netflix.db"
-
-
-def get_movies(endpoint, params=None):
-    if params is None:
-        params = {}
-    url = f"https://api.themoviedb.org/3/{endpoint}?api_key={TMDB_API_KEY}&language=en-US&page=1"
-    for key, value in params.items():
-        url += f"&{key}={value}"
-    
-    try:
-        response = requests.get(url)
-        if response.status_code == 200:
-            return response.json()["results"]
-        else:
-            print(f"❌ Error {response.status_code} fetching {endpoint}")
-            return []
-    except Exception as e:
-        print(f"❌ Connection Failed: {e}")
-        return []
+def get_db_connection():
+    conn = sqlite3.connect('netflix.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def save_to_db():
-    # 1. Connect (This creates the file if it was deleted)
-    print(f"🔨 Creating new database: {DB_NAME}...")
-    conn = sqlite3.connect(DB_NAME)
-    db = conn.cursor()
+    conn = get_db_connection()
+    print("Starting Database Update...")
 
-    # 2. Force Create Table (Drop old one if it exists)
-    db.execute("DROP TABLE IF EXISTS movies")
-    db.execute("""
-        CREATE TABLE movies (
+    # --- 1. SAFE CLEANUP ---
+    conn.execute("DROP TABLE IF EXISTS movies")
+
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS movies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            tmdb_id INTEGER,
+            tmdb_id INTEGER UNIQUE,
             title TEXT,
             overview TEXT,
             poster_path TEXT,
             backdrop_path TEXT,
             release_date TEXT,
             vote_average REAL,
-            genre TEXT,
             media_type TEXT,
+            genre TEXT,
             age_rating TEXT
         )
     """)
+    
+    # Ensure users/mylist exist
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            name TEXT
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS mylist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            tmdb_id INTEGER,
+            media_type TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
 
-    # 3. Categories to Fetch
-    categories = {
-        # MOVIES
-        "popular":       ("movie/popular", {}, "movie"),
-        "trending":      ("trending/movie/week", {}, "movie"),
-        "new_releases":  ("movie/upcoming", {}, "movie"),
-        "action":        ("discover/movie", {"with_genres": "28"}, "movie"),
-        "bollywood":     ("discover/movie", {"with_original_language": "hi", "region": "IN"}, "movie"),
+    # --- 2. CONFIGURATION ---
+    base_url = "https://api.themoviedb.org/3"
+    genres = [28, 35, 27, 10749, 878] 
+    PAGES_TO_FETCH = 5  # Fetch 5 pages per category (approx 100 items each)
+
+    # Global Counter
+    total_added = 0
+
+    # --- 3. FETCH FUNCTION ---
+    def fetch_and_save(endpoint, media_type, genre_name="Generic"):
+        nonlocal total_added
+        print(f"\nFetching {genre_name} ({media_type})...")
         
-        # TV SHOWS
-        "anime":         ("discover/tv", {"with_genres": "16", "with_keywords": "210024"}, "tv"),
-        "us_tv_drama":   ("discover/tv", {"with_genres": "18", "with_original_language": "en", "region": "US"}, "tv"),
-        "scifi_horror":  ("discover/tv", {"with_genres": "10765"}, "tv"),
-        "kdrama":        ("discover/tv", {"with_original_language": "ko", "with_genres": "18"}, "tv"),
-    }
+        current_batch_count = 0
 
-    movie_ratings = ["PG-13", "R", "PG", "18+", "16+"]
-    tv_ratings = ["TV-MA", "TV-14", "TV-PG"]
-
-    count = 0
-
-    # 4. Fetch Loop
-    for genre_tag, (endpoint, params, m_type) in categories.items():
-        print(f"📥 Fetching {genre_tag}...")
-        items = get_movies(endpoint, params)
-        
-        if not items:
-            print(f"   ⚠️ No items found for {genre_tag}. Check API Key?")
-            continue
-
-        for item in items:
+        for page in range(1, PAGES_TO_FETCH + 1):
+            # FIX: Handle ? vs & correctly
+            separator = '&' if '?' in endpoint else '?'
+            url = f"{base_url}/{endpoint}{separator}api_key={TMDB_API_KEY}&language=en-US&page={page}"
+            
             try:
-                # Get Title (Movies use 'title', TV uses 'name')
-                title = item.get('title', item.get('name'))
-                if not title: continue
-                
-                # Get Date
-                date = item.get('release_date', item.get('first_air_date'))
+                response = requests.get(url)
+                if response.status_code == 200:
+                    data = response.json()
+                    
+                    for item in data.get('results', []):
+                        tmdb_id = item.get('id')
+                        title = item.get('title') or item.get('name')
+                        overview = item.get('overview')
+                        poster = item.get('poster_path')
+                        backdrop = item.get('backdrop_path')
+                        date = item.get('release_date') or item.get('first_air_date')
+                        rating = item.get('vote_average')
+                        
+                        if not poster or not backdrop or not title:
+                            continue
 
-                # Assign Rating
-                if item.get('adult') is True:
-                    rating = "18+"
+                        try:
+                            # Use INSERT OR IGNORE to skip duplicates
+                            conn.execute("""
+                                INSERT OR IGNORE INTO movies 
+                                (tmdb_id, title, overview, poster_path, backdrop_path, release_date, vote_average, media_type, genre)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            """, (tmdb_id, title, overview, poster, backdrop, date, rating, media_type, genre_name))
+                            
+                            total_added += 1
+                            current_batch_count += 1
+                            
+                        except sqlite3.Error:
+                            pass
                 else:
-                    rating = random.choice(movie_ratings if m_type == "movie" else tv_ratings)
-
-                # Insert into DB
-                db.execute("""
-                    INSERT INTO movies 
-                    (tmdb_id, title, overview, poster_path, backdrop_path, release_date, vote_average, genre, media_type, age_rating)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    item['id'],
-                    title,
-                    item.get('overview', 'No description available.'),
-                    f"https://image.tmdb.org/t/p/w500{item.get('poster_path')}",
-                    f"https://image.tmdb.org/t/p/original{item.get('backdrop_path')}",
-                    date,
-                    item.get('vote_average', 0),
-                    genre_tag,
-                    m_type,
-                    rating
-                ))
-                count += 1
+                    print(f"  [!] Error on page {page}: {response.status_code}")
+            
             except Exception as e:
-                print(f"Skipped one item: {e}")
+                print(f"  [!] Crash: {e}")
+
+            time.sleep(0.1) # Be nice to the API
+
+        print(f"  -> Added {current_batch_count} items. (Total Database: {total_added})")
+
+    # --- 4. EXECUTE ---
+    fetch_and_save("movie/popular", "movie", "Popular")
+    fetch_and_save("tv/popular", "tv", "TV Show")
+    fetch_and_save("movie/top_rated", "movie", "Top Rated")
+
+    for genre_id in genres:
+        fetch_and_save(f"discover/movie?with_genres={genre_id}", "movie", f"Genre {genre_id}")
 
     conn.commit()
     conn.close()
-    print(f"✅ SUCCESS! Database rebuilt with {count} movies/shows.")
+    print(f"\nSUCCESS! Database seeding complete. Total Movies/Shows: {total_added}")
 
 if __name__ == "__main__":
     save_to_db()

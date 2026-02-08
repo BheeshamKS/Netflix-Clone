@@ -230,10 +230,22 @@ function openMoreInfo(mediaType, tmdbId) {
                 document.getElementById('info-cast').innerText = cast;
             }
 
-            // 3. Configure the "Play" button inside the modal
+            // 3. Configure the "Play" button
             const playBtn = document.getElementById('info-play-btn');
             const title = (data.title || data.name).replace(/'/g, ""); // Remove apostrophes
             playBtn.setAttribute('onclick', `closeMoreInfo(); playTrailer('${mediaType}', ${tmdbId}, '${title}')`);
+
+            // --- 4. NEW: Configure the "My List" button ---
+            const listBtn = document.getElementById('info-list-btn');
+            
+            // This updates the onclick to include the specific ID and Type
+            listBtn.setAttribute('onclick', `toggleMyList(event, this, '${mediaType}', ${tmdbId})`);
+            
+            // Optional: Reset button visual state to "Add" every time you open a new modal
+            // (Unless you add a check to see if it's already saved)
+            const icon = listBtn.querySelector('i');
+            icon.className = 'fas fa-plus';
+            listBtn.innerHTML = '<i class="fas fa-plus"></i> My List';
         })
         .catch(err => console.error(err));
 }
@@ -252,24 +264,69 @@ window.onclick = function(event) {
     }
 }
 
-/* --- TOGGLE MY LIST (Checkmark Effect) --- */
-function toggleMyList(btn) {
+
+/* --- TOGGLE MY LIST (Final Fix: Handles Cross & Removes Card) --- */
+function toggleMyList(event, btn, mediaType, tmdbId) {
+    // 1. Stop click from opening the popup
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+
     const icon = btn.querySelector('i');
-    
-    // Toggle between Plus (+) and Check (✔)
+    const isModalButton = btn.classList.contains('btn-list');
+
+    // --- VISUAL TOGGLE ---
     if (icon.classList.contains('fa-plus')) {
+        // CASE: Add to List
         icon.classList.remove('fa-plus');
         icon.classList.add('fa-check');
-        btn.innerHTML = '<i class="fas fa-check"></i> Added';
+        
+        if (isModalButton) btn.innerHTML = '<i class="fas fa-check"></i> Added';
     } else {
+        // CASE: Remove from List
+        // FIX: We must remove BOTH 'fa-check' AND 'fa-times' to be safe
         icon.classList.remove('fa-check');
+        icon.classList.remove('fa-times'); 
+        
         icon.classList.add('fa-plus');
-        btn.innerHTML = '<i class="fas fa-plus"></i> My List';
+        
+        if (isModalButton) btn.innerHTML = '<i class="fas fa-plus"></i> My List';
     }
+
+    // --- BACKEND SAVE & REMOVE CARD ---
+    if (!tmdbId) return;
+
+    fetch(`/add_to_list/${mediaType}/${tmdbId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (response.status === 401) window.location.href = "/login";
+        return response.json();
+    })
+    .then(data => {
+        console.log("Status:", data.status);
+
+        // EXTRA FEATURE: If we are on the "My List" page, remove the card visually!
+        if (window.location.pathname === '/my-list' && data.status === 'removed') {
+            const card = btn.closest('.movie-card');
+            if (card) {
+                // Fade out animation
+                card.style.transition = "opacity 0.3s, transform 0.3s";
+                card.style.opacity = "0";
+                card.style.transform = "scale(0.9)";
+                
+                // Remove from HTML after animation
+                setTimeout(() => card.remove(), 300);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 /* --- CARD ICON TOGGLES (Visual Only) --- */
-function toggleCardIcon(btn, type) {
+function toggleCardIcon(event, btn, type) {
     // STOP the click from bubbling up to the card (prevents opening More Info)
     event.stopPropagation();
 
