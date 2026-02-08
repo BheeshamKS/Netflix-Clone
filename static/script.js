@@ -18,19 +18,15 @@ function onYouTubeIframeAPIReady() {
     console.log("YouTube API Ready");
 }
 
-/* --- 4. PLAY VIDEO FUNCTION --- */
+/* --- 4. PLAY VIDEO FUNCTION (Fixed: Stops background audio bug) --- */
 function playTrailer(mediaType, tmdbId, title) {
-    // FIX: Remove focus from the button we just clicked. 
-    // This stops the Space bar from "clicking" it again and restarting the video.
     if (document.activeElement) {
         document.activeElement.blur();
     }
 
-    // Update Title
     const titleElement = document.getElementById('player-title');
     if (titleElement) titleElement.innerText = title || "Now Playing";
 
-    // Show Modal
     const modal = document.getElementById('video-modal');
     modal.style.display = 'flex';
     void modal.offsetWidth; 
@@ -40,6 +36,12 @@ function playTrailer(mediaType, tmdbId, title) {
     fetch(`/get_trailer/${mediaType}/${tmdbId}`)
         .then(response => response.json())
         .then(data => {
+            // FIX: Check if user closed the modal while we were waiting!
+            if (!modal.classList.contains('show')) {
+                console.log("Modal closed, cancelling video start.");
+                return; // Stop here. Do NOT create the player.
+            }
+
             if (data.key) {
                 if (player) {
                     player.destroy();
@@ -256,16 +258,23 @@ function closeMoreInfo() {
     setTimeout(() => { modal.style.display = 'none'; }, 300);
 }
 
-// Close on clicking outside
+/* --- CLOSE MODALS ON CLICK OUTSIDE --- */
 window.onclick = function(event) {
-    const modal = document.getElementById('info-modal');
-    if (event.target == modal) {
+    // 1. Handle More Info Modal
+    const infoModal = document.getElementById('info-modal');
+    if (event.target == infoModal) {
         closeMoreInfo();
+    }
+
+    // 2. Handle Video Player Modal (NEW)
+    const videoModal = document.getElementById('video-modal');
+    if (event.target == videoModal) {
+        closeVideo();
     }
 }
 
 
-/* --- TOGGLE MY LIST (With Undo & Empty State) --- */
+/* --- TOGGLE MY LIST (Final Polish) --- */
 function toggleMyList(event, btn, mediaType, tmdbId, title) {
     if (event) {
         event.stopPropagation();
@@ -274,17 +283,24 @@ function toggleMyList(event, btn, mediaType, tmdbId, title) {
 
     const icon = btn.querySelector('i');
     
-    // 1. Visual Icon Toggle (Immediate Feedback)
-    if (icon.classList.contains('fa-plus')) {
-        icon.classList.remove('fa-plus');
-        icon.classList.add('fa-check');
-    } else {
-        icon.classList.remove('fa-check');
-        icon.classList.remove('fa-times'); // Handle cross too
-        icon.classList.add('fa-plus');
+    // --- 1. VISUAL TOGGLE ---
+    // FIX: We added this check. 
+    // If we are on '/my-list', we SKIP the icon toggle so the X doesn't become a +
+    if (window.location.pathname !== '/my-list') {
+        
+        if (icon.classList.contains('fa-plus')) {
+            // Add to list
+            icon.classList.remove('fa-plus');
+            icon.classList.add('fa-check');
+        } else {
+            // Remove from list
+            icon.classList.remove('fa-check');
+            icon.classList.remove('fa-times'); 
+            icon.classList.add('fa-plus');
+        }
     }
 
-    // 2. Backend Call
+    // --- 2. BACKEND CALL ---
     fetch(`/add_to_list/${mediaType}/${tmdbId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
@@ -294,17 +310,17 @@ function toggleMyList(event, btn, mediaType, tmdbId, title) {
         return response.json();
     })
     .then(data => {
-        // 3. Special Logic for "My List" Page
+        // --- 3. REMOVE CARD LOGIC (Only for My List Page) ---
         if (window.location.pathname === '/my-list' && data.status === 'removed') {
             const card = document.getElementById(`card-${tmdbId}`);
             if (card) {
-                // A. Hide the card (don't delete yet, so we can undo)
+                // Hide Card
                 card.style.display = 'none';
 
-                // B. Check if list is now empty
+                // Check if list is empty (to show "Browse Movies")
                 checkEmptyState();
 
-                // C. Show Undo Toast
+                // Show Undo Toast
                 showUndoToast(title || "Movie", mediaType, tmdbId, card);
             }
         }
@@ -317,7 +333,6 @@ function checkEmptyState() {
     const container = document.getElementById('my-list-container');
     const emptyState = document.getElementById('empty-state');
     
-    // Count visible cards
     const visibleCards = Array.from(container.children).filter(card => card.style.display !== 'none');
 
     if (visibleCards.length === 0) {
@@ -331,11 +346,9 @@ function checkEmptyState() {
 
 /* Helper: Show Undo Toast */
 function showUndoToast(title, mediaType, tmdbId, cardElement) {
-    // Remove existing toast if present
     const existing = document.querySelector('.toast-notification');
     if (existing) existing.remove();
 
-    // Create Toast HTML
     const toast = document.createElement('div');
     toast.className = 'toast-notification';
     toast.innerHTML = `
@@ -354,25 +367,23 @@ function showUndoToast(title, mediaType, tmdbId, cardElement) {
     toast.querySelector('.toast-undo').onclick = () => {
         isUndone = true;
         
-        // Add back to database
         fetch(`/add_to_list/${mediaType}/${tmdbId}`, { method: 'POST' })
             .then(() => {
                 // Show card again
                 cardElement.style.display = 'block';
                 
-                // Reset Icon
-                const icon = cardElement.querySelector('.card-buttons .mini-btn i');
-                icon.className = 'fas fa-times';
+                // --- FIX IS HERE ---
+                // Targeted the 2nd button (Remove btn) instead of the 1st (Play btn)
+                const icon = cardElement.querySelector('.card-buttons .mini-btn:nth-child(2) i');
+                if (icon) {
+                    icon.className = 'fas fa-times';
+                }
 
-                // Check empty state (to hide "Browse" message)
                 checkEmptyState();
-                
-                // Remove Toast
                 removeToast();
             });
     };
 
-    // Auto Remove after 5 seconds
     setTimeout(() => {
         if (!isUndone) removeToast();
     }, 5000);
