@@ -41,19 +41,40 @@
 
                 {% if current_user.is_authenticated %}
                     <i class="fas fa-bell nav-icon"></i>
-                    <div class="profile-menu">
-                        <div class="nav-avatar avatar-{{ session.get('profile_avatar', 'blue') }}">
-                            <img src="/static/images/user_avatar.png" alt="User">
-                        </div>
+                    <div class="profile-menu" onclick="toggleProfileMenu()">
+    
+                        {% if active_profile %}
+                            <div class="avatar-wrapper nav-size avatar-{{ active_profile.avatar }}">
+                                <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
+                            </div>
+                        {% else %}
+                            <div class="avatar-wrapper nav-size">
+                                <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
+                            </div>
+                        {% endif %}
 
                         <i class="fas fa-caret-down profile-arrow"></i>
-                        <div class="dropdown-content">
-                            <a href="#">Account: {{ current_user.name }}</a>
-                            <a href="{{ url_for('my_list') }}">My List</a>
-                            <a href="{{ url_for('browse_profiles') }}">Change Profiles</a>
-                            <a href="{{ url_for('manage_profiles') }}">Manage Profiles</a>
-                            <hr>
-                            <a href="{{ url_for('logout') }}">Sign out</a>
+                    
+                        <div class="dropdown-content" id="profileDropdown">
+
+                            {% for profile in all_profiles %}
+                            <a href="{{ url_for('set_profile', profile_id=profile.id) }}" class="dropdown-item profile-dropdown-item">
+
+                                <div class="avatar-wrapper nav-size avatar-{{ profile.avatar }}">
+                                    <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="Smile">
+                                </div>
+
+                                <span>{{ profile.name }}</span>
+                            </a>
+                            {% endfor %}
+                        
+                            <a href="{{ url_for('manage_profiles') }}" class="dropdown-link text-link">Manage Profiles</a>
+
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-link text-link">Account</a>
+                            <a href="#" class="dropdown-link text-link">Help Center</a>
+
+                            <a href="{{ url_for('logout') }}" class="dropdown-link sign-out-link text-link">Sign out of Netflix</a>
                         </div>
                     </div>
                 {% else %}
@@ -207,5 +228,35 @@
         <script src="https://www.youtube.com/iframe_api"></script>
 
         <script src="/static/script.js"></script>
+
+        <script>
+            function toggleProfileMenu() {
+                // 1. Toggle the dropdown visibility
+                document.getElementById("profileDropdown").classList.toggle("show");
+
+                // 2. Rotate the arrow
+                document.querySelector(".profile-menu").classList.toggle("open");
+            }
+        
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.closest('.profile-menu')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    var arrows = document.getElementsByClassName("profile-menu");
+
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
+                    }
+
+                    // Reset arrow rotation
+                    for (var i = 0; i < arrows.length; i++) {
+                        arrows[i].classList.remove('open');
+                    }
+                }
+            }
+        </script>
     </body>
 </html>

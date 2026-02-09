@@ -245,6 +245,37 @@ def delete_profile(profile_id):
     return redirect(url_for('manage_profiles'))
 
 
+@app.context_processor
+def inject_user_data():
+    """
+    Injects 'all_profiles' AND 'active_profile' into every page.
+    """
+    data = {}
+    if current_user.is_authenticated:
+        conn = get_db_connection()
+        
+        # 1. Get ALL profiles (for the dropdown list)
+        profiles = conn.execute('SELECT * FROM profiles WHERE user_id = ?', (current_user.id,)).fetchall()
+        data['all_profiles'] = profiles
+        
+        # 2. Get ACTIVE profile (to color the top-right avatar)
+        active_profile_id = session.get('profile_id')
+        
+        if active_profile_id:
+            # Find the profile that matches the session ID
+            active_profile = conn.execute('SELECT * FROM profiles WHERE id = ?', (active_profile_id,)).fetchone()
+            data['active_profile'] = active_profile
+        else:
+            # Fallback: If no profile selected yet, use the first one
+            if profiles:
+                data['active_profile'] = profiles[0]
+            else:
+                data['active_profile'] = None
+
+        conn.close()
+    return data
+
+
 # --- MY LIST API ---
 
 @app.route('/add_to_list/<media_type>/<int:tmdb_id>', methods=['POST'])

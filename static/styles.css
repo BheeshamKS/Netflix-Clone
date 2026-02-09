@@ -130,44 +130,93 @@ body {
     transition: transform 0.3s;
 }
 
-/* Rotate arrow when hovering */
-.profile-menu:hover .profile-arrow {
-    transform: rotate(180deg);
-}
+/* --- DROPDOWN FORCE FIX --- */
 
-/* Simple Dropdown Styles */
+/* 1. The Container */
 .dropdown-content {
     display: none;
     position: absolute;
     top: 40px;
     right: 0;
-    background-color: rgba(0, 0, 0, 0.9);
+    width: 220px;
+    background-color: rgba(0, 0, 0, 0.95);
     border: 1px solid #333;
-    min-width: 150px;
     padding: 10px 0;
+    z-index: 2000; /* High z-index to sit on top */
 }
 
-.profile-menu:hover .dropdown-content {
-    display: block; /* Show on hover */
+.dropdown-content.show {
+    display: block !important;
 }
 
-.dropdown-content a {
-    color: white;
+/* 2. ALL ITEMS (Reset Links) */
+.dropdown-item {
+    display: flex !important;       /* Force Flexbox */
+    align-items: center !important; /* Vertically Center Items */
+    flex-direction: row !important; /* Force Horizontal Row */
+    gap: 12px !important;           /* Space between Avatar and Name */
+    
     padding: 10px 20px;
-    text-decoration: none;
-    display: block;
-    font-size: 13px;
+    
+    /* TEXT STYLING (Matches Nav) */
+    color: #b3b3b3 !important;      /* Netflix Grey */
+    font-size: 16px !important;
+    text-decoration: none !important; /* KILL THE UNDERLINE */
+    transition: color 0.2s;
 }
 
-.dropdown-content a:hover {
-    text-decoration: underline;
-}
-
-.nav-avatar {
-    height: 30px;
-    border-radius: 4px;
+/* 3. HOVER STATE (Matches Nav Active) */
+.dropdown-item:hover {
+    color: white !important;        /* Bright White */
+    text-decoration: none !important; /* Ensure underline stays dead */
     cursor: pointer;
 }
+
+/* 4. THE MINI AVATAR BOX */
+.nav-avatar-small {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 4px;
+    overflow: hidden;
+    
+    /* Prevent shrinking */
+    flex-shrink: 0; 
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 5. DIVIDER LINE */
+.dropdown-divider {
+    height: 1px;
+    background-color: #333;
+    margin: 5px 0;
+}
+
+/* Rotate arrow when open */
+.profile-menu.open .profile-arrow {
+    transform: rotate(180deg);
+}
+
+
+.nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    overflow: hidden;
+    /* Centers the smile image */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 /* --- PROFILE GATE (Who's Watching) --- */
 .profiles-body {
@@ -230,6 +279,22 @@ body {
     transition: all 0.2s ease;
 }
 
+.avatar-wrapper.nav-size {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 4px;
+    
+    /* Remove the hover border effect from the main page */
+    border: none !important;
+    margin-right: 10px; /* Space for the dropdown text */
+}
+
+.avatar-wrapper.nav-size img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .avatar-wrapper img {
     width: 100%;
     height: 100%;
@@ -268,14 +333,23 @@ body {
 }
 
 .manage-btn {
+    /* --- 1. THE FORCE MOVE --- */
+    display: inline-block;
+    
+    /* This visually pushes it down 80px from its original spot */
+    transform: translateY(80px); 
+    
+    /* --- 2. STYLE --- */
+    background-color: transparent;
     border: 1px solid grey;
     color: grey;
     padding: 10px 30px;
-    text-decoration: none;
     font-size: 1.2rem;
     letter-spacing: 2px;
     text-transform: uppercase;
-    transition: all 0.2s;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .manage-btn:hover {
@@ -402,6 +476,9 @@ body {
 
 /* The "Done" Button */
 .btn-done {
+    display: inline-block;
+    transform: translateY(80px);
+
     background-color: white;
     color: black;
     padding: 10px 30px;
@@ -419,6 +496,8 @@ body {
 
 /* --- EDIT PROFILE BUTTONS --- */
 .edit-buttons {
+    display: inline-block;
+    transform: translateY(80px);
     display: flex;
     gap: 20px;
     align-items: center;
@@ -522,6 +601,89 @@ body {
     height: 100%;
     object-fit: cover;
     filter: brightness(2);
+}
+
+/* --- NEW DROPDOWN STYLES --- */
+
+/* The Box Itself */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    width: 220px; /* Slightly wider to fit long names */
+    background-color: rgba(0, 0, 0, 0.95);
+    border: 1px solid #333;
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+/* 1. Profile Row (Avatar + Name) */
+.dropdown-profile-item {
+    /* FLEXBOX: Puts Avatar and Name side-by-side */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    padding: 10px 20px;
+    
+    /* NAV TEXT STYLE (Light Grey, No Underline) */
+    color: #e5e5e5;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400; /* Normal weight */
+    
+    transition: color 0.2s;
+}
+
+.dropdown-profile-item:hover {
+    color: white;
+    font-weight: 700; /* Bold like active nav link */
+    text-decoration: none; /* Ensure no underline appears */
+    background-color: transparent;
+}
+
+.dropdown-profile-item img {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* 2. Standard Links (Manage, Account, Help) */
+.dropdown-link {
+    display: block;
+    padding: 8px 20px;
+    
+    /* NAV TEXT STYLE */
+    color: #e5e5e5;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 700;
+    
+    transition: color 0.2s;
+}
+
+.dropdown-link:hover {
+    color: white;
+    font-weight: 700; /* Bold on hover */
+    text-decoration: none;
+}
+
+/* 3. The Divider Line */
+.dropdown-divider {
+    height: 1px;
+    background-color: #333; /* Dark grey line */
+    margin: 10px 0;
+}
+
+/* 4. Sign Out (Center it?) */
+.sign-out-link {
+    padding-top: 5px;
 }
 
 /* --- 3. HERO SECTION --- */
@@ -1470,6 +1632,7 @@ body {
 
 .match-score { color: #46d369; }
 .age-box { border: 1px solid gray; padding: 2px 5px; font-size: 0.8rem; }
+
 
 #info-overview {
     line-height: 1.6;
