@@ -9,8 +9,14 @@
             {% for movie in saved_items %}
             <div class="movie-card" id="card-{{ movie.tmdb_id }}" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                 
-                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}">
-                <p class="default-title">{{ movie.title }}</p>
+                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
+                     alt="{{ movie.title }}" 
+                     class="bg-image" 
+                     loading="lazy">
+
+                {% if movie.logo_path %}
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
@@ -24,7 +30,15 @@
                         </button>
                     
                     </div>
-                    <p class="movie-title">{{ movie.title }}</p>
+                    
+                    {% if not movie.logo_path %}
+                        <p class="movie-title">{{ movie.title }}</p>
+                    {% endif %}
+
+                    <div class="card-meta">
+                        <span class="match-score">98% Match</span>
+                        <span class="age-box">{{ movie.age_rating }}</span>
+                    </div>
                 </div>
             </div>
             {% endfor %}

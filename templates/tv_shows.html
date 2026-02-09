@@ -6,7 +6,14 @@
 
     <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
         <div class="hero-content">
-            <h1 class="hero-title">{{ featured_movie.title }}</h1>
+            {% if featured_movie.logo_path %}
+                <img src="https://image.tmdb.org/t/p/w500{{ featured_movie.logo_path }}" 
+                    alt="{{ featured_movie.title }}" 
+                    class="hero-logo">
+            {% else %}
+                <h1 class="hero-title">{{ featured_movie.title }}</h1>
+            {% endif %}
+
             <p class="hero-desc">{{ featured_movie.overview }}</p>
 
             <div class="hero-buttons">
@@ -52,11 +59,12 @@
                         </button>
                     
                         <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> </button>
+                            <i class="far fa-thumbs-up"></i> 
+                        </button>
                         
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Series • {{ show.age_rating }}</p>
+                    <p class="card-info">Series â€¢ {{ show.age_rating }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -85,7 +93,7 @@
                         
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Kdrama • {{ show.age_rating }}</p>
+                    <p class="card-info">Kdrama â€¢ {{ show.age_rating }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -114,7 +122,7 @@
                         
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Anime • {{ show.age_rating }}</p>
+                    <p class="card-info">Anime â€¢ {{ show.age_rating }}</p>
                 </div>
             </div>
             {% endfor %}
@@ -143,7 +151,7 @@
                         
                     </div>
                     <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Sci-Fi • {{ show.age_rating }}</p>
+                    <p class="card-info">Sci-Fi â€¢ {{ show.age_rating }}</p>
                 </div>
             </div>
             {% endfor %}
