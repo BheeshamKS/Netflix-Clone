@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Profiles - Netflix</title>
+    <link href="/static/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="profiles-body">
+
+    <div class="profile-nav">
+        <img src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
+    </div>
+
+    <div class="profile-container">
+        <h1 class="profile-title">Manage Profiles</h1>
+        
+        <div class="profile-grid">
+            {% for profile in profiles %}
+            <a href="{{ url_for('edit_profile', profile_id=profile.id) }}" class="profile-card manage-card">
+                <div class="avatar-wrapper">
+                    <img src="/static/images/user_avatar.png" alt="{{ profile.name }}">
+                    <div class="edit-overlay">
+                        <i class="fas fa-pencil-alt"></i>
+                    </div>
+                </div>
+                <span class="profile-name">{{ profile.name }}</span>
+            </a>
+            {% endfor %}
+
+            <a href="{{ url_for('add_profile') }}" class="profile-card add-profile">
+                <div class="avatar-wrapper add-btn">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <span class="profile-name">Add Profile</span>
+            </a>
+        </div>
+
+        <a href="{{ url_for('browse_profiles') }}" class="btn-done">Done</a>
+    </div>
+
+</body>
+</html>

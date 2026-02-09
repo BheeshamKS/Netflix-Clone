@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, url_for, flash
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 import sqlite3
 import random
 import requests
@@ -50,20 +50,34 @@ def signup():
 
         if user:
             flash('Email already exists')
+            conn.close()
             return redirect(url_for('signup'))
 
         # Create new user
         hashed_pw = generate_password_hash(password, method='scrypt')
-        conn.execute('INSERT INTO users (email, password, name) VALUES (?, ?, ?)', 
+        
+        # 1. Get the cursor so we can grab the new ID
+        cursor = conn.execute('INSERT INTO users (email, password, name) VALUES (?, ?, ?)', 
                      (email, hashed_pw, name))
+        new_user_id = cursor.lastrowid
+
+        # 2. AUTOMATICALLY Create a Default Profile
+        # We use a default avatar name 'avatar_1.png' (we'll add images later)
+        conn.execute('INSERT INTO profiles (user_id, name, avatar) VALUES (?, ?, ?)',
+                     (new_user_id, name, 'avatar_1.png'))
+        
         conn.commit()
         conn.close()
         
-        return redirect(url_for('login'))
+        # 3. Auto Login
+        new_user = User(id=new_user_id, email=email, name=name)
+        login_user(new_user)
+        
+        # 4. Send to Profile Selection
+        return redirect(url_for('browse_profiles'))
 
     return render_template('signup.html')
 
-# --- LOGIN ROUTE (Updated with specific messages) ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -87,7 +101,9 @@ def login():
         # CASE 3: Success
         user_obj = User(id=user['id'], email=user['email'], name=user['name'])
         login_user(user_obj)
-        return redirect(url_for('index'))
+        
+        # CHANGE: Redirect to "Who's Watching?" instead of Home
+        return redirect(url_for('browse_profiles'))
 
     return render_template('login.html')
 
@@ -96,7 +112,132 @@ def login():
 @login_required
 def logout():
     logout_user()
+    # Clear session data
+    session.pop('profile_id', None)
+    session.pop('profile_name', None)
     return redirect(url_for('index'))
+
+
+# --- PROFILE ROUTES (NEW) ---
+
+@app.route('/profiles')
+@login_required
+def browse_profiles():
+    conn = get_db_connection()
+    # Fetch all profiles belonging to this user
+    profiles = conn.execute('SELECT * FROM profiles WHERE user_id = ?', (current_user.id,)).fetchall()
+    conn.close()
+    return render_template('profiles.html', profiles=profiles)
+
+@app.route('/set_profile/<int:profile_id>')
+@login_required
+def set_profile(profile_id):
+    # Security: Ensure this profile actually belongs to the logged-in user!
+    conn = get_db_connection()
+    profile = conn.execute('SELECT * FROM profiles WHERE id = ? AND user_id = ?', 
+                           (profile_id, current_user.id)).fetchone()
+    conn.close()
+    
+    if profile:
+        # Save Profile to Session
+        session['profile_id'] = profile['id']
+        session['profile_name'] = profile['name']
+        session['profile_avatar'] = profile['avatar']
+        return redirect(url_for('index'))
+    else:
+        flash("Invalid Profile")
+        return redirect(url_for('browse_profiles'))
+
+@app.route('/add-profile', methods=['GET', 'POST'])
+@login_required
+def add_profile():
+    if request.method == 'POST':
+        name = request.form['name']
+        
+        if name:
+            conn = get_db_connection()
+            # 1. Limit profiles to 5 (Netflix style)
+            # We fetch one row and get the first column (the count)
+            count = conn.execute('SELECT COUNT(*) FROM profiles WHERE user_id = ?', (current_user.id,)).fetchone()[0]
+            
+            if count < 5:
+                # We use the default avatar for now
+                conn.execute('INSERT INTO profiles (user_id, name, avatar) VALUES (?, ?, ?)',
+                             (current_user.id, name, 'avatar_1.png'))
+                conn.commit()
+            else:
+                flash("Maximum 5 profiles allowed.")
+            
+            conn.close()
+            return redirect(url_for('browse_profiles'))
+
+    return render_template('add_profile.html')
+
+# --- MANAGE PROFILES ROUTES ---
+
+@app.route('/manage-profiles')
+@login_required
+def manage_profiles():
+    conn = get_db_connection()
+    profiles = conn.execute('SELECT * FROM profiles WHERE user_id = ?', (current_user.id,)).fetchall()
+    conn.close()
+    return render_template('manage_profiles.html', profiles=profiles)
+
+@app.route('/edit-profile/<int:profile_id>', methods=['GET', 'POST'])
+@login_required
+def edit_profile(profile_id):
+    conn = get_db_connection()
+    
+    # 1. Security Check: Verify profile belongs to current user
+    profile = conn.execute('SELECT * FROM profiles WHERE id = ? AND user_id = ?', 
+                           (profile_id, current_user.id)).fetchone()
+    
+    if not profile:
+        conn.close()
+        return redirect(url_for('manage_profiles'))
+
+    # 2. Handle Update
+    if request.method == 'POST':
+        new_name = request.form['name']
+        
+        conn.execute('UPDATE profiles SET name = ? WHERE id = ?', (new_name, profile_id))
+        conn.commit()
+        conn.close()
+        
+        # Update session if we just edited the active profile
+        if session.get('profile_id') == profile_id:
+            session['profile_name'] = new_name
+            
+        return redirect(url_for('manage_profiles'))
+
+    conn.close()
+    return render_template('edit_profile.html', profile=profile)
+
+@app.route('/delete-profile/<int:profile_id>')
+@login_required
+def delete_profile(profile_id):
+    conn = get_db_connection()
+    
+    # 1. Prevent deleting the last profile
+    count = conn.execute('SELECT COUNT(*) FROM profiles WHERE user_id = ?', (current_user.id,)).fetchone()[0]
+    
+    if count <= 1:
+        flash("You cannot delete your only profile.")
+        conn.close()
+        return redirect(url_for('manage_profiles'))
+
+    # 2. Delete
+    conn.execute('DELETE FROM profiles WHERE id = ? AND user_id = ?', (profile_id, current_user.id))
+    conn.commit()
+    conn.close()
+    
+    # 3. Handle Session (If we deleted the active profile, log them out of the profile)
+    if session.get('profile_id') == profile_id:
+        session.pop('profile_id', None)
+        session.pop('profile_name', None)
+        session.pop('profile_avatar', None)
+        
+    return redirect(url_for('manage_profiles'))
 
 
 # --- MY LIST API ---
@@ -104,23 +245,22 @@ def logout():
 @app.route('/add_to_list/<media_type>/<int:tmdb_id>', methods=['POST'])
 @login_required
 def add_to_list(media_type, tmdb_id):
+    # Ensure a profile is selected
+    if 'profile_id' not in session:
+        return jsonify({'error': 'No profile selected'}), 403
+
     conn = get_db_connection()
-    
-    # 1. Force lowercase to ensure matches (e.g., 'Movie' -> 'movie')
     media_type = media_type.lower()
     
-    # 2. Check if it exists
+    # Check if it exists (using USER_ID for now, later we can switch to PROFILE_ID if you want per-profile lists)
     exists = conn.execute('SELECT * FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?', 
                           (current_user.id, tmdb_id, media_type)).fetchone()
     
     if exists:
-        # DELETE
         conn.execute('DELETE FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?',
                      (current_user.id, tmdb_id, media_type))
         status = 'removed'
     else:
-        # ADD
-        # (Same logic as before to fetch details if missing locally)
         local_movie = conn.execute('SELECT * FROM movies WHERE tmdb_id = ? AND media_type = ?', 
                                    (tmdb_id, media_type)).fetchone()
         
@@ -155,9 +295,6 @@ def add_to_list(media_type, tmdb_id):
 @login_required
 def my_list():
     conn = get_db_connection()
-    
-    # We add "GROUP BY tmdb_id" to merge duplicates.
-    # If 'Inception' is in DB 3 times (Action, Sci-Fi, Popular), this forces it to show ONCE.
     saved_items = conn.execute("""
         SELECT movies.* FROM mylist 
         JOIN movies ON mylist.tmdb_id = movies.tmdb_id AND mylist.media_type = movies.media_type
@@ -170,6 +307,14 @@ def my_list():
 
 @app.route('/')
 def index():
+    # Force Login if not authenticated
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+        
+    # Force Profile Selection if logged in but no profile set
+    if 'profile_id' not in session:
+        return redirect(url_for('browse_profiles'))
+
     conn = get_db_connection()
 
     featured_movie = conn.execute('SELECT * FROM movies ORDER BY RANDOM() LIMIT 1').fetchone()
@@ -184,7 +329,6 @@ def index():
             'age_rating': 'N/A'
         }
     
-    # 1. Fetch every category we just saved
     popular = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
     trending = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
     new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
@@ -195,7 +339,6 @@ def index():
     kdrama = conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall()
     action = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
 
-    # 2. Hero Movie (Pick a random popular one)
     if popular:
         featured = random.choice(popular)
     else:
@@ -203,7 +346,6 @@ def index():
 
     conn.close()
     
-    # 3. Send it all to index.html
     return render_template('index.html', 
                            featured_movie=featured,
                            popular_movies=popular,
@@ -216,21 +358,18 @@ def index():
                            kdrama_movies=kdrama,
                            action_movies=action)
 
-# --- ADD THIS TO app.py ---
-
 @app.route('/tvshows')
+@login_required
 def tv_shows():
+    if 'profile_id' not in session: return redirect(url_for('browse_profiles'))
+    
     conn = get_db_connection()
 
-    # 1. Fetch specific TV Genres from the database
-    # We use the tags we saved in seed.py
     us_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
     kdrama = conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall()
     anime = conn.execute("SELECT * FROM movies WHERE genre='anime'").fetchall()
     scifi = conn.execute("SELECT * FROM movies WHERE genre='scifi_horror'").fetchall()
     
-    # 2. Pick a Random Hero Movie for the top of the TV page
-    # We prefer US TV shows, but fallback to K-Drama if needed
     if us_tv:
         featured = random.choice(us_tv)
     elif kdrama:
@@ -240,7 +379,6 @@ def tv_shows():
 
     conn.close()
 
-    # 3. Send all these lists to the 'tvshows.html' template
     return render_template('tv_shows.html', 
                            featured_movie=featured,
                            us_tv_shows=us_tv,
@@ -249,17 +387,18 @@ def tv_shows():
                            scifi_shows=scifi)
 
 @app.route('/movies')
+@login_required
 def movies():
+    if 'profile_id' not in session: return redirect(url_for('browse_profiles'))
+
     conn = get_db_connection()
 
-    # 1. Fetch specific Movie Genres
     popular = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
     action = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
     bollywood = conn.execute("SELECT * FROM movies WHERE genre='bollywood'").fetchall()
     new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
     trending = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
 
-    # 2. Pick a Random Hero Movie (from Popular or Trending)
     if trending:
         featured = random.choice(trending)
     elif popular:
@@ -269,7 +408,6 @@ def movies():
 
     conn.close()
 
-    # 3. Send data to movies.html
     return render_template('movies.html', 
                            featured_movie=featured,
                            popular_movies=popular,
@@ -280,12 +418,6 @@ def movies():
 
 @app.route('/get_trailer/<media_type>/<int:tmdb_id>')
 def get_trailer(media_type, tmdb_id):
-    """
-    Smart Fetch: Tries the requested media_type first. 
-    If not found, it automatically checks the other type (Movie <-> TV).
-    """
-    
-    # 1. Helper function to hit the API
     def fetch_videos_from_tmdb(m_type, m_id):
         url = f"https://api.themoviedb.org/3/{m_type}/{m_id}/videos?api_key={TMDB_API_KEY}&language=en-US"
         try:
@@ -297,48 +429,37 @@ def get_trailer(media_type, tmdb_id):
         except:
             return []
 
-    # 2. Attempt 1: Try with the original requested type (e.g., 'movie')
     results = fetch_videos_from_tmdb(media_type, tmdb_id)
 
-    # 3. Attempt 2: If empty, try the OTHER type (Fallback)
     if not results:
-        # Swap: If it was 'movie', try 'tv'. If 'tv', try 'movie'.
         fallback_type = 'tv' if media_type == 'movie' else 'movie'
         results = fetch_videos_from_tmdb(fallback_type, tmdb_id)
 
-    # 4. Search for the best video (Trailer > Teaser)
     if results:
-        # Priority: Look for an official "Trailer"
         for video in results:
             if video['site'] == 'YouTube' and video['type'] == 'Trailer':
                 return jsonify({'key': video['key']})
         
-        # Fallback: Use the first available video (Teaser, Clip, etc.)
         if results[0]['site'] == 'YouTube':
              return jsonify({'key': results[0]['key']})
 
     return jsonify({'error': 'No trailer found'}), 404
 
 @app.route('/new-popular')
+@login_required
 def new_popular():
+    if 'profile_id' not in session: return redirect(url_for('browse_profiles'))
+    
     conn = get_db_connection()
 
-    # 1. Fetch categories
     new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
     trending_movies = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
-    
-    # "Top 10 TV" proxy
     top_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
-    
-    # "Coming Soon" proxy
     coming_soon = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
-
-    # "Worth the Wait" proxy (Using Action movies)
     worth_wait = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
 
     conn.close()
 
-    # 2. Send everything to the template
     return render_template('new_popular.html', 
                            new_releases=new_releases,
                            trending_movies=trending_movies,
@@ -348,10 +469,6 @@ def new_popular():
 
 @app.route('/get_info/<media_type>/<int:tmdb_id>')
 def get_info(media_type, tmdb_id):
-    """
-    Fetches detailed metadata (Cast, Genres, Runtime) from TMDB.
-    """
-    # We use 'append_to_response=credits' to get the Cast/Actors in one request
     url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&language=en-US&append_to_response=credits"
     
     try:

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile - Netflix</title>
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body class="profiles-body">
+
+    <div class="add-profile-container">
+        <h1 class="profile-title">Edit Profile</h1>
+
+        <form method="POST" class="add-profile-form">
+            <div class="profile-entry">
+                <img src="/static/images/user_avatar.png" alt="Profile" class="entry-avatar">
+                <input type="text" name="name" value="{{ profile.name }}" required>
+            </div>
+
+            <div class="edit-buttons">
+                <button type="submit" class="btn-save">Save</button>
+                <a href="{{ url_for('manage_profiles') }}" class="btn-cancel">Cancel</a>
+                
+                <a href="{{ url_for('delete_profile', profile_id=profile.id) }}" 
+                   class="btn-delete"
+                   onclick="return confirm('Delete this profile? This cannot be undone.')">
+                   Delete Profile
+                </a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

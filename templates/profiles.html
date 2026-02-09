@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Who's Watching? - Netflix</title>
+    <link href="/static/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="profiles-body">
+
+    <div class="profile-nav">
+        <img src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
+    </div>
+
+    <div class="profile-container">
+        <h1 class="profile-title">Who's watching?</h1>
+        
+        <div class="profile-grid">
+            {% for profile in profiles %}
+            <a href="{{ url_for('set_profile', profile_id=profile.id) }}" class="profile-card">
+                <div class="avatar-wrapper">
+                    <img src="/static/images/user_avatar.png" alt="{{ profile.name }}">
+                </div>
+                <span class="profile-name">{{ profile.name }}</span>
+            </a>
+            {% endfor %}
+
+            <a href="{{ url_for('add_profile') }}" class="profile-card add-profile">
+                <div class="avatar-wrapper add-btn">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <span class="profile-name">Add Profile</span>
+            </a>
+        </div>
+
+        <a href="{{ url_for('manage_profiles') }}" class="manage-btn">Manage Profiles</a>
+    </div>
+
+</body>
+</html>

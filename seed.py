@@ -73,6 +73,16 @@ def save_to_db():
         )
     """)
 
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            avatar TEXT,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )
+    """)
+
     # 2. Config
     base_url = "https://api.themoviedb.org/3"
     PAGES_TO_FETCH = 3 

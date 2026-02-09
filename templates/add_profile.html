@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Profile - Netflix</title>
+    <link href="/static/styles.css" rel="stylesheet">
+</head>
+<body class="profiles-body">
+
+    <div class="add-profile-container">
+        <h1 class="profile-title">Add Profile</h1>
+        <p class="profile-subtext">Add a profile for another person watching Netflix.</p>
+
+        <form method="POST" class="add-profile-form">
+            <div class="profile-entry">
+                <img src="/static/images/user_avatar.png" alt="Profile" class="entry-avatar">
+                <input type="text" name="name" placeholder="Name" required autofocus>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="btn-save">Continue</button>
+                <a href="{{ url_for('browse_profiles') }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>
