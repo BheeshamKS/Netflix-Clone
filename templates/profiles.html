@@ -18,7 +18,7 @@
         <div class="profile-grid">
             {% for profile in profiles %}
             <a href="{{ url_for('set_profile', profile_id=profile.id) }}" class="profile-card">
-                <div class="avatar-wrapper">
+                <div class="avatar-wrapper avatar-{{ profile.avatar }}">
                     <img src="/static/images/user_avatar.png" alt="{{ profile.name }}">
                 </div>
                 <span class="profile-name">{{ profile.name }}</span>
@@ -26,10 +26,9 @@
             {% endfor %}
 
             <a href="{{ url_for('add_profile') }}" class="profile-card add-profile">
-                <div class="avatar-wrapper add-btn">
+                <div class="avatar-wrapper add-btn-wrapper">
                     <i class="fas fa-plus-circle"></i>
                 </div>
-                <span class="profile-name">Add Profile</span>
             </a>
         </div>
 

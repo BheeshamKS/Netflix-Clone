@@ -442,6 +442,88 @@ body {
     color: white;
 }
 
+/* --- PROFILE AVATARS (Colors & Dimensions) --- */
+
+/* 1. The Avatar Box (Container) */
+.avatar-wrapper {
+    width: 180px;           /* Large size for Profile Selection */
+    height: 160px;
+    border-radius: 4px;     /* Subtle rounded corners */
+    overflow: hidden;
+    border: 3px solid transparent; /* Hidden border for hover effect */
+    transition: all 0.2s ease;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #333; /* Default Grey */
+}
+
+/* 2. Color Variants (Netflix Palette) */
+.avatar-blue    { background-color: #0080ff; }
+.avatar-red     { background-color: #e50914; }
+.avatar-green   { background-color: #46d369; }
+.avatar-yellow  { background-color: #ffaa00; }
+.avatar-purple  { background-color: #8000ff; }
+
+/* 3. The Smile Image */
+.avatar-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* OPTIONAL: If your image is black, this turns it white to pop on color */
+    filter: brightness(2); 
+}
+
+/* --- ADD PROFILE BUTTON (Custom Style) --- */
+
+/* 1. Override the default grey box */
+.add-btn-wrapper {
+    background-color: transparent !important; /* Removes the grey box */
+    border: none !important;                  /* Removes border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. Style the Plus Icon */
+.add-btn-wrapper i {
+    font-size: 5rem;      /* Big Icon */
+    color: #808080;       /* Grey color by default */
+    transition: color 0.2s, transform 0.2s;
+}
+
+/* 3. Hover Effect */
+.profile-card:hover .add-btn-wrapper i {
+    color: white;         /* Turns white on hover */
+    transform: scale(1.1); /* Slight zoom */
+    background-color: transparent; /* Ensure no box appears on hover */
+}
+
+/* 4. Ensure no background appears on the wrapper on hover */
+.profile-card:hover .add-btn-wrapper {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+/* 4. Small Navbar Avatar */
+.nav-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.nav-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(2);
+}
+
 /* --- 3. HERO SECTION --- */
 .hero {
     height: 80vh;
@@ -1514,6 +1596,63 @@ body {
     border-radius: 4px;
     margin-bottom: 20px;
     font-size: 14px;
+}
+
+/* --- UI SCALING TWEAKS (2x Logo, 0.8x UI) --- */
+
+/* 1. BIGGER LOGO (2x) */
+/* Applies to Login, Signup, and Profiles pages */
+.auth-header .nav-logo, 
+.profile-nav .nav-logo {
+    height: 70px !important;
+    width: auto;
+    position: absolute;
+    top: 15px;
+    left: 12px;
+    z-index: 100;
+}
+
+/* 2. NORMAL NAVBAR LOGO (Reset for Main Pages) */
+.navbar .nav-logo {
+    height: 35px !important; /* Standard Netflix Size */
+    width: auto;
+}
+
+
+/* 3. SMALLER PROFILE ELEMENTS (0.8x) */
+/* Shrink the "Who's Watching?" Title */
+.profile-title {
+    font-size: 2.5rem !important; /* Down from 3.5rem */
+    margin-bottom: 1.5rem !important;
+}
+
+/* Shrink the Avatars (180px -> ~145px) */
+.profiles-body .avatar-wrapper {
+    width: 145px !important;
+    height: 128px !important;
+}
+
+/* Shrink the Profile Names */
+.profile-name {
+    font-size: 1rem !important;
+    margin-top: 5px;
+}
+
+/* Shrink the "Manage Profiles" Button */
+.manage-btn {
+    font-size: 1rem !important;
+    padding: 8px 25px !important;
+    margin-top: 20px;
+}
+
+/* Shrink the Grid Gap */
+.profile-grid {
+    gap: 1.5rem !important;
+}
+
+/* 4. MANAGE PAGE TWEAKS */
+.add-btn-wrapper i {
+    font-size: 4rem !important; /* Smaller Plus Icon */
 }
 
 /* Mobile */

@@ -61,10 +61,12 @@ def signup():
                      (email, hashed_pw, name))
         new_user_id = cursor.lastrowid
 
-        # 2. AUTOMATICALLY Create a Default Profile
-        # We use a default avatar name 'avatar_1.png' (we'll add images later)
+        # --- RANDOM COLOR ASSIGNMENT ---
+        colors = ['blue', 'red', 'green', 'yellow', 'purple']
+        avatar_color = random.choice(colors)
+
         conn.execute('INSERT INTO profiles (user_id, name, avatar) VALUES (?, ?, ?)',
-                     (new_user_id, name, 'avatar_1.png'))
+                     (new_user_id, name, avatar_color)) # Saving 'blue', 'red', etc.
         
         conn.commit()
         conn.close()
@@ -161,9 +163,12 @@ def add_profile():
             count = conn.execute('SELECT COUNT(*) FROM profiles WHERE user_id = ?', (current_user.id,)).fetchone()[0]
             
             if count < 5:
-                # We use the default avatar for now
+                # --- RANDOM COLOR ASSIGNMENT ---
+                colors = ['blue', 'red', 'green', 'yellow', 'purple']
+                avatar_color = random.choice(colors)
+
                 conn.execute('INSERT INTO profiles (user_id, name, avatar) VALUES (?, ?, ?)',
-                             (current_user.id, name, 'avatar_1.png'))
+                             (current_user.id, name, avatar_color))
                 conn.commit()
             else:
                 flash("Maximum 5 profiles allowed.")

@@ -42,11 +42,16 @@
                 {% if current_user.is_authenticated %}
                     <i class="fas fa-bell nav-icon"></i>
                     <div class="profile-menu">
-                        <img src="/static/images/user_avatar.png" alt="User" class="profile-img">
+                        <div class="nav-avatar avatar-{{ session.get('profile_avatar', 'blue') }}">
+                            <img src="/static/images/user_avatar.png" alt="User">
+                        </div>
+
                         <i class="fas fa-caret-down profile-arrow"></i>
                         <div class="dropdown-content">
                             <a href="#">Account: {{ current_user.name }}</a>
                             <a href="{{ url_for('my_list') }}">My List</a>
+                            <a href="{{ url_for('browse_profiles') }}">Change Profiles</a>
+                            <a href="{{ url_for('manage_profiles') }}">Manage Profiles</a>
                             <hr>
                             <a href="{{ url_for('logout') }}">Sign out</a>
                         </div>
