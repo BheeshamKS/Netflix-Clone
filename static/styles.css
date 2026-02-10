@@ -1746,17 +1746,18 @@ body {
 .auth-overlay {
     background: rgba(0, 0, 0, 0.5); /* Dark tint over the image */
     width: 100%;
-    min-height: 100vh;
+    min-height: 140vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center; 
 }
 
 .login-box {
+    margin: auto;
     background: rgba(0, 0, 0, 0.75); /* Dark semi-transparent box */
     padding: 60px 68px 40px;
     width: 450px;
-    border-radius: 4px;
     color: white;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
@@ -1843,6 +1844,103 @@ body {
     z-index: 100;
 }
 
+/* --- LOGIN RECAPTCHA TEXT --- */
+.recaptcha-text {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #8c8c8c; /* Specific subtle grey */
+    line-height: 1.4;
+    text-align: left;
+}
+
+.recaptcha-text a {
+    color: #0071eb; /* Link Blue */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.recaptcha-text a:hover {
+    text-decoration: underline;
+}
+
+/* --- LOGIN FOOTER (Dark Overlay) --- */
+.login-footer {
+    width: 100%;
+    padding: 30px 0;
+    background-color: rgba(0, 0, 0, 0.75); /* Dark semi-transparent background */
+    position: relative;
+    z-index: 10;
+}
+
+/* Re-use existing .footer-content max-width if you have it, 
+   otherwise use this to center it */
+.login-footer .footer-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px 4%;
+    color: #737373;
+}
+
+.contact-text {
+    font-size: 16px;
+    margin-bottom: 30px;
+    color: #737373;
+}
+
+/* Footer Grid Layout */
+.login-links {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+    gap: 15px;
+    margin-bottom: 30px;
+    font-size: 13px;
+}
+
+.login-links a {
+    color: #737373;
+    text-decoration: none;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}
+
+/* Language Selector Box */
+.lang-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    position: relative;
+    background-color: rgba(0,0,0,0.4);
+    width: fit-content;
+}
+
+.lang-selector select {
+    background: transparent;
+    color: #999;
+    border: none;
+    appearance: none; /* Hides default arrow */
+    font-size: 14px;
+    padding-right: 20px;
+    outline: none;
+    cursor: pointer;
+}
+
+.lang-selector i {
+    color: #999;
+    font-size: 12px;
+}
+
+/* Mobile Tweak */
+@media (max-width: 740px) {
+    .login-links {
+        grid-template-columns: repeat(2, 1fr); /* 2 cols on mobile */
+    }
+}
+
 /* 2. NORMAL NAVBAR LOGO (Reset for Main Pages) */
 .navbar .nav-logo {
     height: 35px !important; /* Standard Netflix Size */
@@ -1897,4 +1995,136 @@ body {
 @keyframes spin {
     0% { transform: translate(-50%, -50%) rotate(0deg); }
     100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+
+/* --- NETFLIX SEARCH BAR ANIMATION --- */
+.search-box {
+    display: flex;
+    align-items: center;
+    
+    /* Key: Transparent and No Border by default */
+    background: transparent;
+    border: 1px solid transparent; 
+    
+    /* Key: No padding on the container itself in idle mode */
+    padding: 0;
+    
+    transition: all 0.4s ease;
+    margin-right: 20px;
+}
+
+/* --- 2. SEARCH INPUT (IDLE) --- */
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* DEFAULT STATE: Transparent & Invisible Border */
+    background: transparent;
+    border: 1px solid transparent; 
+    padding: 5px; /* Just enough for the icon */
+    
+    transition: all 0.4s ease;
+    margin-right: 20px;
+}
+
+/* --- ACTIVE STATE (When Clicked) --- */
+.search-box.active {
+    background: black;
+    border: 1px solid white;
+    padding: 5px 10px; /* Add space for text */
+}
+
+/* --- THE SEARCH ICON --- */
+.search-icon {
+    font-size: 1.2rem;
+    color: white;
+    cursor: pointer;
+    /* Ensure icon acts as the "Button" */
+    z-index: 2; 
+}
+
+/* --- THE INPUT FIELD (The Problem Child) --- */
+.search-input {
+    /* FORCE HIDDEN: No width, no padding, no visibility */
+    width: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    opacity: 0 !important;
+    
+    background: transparent;
+    color: white;
+    outline: none;
+    font-size: 14px;
+    
+    /* Animation */
+    transition: width 0.4s ease, opacity 0.4s ease;
+}
+
+/* --- EXPAND INPUT (Only when Parent is Active) --- */
+.search-box.active .search-input {
+    width: 240px !important;     /* Netflix Width */
+    padding-left: 10px !important; /* Text Spacing */
+    opacity: 1 !important;
+}
+
+/* --- CLEAR BUTTON (X) --- */
+.search-clear {
+    display: none; /* Hidden by default */
+    font-size: 1rem;
+    color: #ccc;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+/* --- FULL SCREEN RESULTS GRID --- */
+.search-overlay {
+    display: none;        /* Hidden by default */
+    position: fixed;
+    top: 70px;            /* Below Navbar */
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background-color: #141414; /* Netflix Background */
+    z-index: 2000;
+    overflow-y: auto;     /* Scrollable */
+    padding: 20px 4%;
+}
+
+.results-header {
+    color: #808080;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+/* The Grid Layout */
+.search-grid {
+    display: grid;
+    /* Responsive columns that fill space */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 10px;            /* Tight gap like Netflix */
+}
+
+/* Movie Card in Search (Matches your main cards) */
+.search-grid .movie-card {
+    width: 100%;
+    aspect-ratio: 16/9;   /* Force standard shape */
+    height: auto;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.search-grid .movie-card:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.search-grid .movie-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
 }

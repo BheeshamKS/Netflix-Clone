@@ -75,8 +75,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Netflix • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -100,27 +100,27 @@
                     <div class="card-overlay">
 
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
                         
-                    </div>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        
+                        </div>
                     
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -163,8 +163,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Action • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -206,9 +206,9 @@
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
 
-                        <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                        <div class="card-meta">   
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">New Release • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -232,28 +232,28 @@
                     <div class="card-overlay">
 
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
                         
-                    </div>
-                    
-                        {% if not movie.logo_path %}
-                            <p class="movie-title">{{ movie.title }}</p>
-                        {% endif %}
-
-                        <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        
                         </div>
+                    
+                            {% if not movie.logo_path %}
+                                <p class="movie-title">{{ movie.title }}</p>
+                            {% endif %}
+
+                            <div class="card-meta">
+                                <p class="movie-title">{{ movie.title }}</p>
+                                <p class="card-info">Popular on Netflix • {{ movie.age_rating }}</p>
+                            </div>
                     </div>
                 </div>
             {% endfor %}

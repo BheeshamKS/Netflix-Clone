@@ -516,5 +516,38 @@ def get_info(media_type, tmdb_id):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/search')
+def search():
+    query = request.args.get('q', '').strip()
+    
+    # If empty query, return nothing
+    if not query:
+        return jsonify([])
+
+    conn = get_db_connection()
+    # Search for Title matching the query (Case insensitive with LIKE)
+    # We limit to 20 results to keep it fast
+    results = conn.execute("""
+        SELECT * FROM movies 
+        WHERE title LIKE ? 
+        ORDER BY vote_average DESC 
+        LIMIT 20
+    """, ('%' + query + '%',)).fetchall()
+    conn.close()
+
+    # Convert row objects to a list of dictionaries (JSON compatible)
+    movies_list = []
+    for movie in results:
+        movies_list.append({
+            'id': movie['tmdb_id'],
+            'title': movie['title'],
+            'media_type': movie['media_type'],
+            'backdrop_path': movie['backdrop_path'],
+            'poster_path': movie['poster_path'],
+            'age_rating': movie['age_rating'] or 'n/a'
+        })
+
+    return jsonify(movies_list)
+
 if __name__ == '__main__':
     app.run(debug=True)

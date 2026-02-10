@@ -73,8 +73,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Netflix • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -117,8 +117,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Netflix • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -161,8 +161,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Netflix • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -205,17 +205,17 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Netflix • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
 
-        <h3 class="row-header">Only on Netflix</h3>
+        <h3 class="row-header">Anime</h3>
         <div class="row">
-            {% for movie in netflix_movies %}
+            {% for movie in anime_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
                     <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
@@ -249,8 +249,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Anime • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -293,8 +293,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -337,8 +337,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Sci-Fi • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -381,8 +381,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">K-Dramas • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>
@@ -425,8 +425,8 @@
                         {% endif %}
 
                         <div class="card-meta">
-                            <span class="match-score">98% Match</span>
-                            <span class="age-box">{{ movie.age_rating }}</span>
+                            <p class="movie-title">{{ movie.title }}</p>
+                            <p class="card-info">Action • {{ movie.age_rating }}</p>
                         </div>
                     </div>
                 </div>

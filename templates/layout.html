@@ -37,7 +37,29 @@
             </div>
 
             <div class="nav-right">
-                <i class="fas fa-search nav-icon"></i>
+                <div class="search-box" id="searchBox">
+                    <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
+
+                    <input type="text" 
+                           id="searchInput" 
+                           class="search-input"
+                           placeholder="Titles, people, genres" 
+                           autocomplete="off"
+                           oninput="handleSearch(this.value)">
+
+                    <i class="fas fa-times search-clear" 
+                       id="searchClear" 
+                       onclick="closeSearch()" 
+                       style="display: none;"></i>
+                </div>
+
+                <div id="searchOverlay" class="search-overlay">
+                    <div class="search-content">
+                        <h3 id="resultsTitle" class="results-header"></h3>
+                        <div class="search-grid" id="searchGrid">
+                            </div>
+                    </div>
+                </div>
 
                 {% if current_user.is_authenticated %}
                     <i class="fas fa-bell nav-icon"></i>
@@ -81,11 +103,120 @@
                     <a href="{{ url_for('login') }}" class="btn-play" style="width: 100px; height: 35px; font-size: 14px; text-decoration: none;">Sign In</a>
                 {% endif %}
             </div>
-        </nav>
+        </nav> 
+        <div id="searchResults" class="search-results-container">
+            <div class="search-grid" id="searchGrid">
+                </div>
+        </div>
 
         <main>
             {% block main %}{% endblock %}
         </main>
+
+        <script>
+            let searchDebounce;
+
+            // 1. OPEN SEARCH BOX
+            function toggleSearch() {
+                const box = document.getElementById('searchBox');
+                const input = document.getElementById('searchInput');
+                const clearBtn = document.getElementById('searchClear');
+                        
+                box.classList.toggle('active');
+                        
+                if (box.classList.contains('active')) {
+                    input.focus();
+                    // Hide X initially because box is empty
+                    clearBtn.style.display = 'none'; 
+                } else {
+                    // If closing via icon click, clear everything
+                    closeSearch();
+                }
+            }
+        
+            // 2. CLOSE SEARCH (X Button)
+            function closeSearch() {
+                const box = document.getElementById('searchBox');
+                const input = document.getElementById('searchInput');
+                const overlay = document.getElementById('searchOverlay');
+                const clearBtn = document.getElementById('searchClear');
+
+                // Reset everything
+                input.value = '';            
+                box.classList.remove('active'); 
+                overlay.style.display = 'none'; 
+                clearBtn.style.display = 'none'; // FORCE HIDE
+            }
+        
+            // 3. HANDLE TYPING (The Logic)
+            function handleSearch(query) {
+                const overlay = document.getElementById('searchOverlay');
+                const grid = document.getElementById('searchGrid');
+                const title = document.getElementById('resultsTitle');
+                const clearBtn = document.getElementById('searchClear');
+
+                if (query.length > 0) {
+                    clearBtn.style.display = 'block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            
+                // Show/Hide X button
+                clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+            
+                // Clear previous timer
+                clearTimeout(searchDebounce);
+            
+                // If empty, hide overlay and return
+                if (!query.trim()) {
+                    overlay.style.display = 'none';
+                    return;
+                }
+            
+                // 500ms Delay (Debounce)
+                searchDebounce = setTimeout(() => {
+                    fetch(`/search?q=${query}`)
+                        .then(res => res.json())
+                        .then(movies => {
+                            grid.innerHTML = ''; // Clear old results
+                            overlay.style.display = 'block'; // Show overlay
+
+                            if (movies.length > 0) {
+                                title.innerText = `More Titles Related to "${query}"`;
+
+                                movies.forEach(movie => {
+                                    const html = `
+                                        <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.id})">
+                                            <img src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" 
+                                                 onerror="this.src='/static/images/placeholder.jpg'">
+
+                                            <div class="card-overlay">
+                                                <p class="movie-title">${movie.title}</p>
+                                            </div>
+                                        </div>
+                                    `;
+                                    grid.innerHTML += html;
+                                });
+                            } else {
+                                title.innerText = `Your search for "${query}" did not have any matches.`;
+                                grid.innerHTML = '<p style="color: grey;">Suggestions:<ul><li>Try different keywords</li><li>Looking for a movie or TV show?</li></ul></p>';
+                            }
+                        });
+                }, 500);
+            }
+        
+            // Optional: Close if user clicks outside
+            document.addEventListener('click', function(event) {
+                const box = document.getElementById('searchBox');
+                const isClickInside = box.contains(event.target);
+                const input = document.getElementById('searchInput');
+
+                // If clicked outside AND input is empty, close it
+                if (!isClickInside && input.value === '') {
+                    box.classList.remove('active');
+                }
+            });
+        </script>
 
         <footer class="site-footer">
             <div class="footer-content">

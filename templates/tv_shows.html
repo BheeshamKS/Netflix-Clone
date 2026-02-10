@@ -44,9 +44,14 @@
             {% for show in us_tv_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
                 
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
-                
-                <p class="default-title">{{ show.title }}</p>
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
+                         alt="{{ show.title }}" 
+                         class="bg-image" 
+                         loading="lazy">
+
+                    {% if show.logo_path %}
+                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                    {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
@@ -63,10 +68,20 @@
                         </button>
                         
                     </div>
-                    <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Series â€¢ {{ show.age_rating }}</p>
+
+                    {% if not show.logo_path %}
+                        <p class="movie-title">{{ show.title }}</p>
+                    {% endif %}
+                    <div class="card-meta">    
+                        <p class="movie-title">{{ show.title }}</p>
+                        <p class="card-info">Series • {{ show.age_rating }}</p>
+                    </div>
+                    
                 </div>
+                    
+
             </div>
+                    
             {% endfor %}
         </div>
 
@@ -74,9 +89,13 @@
         <div class="row">
             {% for show in kdramas %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
-                
-                <p class="default-title">{{ show.title }}</p>
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
+                         alt="{{ show.title }}" 
+                         loading="lazy">
+
+                    {% if show.logo_path %}
+                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                    {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
@@ -92,20 +111,30 @@
                             <i class="far fa-thumbs-up"></i> </button>
                         
                     </div>
-                    <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Kdrama â€¢ {{ show.age_rating }}</p>
+
+                    {% if not show.logo_path %}
+                        <p class="movie-title">{{ show.title }}</p>
+                    {% endif %}
+                    <div class="card-meta">    
+                        <p class="movie-title">{{ show.title }}</p>
+                        <p class="card-info">K-Drama • {{ show.age_rating }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
         </div>
 
-        <h3 class="row-header">Anime Series</h3>
+        <h3 class="row-header">Anime</h3>
         <div class="row">
             {% for show in anime_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
-                
-                <p class="default-title">{{ show.title }}</p>
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
+                        alt="{{ show.title }}" 
+                        loading="lazy">
+
+                    {% if show.logo_path %}
+                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                    {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
@@ -121,8 +150,13 @@
                             <i class="far fa-thumbs-up"></i> </button>
                         
                     </div>
-                    <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Anime â€¢ {{ show.age_rating }}</p>
+                    {% if not show.logo_path %}
+                        <p class="movie-title">{{ show.title }}</p>
+                    {% endif %}
+                    <div class="card-meta">    
+                        <p class="movie-title">{{ show.title }}</p>
+                        <p class="card-info">Series • {{ show.age_rating }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -132,10 +166,14 @@
         <div class="row">
             {% for show in scifi_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}">
-                
-                <p class="default-title">{{ show.title }}</p>
-                
+                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
+                        alt="{{ show.title }}" 
+                        loading="lazy">
+
+                    {% if show.logo_path %}
+                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                    {% endif %}
+
                 <div class="card-overlay">
                     <div class="card-buttons">
                         <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
@@ -150,8 +188,13 @@
                             <i class="far fa-thumbs-up"></i> </button>
                         
                     </div>
-                    <p class="movie-title">{{ show.title }}</p>
-                    <p class="card-info">Sci-Fi â€¢ {{ show.age_rating }}</p>
+                    {% if not show.logo_path %}
+                        <p class="movie-title">{{ show.title }}</p>
+                    {% endif %}
+                    <div class="card-meta">    
+                        <p class="movie-title">{{ show.title }}</p>
+                        <p class="card-info">Sci-Fi • {{ show.age_rating }}</p>
+                    </div>
                 </div>
             </div>
             {% endfor %}

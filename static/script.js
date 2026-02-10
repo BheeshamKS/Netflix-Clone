@@ -426,3 +426,5 @@ function toggleCardIcon(event, btn, type) {
         }
     }
 }
+
+

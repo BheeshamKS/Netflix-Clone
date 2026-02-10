@@ -2,17 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Netflix</title>
     <link href="/static/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="auth-body">
-    <div class="auth-header">
-        <a href="/">
-            <img src="/static/images/netflix_logo.svg" alt="Netflix" class="nav-logo">
-        </a>
-    </div>
 
     <div class="auth-overlay">
+        
+        <div class="auth-header">
+            <a href="/">
+                <img src="/static/images/netflix_logo.svg" alt="Netflix" class="nav-logo">
+            </a>
+        </div>
+
         <div class="login-box">
             
             {% with messages = get_flashed_messages() %}
@@ -24,6 +28,7 @@
             {% endwith %}
             
             <h1>Sign In</h1>
+            
             <form method="POST">
                 <input type="email" name="email" class="auth-input" placeholder="Email or phone number" required>
                 <input type="password" name="password" class="auth-input" placeholder="Password" required>
@@ -34,7 +39,38 @@
             <div class="auth-subtext">
                 New to Netflix? <a href="{{ url_for('signup') }}">Sign up now</a>.
             </div>
+
+            <div class="recaptcha-text">
+                <p>
+                    This page is protected by Google reCAPTCHA to ensure you're not a bot. 
+                    <a href="#">Learn more.</a>
+                </p>
+            </div>
         </div>
-    </div>
-</body>
+
+        <div class="login-footer">
+            <div class="footer-content">
+                <p class="contact-text">Questions? Call 000-800-040-1843</p>
+
+                <div class="footer-links login-links">
+                    <a href="#">FAQ</a>
+                    <a href="#">Help Centre</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Cookie Preferences</a>
+                    <a href="#">Corporate Information</a>
+                </div>
+            
+                <div class="lang-selector">
+                    <i class="fas fa-globe"></i>
+                    <select>
+                        <option>English</option>
+                        <option>Hindi</option>
+                    </select>
+                    <i class="fas fa-caret-down"></i>
+                </div>
+            </div>
+        </div>
+
+    </div> </body>
 </html>
