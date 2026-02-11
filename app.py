@@ -7,14 +7,13 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from config import TMDB_API_KEY
 
 app = Flask(__name__)
-app.secret_key = 'super_secret_key'  # Needed for sessions
+app.secret_key = 'super_secret_key' 
 
 # --- LOGIN SETUP ---
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login' # Redirect here if not logged in
+login_manager.login_view = 'login' 
 
-# User Class for Flask-Login
 class User(UserMixin):
     def __init__(self, id, email, name):
         self.id = id
@@ -30,10 +29,9 @@ def load_user(user_id):
         return User(id=user['id'], email=user['email'], name=user['name'])
     return None
 
-# Helper function to connect to the database
 def get_db_connection():
     conn = sqlite3.connect('netflix.db')
-    conn.row_factory = sqlite3.Row  # Crucial: allows us to use movie['title']
+    conn.row_factory = sqlite3.Row  
     return conn
 
 # --- AUTH ROUTES ---
@@ -61,24 +59,22 @@ def signup():
                      (email, hashed_pw, name))
         new_user_id = cursor.lastrowid
 
-        # --- RANDOM COLOR ASSIGNMENT ---
         colors = ['blue', 'red', 'green', 'yellow', 'purple']
         avatar_color = random.choice(colors)
 
         conn.execute('INSERT INTO profiles (user_id, name, avatar) VALUES (?, ?, ?)',
-                     (new_user_id, name, avatar_color)) # Saving 'blue', 'red', etc.
+                     (new_user_id, name, avatar_color)) 
         
         conn.commit()
         conn.close()
         
-        # 3. Auto Login
         new_user = User(id=new_user_id, email=email, name=name)
         login_user(new_user)
         
-        # 4. Send to Profile Selection
         return redirect(url_for('browse_profiles'))
 
     return render_template('signup.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -90,21 +86,17 @@ def login():
         user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
         conn.close()
 
-        # CASE 1: Email does not exist
         if not user:
             flash("Account not found. This is a free clone! Please Sign Up first.")
             return redirect(url_for('login'))
         
-        # CASE 2: Wrong Password
         if not check_password_hash(user['password'], password):
             flash("Incorrect password. Please try again.")
             return redirect(url_for('login'))
 
-        # CASE 3: Success
         user_obj = User(id=user['id'], email=user['email'], name=user['name'])
         login_user(user_obj)
         
-        # CHANGE: Redirect to "Who's Watching?" instead of Home
         return redirect(url_for('browse_profiles'))
 
     return render_template('login.html')
@@ -114,19 +106,17 @@ def login():
 @login_required
 def logout():
     logout_user()
-    # Clear session data
     session.pop('profile_id', None)
     session.pop('profile_name', None)
     return redirect(url_for('index'))
 
 
-# --- PROFILE ROUTES (NEW) ---
+# --- PROFILE ROUTES ---
 
 @app.route('/profiles')
 @login_required
 def browse_profiles():
     conn = get_db_connection()
-    # Fetch all profiles belonging to this user
     profiles = conn.execute('SELECT * FROM profiles WHERE user_id = ?', (current_user.id,)).fetchall()
     conn.close()
     return render_template('profiles.html', profiles=profiles)
@@ -134,14 +124,12 @@ def browse_profiles():
 @app.route('/set_profile/<int:profile_id>')
 @login_required
 def set_profile(profile_id):
-    # Security: Ensure this profile actually belongs to the logged-in user!
     conn = get_db_connection()
     profile = conn.execute('SELECT * FROM profiles WHERE id = ? AND user_id = ?', 
                            (profile_id, current_user.id)).fetchone()
     conn.close()
     
     if profile:
-        # Save Profile to Session
         session['profile_id'] = profile['id']
         session['profile_name'] = profile['name']
         session['profile_avatar'] = profile['avatar']
@@ -158,12 +146,9 @@ def add_profile():
         
         if name:
             conn = get_db_connection()
-            # 1. Limit profiles to 5 (Netflix style)
-            # We fetch one row and get the first column (the count)
             count = conn.execute('SELECT COUNT(*) FROM profiles WHERE user_id = ?', (current_user.id,)).fetchone()[0]
             
             if count < 5:
-                # --- RANDOM COLOR ASSIGNMENT ---
                 colors = ['blue', 'red', 'green', 'yellow', 'purple']
                 avatar_color = random.choice(colors)
 
@@ -178,7 +163,6 @@ def add_profile():
 
     return render_template('add_profile.html')
 
-# --- MANAGE PROFILES ROUTES ---
 
 @app.route('/manage-profiles')
 @login_required
@@ -262,11 +246,9 @@ def inject_user_data():
         active_profile_id = session.get('profile_id')
         
         if active_profile_id:
-            # Find the profile that matches the session ID
             active_profile = conn.execute('SELECT * FROM profiles WHERE id = ?', (active_profile_id,)).fetchone()
             data['active_profile'] = active_profile
         else:
-            # Fallback: If no profile selected yet, use the first one
             if profiles:
                 data['active_profile'] = profiles[0]
             else:
@@ -276,25 +258,22 @@ def inject_user_data():
     return data
 
 
-# --- MY LIST API ---
-
 @app.route('/add_to_list/<media_type>/<int:tmdb_id>', methods=['POST'])
 @login_required
 def add_to_list(media_type, tmdb_id):
-    # Ensure a profile is selected
     if 'profile_id' not in session:
         return jsonify({'error': 'No profile selected'}), 403
 
+    profile_id = session['profile_id']
     conn = get_db_connection()
     media_type = media_type.lower()
     
-    # Check if it exists (using USER_ID for now, later we can switch to PROFILE_ID if you want per-profile lists)
-    exists = conn.execute('SELECT * FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?', 
-                          (current_user.id, tmdb_id, media_type)).fetchone()
+    exists = conn.execute('SELECT * FROM mylist WHERE profile_id = ? AND tmdb_id = ? AND media_type = ?', 
+                          (profile_id, tmdb_id, media_type)).fetchone()
     
     if exists:
-        conn.execute('DELETE FROM mylist WHERE user_id = ? AND tmdb_id = ? AND media_type = ?',
-                     (current_user.id, tmdb_id, media_type))
+        conn.execute('DELETE FROM mylist WHERE profile_id = ? AND tmdb_id = ? AND media_type = ?',
+                     (profile_id, tmdb_id, media_type))
         status = 'removed'
     else:
         local_movie = conn.execute('SELECT * FROM movies WHERE tmdb_id = ? AND media_type = ?', 
@@ -318,8 +297,8 @@ def add_to_list(media_type, tmdb_id):
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user_saved')
                 """, (tmdb_id, title, overview, poster, backdrop, date, rating, media_type))
         
-        conn.execute('INSERT INTO mylist (user_id, tmdb_id, media_type) VALUES (?, ?, ?)',
-                     (current_user.id, tmdb_id, media_type))
+        conn.execute('INSERT INTO mylist (profile_id, tmdb_id, media_type) VALUES (?, ?, ?)',
+                     (profile_id, tmdb_id, media_type))
         status = 'added'
         
     conn.commit()
@@ -330,24 +309,27 @@ def add_to_list(media_type, tmdb_id):
 @app.route('/my-list')
 @login_required
 def my_list():
+    if 'profile_id' not in session:
+        return redirect(url_for('browse_profiles'))
+
+    profile_id = session['profile_id']
     conn = get_db_connection()
+
     saved_items = conn.execute("""
         SELECT movies.* FROM mylist 
         JOIN movies ON mylist.tmdb_id = movies.tmdb_id AND mylist.media_type = movies.media_type
-        WHERE mylist.user_id = ?
+        WHERE mylist.profile_id = ?
         GROUP BY movies.tmdb_id
-    """, (current_user.id,)).fetchall()
+    """, (profile_id,)).fetchall()
     
     conn.close()
     return render_template('my_list.html', saved_items=saved_items)
 
 @app.route('/')
 def index():
-    # Force Login if not authenticated
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
         
-    # Force Profile Selection if logged in but no profile set
     if 'profile_id' not in session:
         return redirect(url_for('browse_profiles'))
 
@@ -523,7 +505,6 @@ def search():
         return jsonify([])
 
     conn = get_db_connection()
-    # Fetch results
     results = conn.execute("""
         SELECT * FROM movies 
         WHERE title LIKE ? 
@@ -539,7 +520,7 @@ def search():
             'title': movie['title'],
             'media_type': movie['media_type'],
             'backdrop_path': movie['backdrop_path'],
-            'logo_path': movie['logo_path'],    # <--- THIS LINE IS REQUIRED
+            'logo_path': movie['logo_path'],   
             'age_rating': movie['age_rating']
         })
 

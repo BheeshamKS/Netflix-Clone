@@ -120,7 +120,6 @@
         <script>
             let searchDebounce;
 
-            // 1. OPEN SEARCH BOX
             function toggleSearch() {
                 const box = document.getElementById('searchBox');
                 const input = document.getElementById('searchInput');
@@ -130,32 +129,27 @@
 
                 if (box.classList.contains('active')) {
                     input.focus();
-                    // Hide X initially because box is empty
                     clearBtn.style.display = 'none'; 
                 } else {
-                    // If closing via icon click, clear everything
                     closeSearch();
                 }
             }
         
-            // 2. CLOSE SEARCH (X Button)
             function closeSearch() {
                 const box = document.getElementById('searchBox');
                 const input = document.getElementById('searchInput');
                 const overlay = document.getElementById('searchOverlay');
                 const clearBtn = document.getElementById('searchClear');
-                const navbar = document.querySelector('.navbar'); // Select Navbar
+                const navbar = document.querySelector('.navbar');  
 
                 input.value = '';            
                 box.classList.remove('active'); 
                 overlay.style.display = 'none'; 
                 clearBtn.style.display = 'none';
 
-                // *** REVERT NAVBAR ***
-                navbar.classList.remove('search-mode'); // Makes it transparent again
+                navbar.classList.remove('search-mode');  
             }
         
-            // 3. HANDLE TYPING (The Logic)
             function handleSearch(query) {
                 const overlay = document.getElementById('searchOverlay');
                 const grid = document.getElementById('searchGrid');
@@ -163,19 +157,16 @@
                 const clearBtn = document.getElementById('searchClear');
                 const navbar = document.querySelector('.navbar');
 
-                // Toggle 'X' button
                 clearBtn.style.display = query.length > 0 ? 'block' : 'none';
 
                 clearTimeout(searchDebounce);
 
-                // 1. If empty, hide everything
                 if (!query.trim()) {
                     overlay.style.display = 'none';
                     navbar.classList.remove('search-mode');
                     return;
                 }
             
-                // 2. Fetch Data
                 searchDebounce = setTimeout(() => {
                     fetch(`/search?q=${query}`)
                         .then(res => res.json())
@@ -188,10 +179,8 @@
                                 title.innerText = `Results for "${query}"`;
 
                                 movies.forEach(movie => {
-                                    // --- LOGO LOGIC START ---
                                     let contentHTML = '';
 
-                                    // Check if logo_path is valid (not null/empty)
                                     if (movie.logo_path) {
                                         contentHTML = `
                                             <img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" 
@@ -199,10 +188,8 @@
                                                  alt="${movie.title}">
                                         `;
                                     } else {
-                                        // Fallback to Text Title
                                         contentHTML = `<p class="movie-title">${movie.title}</p>`;
                                     }
-                                    // --- LOGO LOGIC END ---
                                 
                                     const card = `
                                         <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.id})">
@@ -224,23 +211,18 @@
                 }, 500);
             }
         
-            // Optional: Close if user clicks outside
             document.addEventListener('click', function(event) {
                 const box = document.getElementById('searchBox');
                 const isClickInside = box.contains(event.target);
                 const input = document.getElementById('searchInput');
 
-                // If clicked outside AND input is empty, close it
                 if (!isClickInside && input.value === '') {
                     box.classList.remove('active');
                 }
             });
-            /* --- HIDE LOADER WHEN PAGE IS READY --- */
             window.addEventListener('load', function() {
                 const loader = document.getElementById('loader-wrapper');
-                
-                // Optional: Add a small delay so the animation is seen for at least 0.5s
-                // (Prevents it from flickering too fast on fast internet)
+
                 setTimeout(() => {
                     loader.classList.add('loaded');
                 }, 500);
@@ -251,10 +233,10 @@
             <div class="footer-content">
 
                 <div class="footer-social">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/PolyBlend3D/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/polyblend_3d/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/BheeshamSajnani" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.youtube.com/@polyblend_3d" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
             
                 <div class="footer-links">
@@ -393,14 +375,11 @@
 
         <script>
             function toggleProfileMenu() {
-                // 1. Toggle the dropdown visibility
                 document.getElementById("profileDropdown").classList.toggle("show");
 
-                // 2. Rotate the arrow
                 document.querySelector(".profile-menu").classList.toggle("open");
             }
         
-            // Close the dropdown if the user clicks outside of it
             window.onclick = function(event) {
                 if (!event.target.closest('.profile-menu')) {
                     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -413,7 +392,6 @@
                         }
                     }
 
-                    // Reset arrow rotation
                     for (var i = 0; i < arrows.length; i++) {
                         arrows[i].classList.remove('open');
                     }

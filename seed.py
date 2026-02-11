@@ -5,8 +5,8 @@ from config import TMDB_API_KEY
 
 # --- CONFIGURATION ---
 NETFLIX_PROVIDER_ID = 8  
-REGIONS = ["US", "IN"]   # Combine content from both regions
-PAGES_TO_FETCH = 5       # 1 Page per region = ~40 items total per genre
+REGIONS = ["US", "IN"]   
+PAGES_TO_FETCH = 5        
 
 def get_db_connection():
     conn = sqlite3.connect('netflix.db')
@@ -15,7 +15,6 @@ def get_db_connection():
 
 # --- HELPER: Get Logo ---
 def get_logo(media_type, tmdb_id):
-    """Fetches the best English PNG logo."""
     url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}/images?api_key={TMDB_API_KEY}&include_image_language=en,null"
     try:
         resp = requests.get(url)
@@ -30,7 +29,6 @@ def get_logo(media_type, tmdb_id):
 
 # --- HELPER: Get Real Age Rating ---
 def get_real_certification(media_type, tmdb_id):
-    """Fetches real age rating (PG-13, TV-MA, etc) from TMDB."""
     append_to = "release_dates" if media_type == "movie" else "content_ratings"
     url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&append_to_response={append_to}"
     
@@ -39,39 +37,32 @@ def get_real_certification(media_type, tmdb_id):
         if resp.status_code == 200:
             data = resp.json()
             
-            # 1. Handle Movies
             if media_type == "movie":
                 releases = data.get("release_dates", {}).get("results", [])
                 for country in releases:
                     if country["iso_3166_1"] in ["US", "IN"]:
-                        # Return the first valid certification found
                         for release in country["release_dates"]:
                             if release["certification"]:
                                 return release["certification"]
-            
-            # 2. Handle TV Shows
             else:
                 ratings = data.get("content_ratings", {}).get("results", [])
                 for rating in ratings:
                     if rating["iso_3166_1"] in ["US", "IN"]:
                         return rating["rating"]
-                        
     except:
         pass
-    
-    # Fallback if API has no data
     return "PG-13" if media_type == "movie" else "TV-14"
 
 def save_to_db():
     conn = get_db_connection()
     print("Starting Netflix-Only Database Update...")
 
-    # 1. Create Tables (Added UNIQUE to tmdb_id to prevent duplicates)
     conn.execute("DROP TABLE IF EXISTS movies")
+    
     conn.execute("""
         CREATE TABLE IF NOT EXISTS movies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            tmdb_id INTEGER UNIQUE,  /* Prevents US/IN duplicates */
+            tmdb_id INTEGER UNIQUE,
             title TEXT,
             overview TEXT,
             poster_path TEXT,
@@ -84,8 +75,8 @@ def save_to_db():
             age_rating TEXT
         )
     """)
-    
-    # User tables (Preserved)
+
+    # Ensure other tables exist (just in case)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -93,15 +84,6 @@ def save_to_db():
             password TEXT NOT NULL,
             name TEXT,
             avatar TEXT DEFAULT 'avatar-blue'
-        )
-    """)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS mylist (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            tmdb_id INTEGER,
-            media_type TEXT,
-            FOREIGN KEY(user_id) REFERENCES users(id)
         )
     """)
     conn.execute("""
@@ -113,6 +95,15 @@ def save_to_db():
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS mylist (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            profile_id INTEGER,
+            tmdb_id INTEGER,
+            media_type TEXT,
+            FOREIGN KEY(profile_id) REFERENCES profiles(id)
+        )
+    """)
 
     # 3. Fetch Logic
     total_added = 0
@@ -121,16 +112,16 @@ def save_to_db():
         nonlocal total_added
         print(f"\nFetching {genre_tag} ({media_type})...")
         
-        # Loop through both regions (US and India)
+        clean_params = base_params.split('&page=')[0]
+
         for region in REGIONS:
             print(f"  > Region: {region}", end=" ")
             
             for page in range(1, PAGES_TO_FETCH + 1):
-                # Construct URL strictly for Netflix in that Region
                 url = (f"https://api.themoviedb.org/3/discover/{media_type}?"
                        f"api_key={TMDB_API_KEY}&language=en-US&page={page}"
                        f"&watch_region={region}&with_watch_providers={NETFLIX_PROVIDER_ID}"
-                       f"&{base_params}") # Append the specific sorting/genre logic
+                       f"&{clean_params}")
                 
                 try:
                     response = requests.get(url)
@@ -149,7 +140,7 @@ def save_to_db():
                             if not poster or not backdrop or not title:
                                 continue
 
-                            # Get Extra Details (Only if not already in DB to save time)
+                            # Check if exists (Avoid re-fetching details)
                             exists = conn.execute("SELECT 1 FROM movies WHERE tmdb_id = ?", (tmdb_id,)).fetchone()
                             if not exists:
                                 logo = get_logo(media_type, tmdb_id)
@@ -169,38 +160,41 @@ def save_to_db():
                 except Exception as e:
                     print(f"Error: {e}")
                 
-                time.sleep(0.2) # Respect API limits
-            print("") # New line after region done
+                time.sleep(0.1) 
+            print("") 
 
-    # 4. Execute Mapped Queries
-    # Note: We converted everything to 'discover' parameters to support the Netflix filter
+    # --- 4. EXECUTE MAPPED QUERIES ---
     
-    # "Trending" -> Popularity Descending
+    # 1. TRENDING (Now includes Top TV Shows so big hits appear)
     fetch_and_save("sort_by=popularity.desc", "movie", "trending")
-    
-    # "Popular" -> Popularity Descending (Similar to trending, but keeps your tag)
+    fetch_and_save("sort_by=popularity.desc", "tv", "trending") # Added TV here!
+
+    # 2. POPULAR (Movies)
     fetch_and_save("sort_by=popularity.desc&vote_count.gte=1000", "movie", "popular")
-    
-    # "New Releases" -> Release Date Descending
+
+    # 3. NEW RELEASES
     fetch_and_save("sort_by=primary_release_date.desc&vote_count.gte=50", "movie", "new_releases")
-    
-    # "Action" -> Genre 28
+
+    # 4. ACTION
     fetch_and_save("with_genres=28", "movie", "action")
-    
-    # "Anime" -> Genre 16 + Japanese
+
+    # 5. ANIME
     fetch_and_save("with_genres=16&with_original_language=ja", "tv", "anime")
-    
-    # "US TV Drama" -> Genre 18 + English
+
+    # 6. US TV DRAMA
     fetch_and_save("with_genres=18&with_original_language=en", "tv", "us_tv_drama")
-    
-    # "Bollywood" -> Hindi Language
+
+    # 7. BOLLYWOOD
     fetch_and_save("with_original_language=hi", "movie", "bollywood")
-    
-    # "K-Drama" -> Korean Language
+
+    # 8. K-DRAMA
     fetch_and_save("with_original_language=ko", "tv", "kdrama")
-    
-    # "Sci-Fi & Horror" -> Genres 878,27
+
+    # 9. SCI-FI & HORROR 
+    # Fetch Movies (Sci-Fi + Horror)
     fetch_and_save("with_genres=878,27", "movie", "scifi_horror")
+    # Fetch TV (Sci-Fi & Fantasy)
+    fetch_and_save("with_genres=10765", "tv", "scifi_horror") 
 
     conn.commit()
     conn.close()

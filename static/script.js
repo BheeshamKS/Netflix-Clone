@@ -18,7 +18,7 @@ function onYouTubeIframeAPIReady() {
     console.log("YouTube API Ready");
 }
 
-/* --- 4. PLAY VIDEO FUNCTION (Fixed: Stops background audio bug) --- */
+/* --- 4. PLAY VIDEO FUNCTION --- */
 function playTrailer(mediaType, tmdbId, title) {
     if (document.activeElement) {
         document.activeElement.blur();
@@ -36,10 +36,9 @@ function playTrailer(mediaType, tmdbId, title) {
     fetch(`/get_trailer/${mediaType}/${tmdbId}`)
         .then(response => response.json())
         .then(data => {
-            // FIX: Check if user closed the modal while we were waiting!
             if (!modal.classList.contains('show')) {
                 console.log("Modal closed, cancelling video start.");
-                return; // Stop here. Do NOT create the player.
+                return; 
             }
 
             if (data.key) {
@@ -75,13 +74,10 @@ function playTrailer(mediaType, tmdbId, title) {
 
 /* --- 5. KEYBOARD CONTROLS (Space & Esc) --- */
 document.addEventListener('keydown', function(event) {
-    // ESCAPE: Close Video
     if (event.key === "Escape") {
         closeVideo();
     }
     
-    // SPACE BAR: Toggle Play/Pause
-    // We check if the modal is actually open first
     const modal = document.getElementById('video-modal');
     if ((event.code === "Space" || event.key === " ") && modal.style.display === 'flex') {
         event.preventDefault(); // Stop the page from scrolling down
@@ -101,10 +97,10 @@ function onPlayerStateChange(event) {
     
     if (event.data == YT.PlayerState.PLAYING) {
         btn.className = 'fas fa-pause';
-        container.classList.remove('paused'); // Hide dark overlay
+        container.classList.remove('paused');  
     } else {
         btn.className = 'fas fa-play';
-        container.classList.add('paused');    // Show dark overlay
+        container.classList.add('paused');     
     }
 }
 
@@ -155,17 +151,14 @@ function closeVideo() {
         
         if (player) {
             player.stopVideo();
-            player.destroy(); // This removes the iframe from the DOM
+            player.destroy();  
             player = null;
         }
         
-        // FIX: Check if the player placeholder is gone, and restore it 
-        // WITHOUT deleting the Close Button or Title!
         if (!document.getElementById('youtube-player')) {
             const newPlayerDiv = document.createElement('div');
             newPlayerDiv.id = 'youtube-player';
             
-            // Insert the new div exactly where it belongs: BEFORE the controls
             const container = document.getElementById('video-container');
             const controls = document.getElementById('custom-controls');
             container.insertBefore(newPlayerDiv, controls);
@@ -200,10 +193,8 @@ function seekVideo(event) {
 function openMoreInfo(mediaType, tmdbId) {
     const modal = document.getElementById('info-modal');
     
-    // KEY FIX: Use 'flex' to maintain your CSS centering
     modal.style.display = 'flex'; 
     
-    // Add opacity class after a tiny delay for the animation to catch
     setTimeout(() => {modal.classList.add('show');}, 10);
 
     // 1. Fetch Details from Backend
@@ -218,22 +209,18 @@ function openMoreInfo(mediaType, tmdbId) {
             const logoImg = document.getElementById('modal-logo');
             const titleText = document.getElementById('modal-title');
 
-            // --- FIX START: Extract Logo from the new "images" structure ---
             let logoPath = null;
             if (data.images && data.images.logos && data.images.logos.length > 0) {
                 logoPath = data.images.logos[0].file_path;
             }
-            // --- FIX END ---
 
             if (logoPath) {
-                // HAS LOGO: Show Image, Hide Text
                 logoImg.src = `https://image.tmdb.org/t/p/w500${logoPath}`;
                 logoImg.style.display = 'block';
                 titleText.style.display = 'none';
             } else {
-                // NO LOGO: Hide Image, Show Text
                 logoImg.style.display = 'none';
-                titleText.innerText = data.title || data.name; // Handle Movie vs TV
+                titleText.innerText = data.title || data.name; 
                 titleText.style.display = 'block';
             }
 
@@ -277,10 +264,8 @@ function openMoreInfo(mediaType, tmdbId) {
 function closeMoreInfo() {
     const modal = document.getElementById('info-modal');
     
-    // Fade out first
     modal.classList.remove('show');
     
-    // Wait for animation (300ms) then hide
     setTimeout(() => {
         modal.style.display = 'none';
     }, 300);
@@ -304,17 +289,14 @@ window.onclick = function(event) {
     
     // Get the modals
     const infoModal = document.getElementById('info-modal');
-    const videoModal = document.getElementById('video-modal'); // If you have a video player
+    const videoModal = document.getElementById('video-modal'); 
 
-    // Check if the user clicked strictly on the dark background (the modal wrapper)
-    // and NOT on the card content inside it.
     
     if (event.target === infoModal) {
         closeMoreInfo();
     }
 
     if (videoModal && event.target === videoModal) {
-        // Assuming you have a closeVideo function defined elsewhere
         closeVideo(); 
     }
 }
@@ -330,8 +312,6 @@ function toggleMyList(event, btn, mediaType, tmdbId, title) {
     const icon = btn.querySelector('i');
     
     // --- 1. VISUAL TOGGLE ---
-    // FIX: We added this check. 
-    // If we are on '/my-list', we SKIP the icon toggle so the X doesn't become a +
     if (window.location.pathname !== '/my-list') {
         
         if (icon.classList.contains('fa-plus')) {
@@ -356,17 +336,13 @@ function toggleMyList(event, btn, mediaType, tmdbId, title) {
         return response.json();
     })
     .then(data => {
-        // --- 3. REMOVE CARD LOGIC (Only for My List Page) ---
         if (window.location.pathname === '/my-list' && data.status === 'removed') {
             const card = document.getElementById(`card-${tmdbId}`);
             if (card) {
-                // Hide Card
                 card.style.display = 'none';
 
-                // Check if list is empty (to show "Browse Movies")
                 checkEmptyState();
 
-                // Show Undo Toast
                 showUndoToast(title || "Movie", mediaType, tmdbId, card);
             }
         }
@@ -418,7 +394,6 @@ function showUndoToast(title, mediaType, tmdbId, cardElement) {
                 // Show card again
                 cardElement.style.display = 'block';
                 
-                // --- FIX IS HERE ---
                 // Targeted the 2nd button (Remove btn) instead of the 1st (Play btn)
                 const icon = cardElement.querySelector('.card-buttons .mini-btn:nth-child(2) i');
                 if (icon) {
@@ -452,11 +427,11 @@ function toggleCardIcon(event, btn, type) {
         if (icon.classList.contains('fa-plus')) {
             icon.classList.remove('fa-plus');
             icon.classList.add('fa-check');
-            btn.style.borderColor = "white"; // Optional: Highlight border
+            btn.style.borderColor = "white";  
         } else {
             icon.classList.remove('fa-check');
             icon.classList.add('fa-plus');
-            btn.style.borderColor = ""; // Reset
+            btn.style.borderColor = "";  
         }
     } 
     else if (type === 'like') {
@@ -464,7 +439,7 @@ function toggleCardIcon(event, btn, type) {
         if (icon.classList.contains('far') || !icon.style.color) {
             icon.classList.remove('far');
             icon.classList.add('fas'); // Solid filled
-            icon.style.color = "#46d369"; // Netflix Green match
+            icon.style.color = "#46d369";  
         } else {
             icon.classList.remove('fas');
             icon.classList.add('far'); // Back to outline

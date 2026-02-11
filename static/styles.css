@@ -1,4 +1,4 @@
-/* --- 1. GLOBAL RESET --- */
+/* --- GLOBAL Values --- */
 :root {
     --netflix-red: #E50914;
     --netflix-black: #000000;
@@ -16,15 +16,14 @@ body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scroll on the whole page */
+    overflow-x: hidden;  
 }
 
-/* Hide scrollbars (Chrome/Safari/Opera) */
 ::-webkit-scrollbar {
     display: none;
 }
 
-/* 1. THE MAIN NAVBAR */
+/* NAVBAR */
 .navbar {
     position: fixed;
     top: 0;
@@ -37,25 +36,19 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    /* DEFAULT STATE: Transparent, no blur */
     background-color: transparent;
     backdrop-filter: blur(0px); 
     -webkit-backdrop-filter: blur(0px);
 
-    /* FAST TRANSITION: 0.2s makes it feel responsive, not "animated" */
     transition: background-color 0.2s ease-in-out, backdrop-filter 0.2s ease-in-out;
 }
 
-/* 2. THE SCROLLED STATE */
 .navbar.nav-black {
-    /* Semi-transparent black */
     background-color: rgba(0, 0, 0, 0.5);
 
-    /* THE BLUR YOU WANTED */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     
-    /* Optional: Remove shadow if you want it perfectly flat */
     box-shadow: none; 
 }
 
@@ -67,12 +60,12 @@ body {
 .nav-right {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Pushes to the right */
+    margin-left: auto; 
     gap: 20px;
 }
 
 .nav-logo {
-    height: 25px; /* Adjust based on your SVG */
+    height: 25px; 
     margin-right: 25px;
 }
 
@@ -83,25 +76,23 @@ body {
     padding: 0;
 }
 
-/* --- NAVIGATION LINKS --- */
+/* --- NAV LINKS --- */
 .nav-links a {
     text-decoration: none;
-    color: #e5e5e5;       /* Default: Slightly transparent grey/white */
+    color: #e5e5e5;    
     font-size: 0.9rem;
-    font-weight: 400;     /* Normal weight */
+    font-weight: 400;      
     transition: color 0.3s ease;
 }
 
-/* Hover State */
 .nav-links a:hover {
-    color: #b3b3b3;       /* Dims slightly on hover (optional) */
+    color: #b3b3b3;       
 }
 
-/* Active State (The one we just fixed) */
 .nav-links a.active {
-    color: white;         /* Bright White */
-    font-weight: 700;     /* Bold */
-    cursor: default;      /* Shows it's already selected */
+    color: white;        
+    font-weight: 700;  
+    cursor: default;    
 }
 
 .nav-icon {
@@ -115,13 +106,13 @@ body {
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    position: relative; /* For positioning the dropdown later */
+    position: relative;  
 }
 
 .profile-img {
     width: 32px;
     height: 32px;
-    border-radius: 4px; /* Slight rounded corners */
+    border-radius: 4px; 
 }
 
 .profile-arrow {
@@ -130,9 +121,7 @@ body {
     transition: transform 0.3s;
 }
 
-/* --- DROPDOWN FORCE FIX --- */
-
-/* 1. The Container */
+ 
 .dropdown-content {
     display: none;
     position: absolute;
@@ -142,44 +131,40 @@ body {
     background-color: rgba(0, 0, 0, 0.95);
     border: 1px solid #333;
     padding: 10px 0;
-    z-index: 2000; /* High z-index to sit on top */
+    z-index: 2000;  
 }
 
 .dropdown-content.show {
     display: block !important;
 }
 
-/* 2. ALL ITEMS (Reset Links) */
 .dropdown-item {
-    display: flex !important;       /* Force Flexbox */
-    align-items: center !important; /* Vertically Center Items */
-    flex-direction: row !important; /* Force Horizontal Row */
-    gap: 12px !important;           /* Space between Avatar and Name */
+    display: flex !important;        
+    align-items: center !important;  
+    flex-direction: row !important;  
+    gap: 12px !important;            
     
     padding: 10px 20px;
     
-    /* TEXT STYLING (Matches Nav) */
-    color: #b3b3b3 !important;      /* Netflix Grey */
+    color: #b3b3b3 !important;       
     font-size: 16px !important;
-    text-decoration: none !important; /* KILL THE UNDERLINE */
+    text-decoration: none !important;  
     transition: color 0.2s;
 }
 
-/* 3. HOVER STATE (Matches Nav Active) */
 .dropdown-item:hover {
-    color: white !important;        /* Bright White */
-    text-decoration: none !important; /* Ensure underline stays dead */
+    color: white !important;         
+    text-decoration: none !important;  
     cursor: pointer;
 }
 
-/* 4. THE MINI AVATAR BOX */
+
 .nav-avatar-small {
     width: 32px !important;
     height: 32px !important;
     border-radius: 4px;
     overflow: hidden;
     
-    /* Prevent shrinking */
     flex-shrink: 0; 
     
     display: flex;
@@ -193,14 +178,12 @@ body {
     object-fit: cover;
 }
 
-/* 5. DIVIDER LINE */
 .dropdown-divider {
     height: 1px;
     background-color: #333;
     margin: 5px 0;
 }
 
-/* Rotate arrow when open */
 .profile-menu.open .profile-arrow {
     transform: rotate(180deg);
 }
@@ -218,7 +201,7 @@ body {
 }
 
 
-/* --- PROFILE GATE (Who's Watching) --- */
+/* --- PROFILE (Who's Watching) --- */
 .profiles-body {
     background-color: #141414;
     color: white;
@@ -229,7 +212,7 @@ body {
     align-items: center;
     justify-content: center;
     margin: 0;
-    overflow: hidden; /* Prevent scrolling on this page */
+    overflow: hidden; 
 }
 
 .profile-nav {
@@ -275,7 +258,7 @@ body {
     height: 150px;
     border-radius: 4px;
     overflow: hidden;
-    border: 3px solid transparent; /* Invisible border for hover */
+    border: 3px solid transparent;  
     transition: all 0.2s ease;
 }
 
@@ -284,9 +267,8 @@ body {
     height: 32px !important;
     border-radius: 4px;
     
-    /* Remove the hover border effect from the main page */
     border: none !important;
-    margin-right: 10px; /* Space for the dropdown text */
+    margin-right: 10px;  
 }
 
 .avatar-wrapper.nav-size img {
@@ -301,10 +283,9 @@ body {
     object-fit: cover;
 }
 
-/* Hover Effects */
 .profile-card:hover .avatar-wrapper {
     border-color: white;
-    transform: scale(1.05); /* Slight zoom */
+    transform: scale(1.05);  
 }
 
 .profile-card:hover .profile-name {
@@ -317,7 +298,6 @@ body {
     transition: color 0.2s;
 }
 
-/* Add Profile Button */
 .add-btn {
     display: flex;
     align-items: center;
@@ -333,13 +313,10 @@ body {
 }
 
 .manage-btn {
-    /* --- 1. THE FORCE MOVE --- */
     display: inline-block;
     
-    /* This visually pushes it down 80px from its original spot */
     transform: translateY(80px); 
     
-    /* --- 2. STYLE --- */
     background-color: transparent;
     border: 1px solid grey;
     color: grey;
@@ -446,9 +423,8 @@ body {
     border-color: white;
 }
 
-/* --- MANAGE PROFILES SPECIFIC --- */
+/* --- MANAGE PROFILES --- */
 
-/* Pencil Overlay */
 .manage-card .avatar-wrapper {
     position: relative;
 }
@@ -463,7 +439,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 1; /* Always visible in 'Manage' mode, or 0 if you want hover only */
+    opacity: 1;  
 }
 
 .edit-overlay i {
@@ -474,7 +450,6 @@ body {
     padding: 10px;
 }
 
-/* The "Done" Button */
 .btn-done {
     display: inline-block;
     transform: translateY(80px);
@@ -494,7 +469,6 @@ body {
     color: white;
 }
 
-/* --- EDIT PROFILE BUTTONS --- */
 .edit-buttons {
     display: inline-block;
     transform: translateY(80px);
@@ -505,7 +479,7 @@ body {
 }
 
 .btn-delete {
-    margin-left: auto; /* Pushes delete button to the far right */
+    margin-left: auto; 
     background-color: transparent;
     color: grey;
     border: 1px solid grey;
@@ -521,71 +495,63 @@ body {
     color: white;
 }
 
-/* --- PROFILE AVATARS (Colors & Dimensions) --- */
+/* --- PROFILE AVATARS --- */
 
-/* 1. The Avatar Box (Container) */
+/* 1. The Avatar Box */
 .avatar-wrapper {
-    width: 180px;           /* Large size for Profile Selection */
+    width: 180px;           
     height: 160px;
-    border-radius: 4px;     /* Subtle rounded corners */
+    border-radius: 4px;     
     overflow: hidden;
-    border: 3px solid transparent; /* Hidden border for hover effect */
+    border: 3px solid transparent;  
     transition: all 0.2s ease;
     
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #333; /* Default Grey */
+    background-color: #333;  
 }
 
-/* 2. Color Variants (Netflix Palette) */
 .avatar-blue    { background-color: #0080ff; }
 .avatar-red     { background-color: #e50914; }
 .avatar-green   { background-color: #46d369; }
 .avatar-yellow  { background-color: #ffaa00; }
 .avatar-purple  { background-color: #8000ff; }
 
-/* 3. The Smile Image */
 .avatar-wrapper img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* OPTIONAL: If your image is black, this turns it white to pop on color */
     filter: brightness(2); 
 }
 
-/* --- ADD PROFILE BUTTON (Custom Style) --- */
 
-/* 1. Override the default grey box */
 .add-btn-wrapper {
-    background-color: transparent !important; /* Removes the grey box */
-    border: none !important;                  /* Removes border */
+    background-color: transparent !important;  
+    border: none !important;                   
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* 2. Style the Plus Icon */
 .add-btn-wrapper i {
-    font-size: 5rem;      /* Big Icon */
-    color: #808080;       /* Grey color by default */
+    font-size: 5rem;       
+    color: #808080;       
     transition: color 0.2s, transform 0.2s;
 }
 
-/* 3. Hover Effect */
+ 
 .profile-card:hover .add-btn-wrapper i {
-    color: white;         /* Turns white on hover */
-    transform: scale(1.1); /* Slight zoom */
-    background-color: transparent; /* Ensure no box appears on hover */
+    color: white;          
+    transform: scale(1.1);  
+    background-color: transparent;  
 }
 
-/* 4. Ensure no background appears on the wrapper on hover */
 .profile-card:hover .add-btn-wrapper {
     border-color: transparent;
     background-color: transparent;
 }
 
-/* 4. Small Navbar Avatar */
 .nav-avatar {
     width: 32px;
     height: 32px;
@@ -603,15 +569,14 @@ body {
     filter: brightness(2);
 }
 
-/* --- NEW DROPDOWN STYLES --- */
+/* --- DROPDOWN --- */
 
-/* The Box Itself */
 .dropdown-content {
     display: none;
     position: absolute;
     top: 40px;
     right: 0;
-    width: 220px; /* Slightly wider to fit long names */
+    width: 220px;  
     background-color: rgba(0, 0, 0, 0.95);
     border: 1px solid #333;
     padding: 10px 0;
@@ -622,28 +587,25 @@ body {
     display: block;
 }
 
-/* 1. Profile Row (Avatar + Name) */
 .dropdown-profile-item {
-    /* FLEXBOX: Puts Avatar and Name side-by-side */
     display: flex;
     align-items: center;
     gap: 10px;
     
     padding: 10px 20px;
     
-    /* NAV TEXT STYLE (Light Grey, No Underline) */
     color: #e5e5e5;
     text-decoration: none;
     font-size: 13px;
-    font-weight: 400; /* Normal weight */
+    font-weight: 400;  
     
     transition: color 0.2s;
 }
 
 .dropdown-profile-item:hover {
     color: white;
-    font-weight: 700; /* Bold like active nav link */
-    text-decoration: none; /* Ensure no underline appears */
+    font-weight: 700; 
+    text-decoration: none;  
     background-color: transparent;
 }
 
@@ -654,12 +616,10 @@ body {
     object-fit: cover;
 }
 
-/* 2. Standard Links (Manage, Account, Help) */
 .dropdown-link {
     display: block;
     padding: 8px 20px;
     
-    /* NAV TEXT STYLE */
     color: #e5e5e5;
     text-decoration: none;
     font-size: 17px;
@@ -670,23 +630,21 @@ body {
 
 .dropdown-link:hover {
     color: white;
-    font-weight: 700; /* Bold on hover */
+    font-weight: 700;  
     text-decoration: none;
 }
 
-/* 3. The Divider Line */
 .dropdown-divider {
     height: 1px;
-    background-color: #333; /* Dark grey line */
+    background-color: #333;  
     margin: 10px 0;
 }
 
-/* 4. Sign Out (Center it?) */
 .sign-out-link {
     padding-top: 5px;
 }
 
-/* --- 3. HERO SECTION --- */
+/* --- HERO SECTION --- */
 .hero {
     height: 90vh;
     background-size: cover;
@@ -695,10 +653,9 @@ body {
     color: white;
     margin-bottom: 40px;
 
-    /* NEW: Flexbox Centering to put content in the middle */
     display: flex;
-    align-items: center; /* Centers vertically */
-    justify-content: flex-start; /* Aligns to the left */
+    align-items: center; 
+    justify-content: flex-start;  
 }
 
 .hero::after {
@@ -708,21 +665,20 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* The Gradient: Dark at top, clear in middle, Dark at bottom */
     background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.8) 0%,   /* Dark top for Navbar readability */
-        rgba(0,0,0,0) 20%,    /* Clear middle for the movie face */
-        rgba(0,0,0,0) 85%,    /* Start fading out */
-        #000000 100%          /* Seamless blend into the black background */
+        rgba(0,0,0,0.8) 0%,   
+        rgba(0,0,0,0) 20%,     
+        rgba(0,0,0,0) 85%,    
+        #000000 100%           
     );
     z-index: 1;
 }
 
 .category-header {
-    position: absolute;       /* Detach from the flow */
+    position: absolute;     
     top: 80px; 
-    left: 4%;                /* Align with the left margin */
+    left: 4%;                 
     
     font-family: 'Inter', sans-serif;
     font-size: 3rem;       
@@ -730,35 +686,31 @@ body {
     color: #ffffff;          
     
     text-transform: capitalize; 
-    z-index: 10;             /* Ensure it sits on top of the image */
+    z-index: 10;              
 }
 .hero-content {
     position: relative; 
     z-index: 2; 
     top: 25px;
     
-    /* REMOVE the old top padding */
     padding-top: 0; 
     
     margin-left: 4%;
     max-width: 500px;
 }
 
-/* --- HERO LOGO (Big Title) --- */
 .hero-logo {
-    width: 100%;            /* Responsive width */
-    max-width: 345px;       /* Never wider than 500px (Desktop) */
-    max-height: 160px;      /* Never taller than 200px */
+    width: 100%;             
+    max-width: 345px;       
+    max-height: 160px;      
     
-    object-fit: contain;    /* Keep aspect ratio perfect */
-    object-position: left bottom; /* Align to bottom-left of container */
+    object-fit: contain;     
+    object-position: left bottom; 
 
-    margin-bottom: 20px;    /* Space before the description */
-    
-    display: block;         /* Ensures it sits on its own line */
+    margin-bottom: 20px;    
+    display: block;          
 }
 
-/* Mobile Tweak: Make it smaller on phones */
 @media (max-width: 768px) {
     .hero-logo {
         max-width: 300px;
@@ -789,42 +741,34 @@ body {
     text-overflow: ellipsis; 
 }
 
-/* Add this to static/styles.css */
 .hero-buttons {
-    display: flex;          /* This forces them into a row */
-    flex-direction: row;    /* Explicitly say "Horizontal" */
-    gap: 15px;              /* Adds consistent space between the buttons */
-    margin-top: 20px;       /* Adds space between the text and the buttons */
+    display: flex;           
+    flex-direction: row;    
+    gap: 15px;              
+    margin-top: 20px;        
 }
 
 .btn-play {
-    /* --- 1. THE RECTANGLE (Container) --- */
     width: 139px;
     height: 53px;
     background: #FFFFFF;
     border-radius: 5px;
-    border: none;       /* Remove default grey border */
-    cursor: pointer;    /* Hand icon on hover */
+    border: none;       
+    cursor: pointer;    
 
-    /* --- 2. THE LAYOUT (Replacing 'absolute') --- */
     display: flex;
-    align-items: center;     /* Centers items vertically */
-    justify-content: center; /* Centers items horizontally */
-    gap: 10px;               /* The space between Icon and Text */
+    align-items: center;     
+    justify-content: center;  
+    gap: 10px;              
 
-    /* --- 3. THE TEXT STYLE --- */
-    /* We use Helvetica because we don't have 'Netflix Sans' */
     font-family: 'Inter', sans-serif;
-    font-weight: 700;        /* Bold (500-700 is good for buttons) */
+    font-weight: 700;        
     font-size: 22px;
     line-height: 26px;
     color: #000000;
-    
-    /* Animation */
     transition: transform 0.2s;
 }
 
-/* Hover Effect */
 .btn-play:hover {
     background-color: rgba(255, 255, 255, 0.75);
 }
@@ -842,7 +786,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px; /* Space between the 'i' and 'More Info' */
+    gap: 10px;  
     
     font-family: 'Inter', sans-serif;
     font-weight: 550;
@@ -852,9 +796,8 @@ body {
     transition: background-color 0.2s;
 }
 
-/* Hover Effect */
 .btn-info:hover {
-    background-color: rgba(88, 88, 88, 0.4); /* Lightens up when you touch it */
+    background-color: rgba(88, 88, 88, 0.4);  
 }
 
 .hero-fade-bottom {
@@ -870,24 +813,22 @@ body {
     width: 100%;
 }
 
-/* --- HERO RIGHT SIDE ACTIONS --- */
 .hero-actions {
     position: absolute;
     right: 0;
-    bottom: 35%; /* Aligns vertically with the description text */
+    bottom: 35%;  
     display: flex;
     align-items: center;
-    gap: 15px; /* Space between Mute button and Age box */
-    z-index: 20; /* Ensures it sits on top of the image */
+    gap: 15px;  
+    z-index: 20; 
 }
 
-/* The Mute Button (Circle with border) */
 .mute-btn {
     width: 40px;
     height: 40px;
     border: 1px solid rgba(255, 255, 255, 0.5);
-    background-color: rgba(0, 0, 0, 0.3); /* Semi-transparent black */
-    border-radius: 50%; /* Makes it a perfect circle */
+    background-color: rgba(0, 0, 0, 0.3);  
+    border-radius: 50%;  
     color: white;
     cursor: pointer;
     display: flex;
@@ -902,20 +843,18 @@ body {
     border-color: white;
 }
 
-/* The Age Rating Box (Rectangle on edge) */
 .age-rating {
-    background-color: rgba(51, 51, 51, 0.6); /* Grey semi-transparent */
-    border-left: 3px solid #dcdcdc; /* The white strip on the left */
-    padding: 8px 35px 8px 15px; /* Extra padding on right to stretch it out */
+    background-color: rgba(51, 51, 51, 0.6); 
+    border-left: 3px solid #dcdcdc;  
+    padding: 8px 35px 8px 15px;  
     color: white;
     font-weight: bold;
     font-size: 16px;
     
-    /* Ensure it touches the right edge of the screen */
     margin-right: 0; 
 }
 
-/* --- 4. ROWS (SCROLLERS) --- */
+/* --- ROWS --- */
 .rows-container {
     width: 100%;
     margin-top: -100px;
@@ -928,24 +867,20 @@ body {
     font-size: 20px;
     font-weight: 700;
     margin-left: 4%;
-    margin-bottom: 0px; /* Reduced gap */
+    margin-bottom: 0px;  
     margin-top: 10px;
 }
 
 .row {
     display: flex;
     overflow-y: hidden;
-    overflow-x: auto; /* Allows horizontal scrolling */
-    
-    /* Spacing */
+    overflow-x: auto;  
     padding: 40px 4%; 
-    gap: 10px;        /* Adds space between the cards */
+    gap: 10px;         
     
-    /* Positioning */
     margin-top: -20px; 
     margin-bottom: -20px;
 
-    /* Smooth Scrolling */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }
@@ -954,11 +889,10 @@ body {
     display: none;
 }
 
-/* --- NETFLIX CARD COMPOSITION --- */
+/* --- CARD --- */
 .movie-card {
-    /* CRITICAL FIX: Prevent Squashing */
-    flex: 0 0 auto;  /* Tells flexbox: DO NOT SHRINK ME */
-    width: 300px;    /* Forces a fixed width */
+    flex: 0 0 auto;   
+    width: 300px;   
     
     position: relative; 
     aspect-ratio: 16 / 9; 
@@ -978,31 +912,23 @@ body {
 .card-logo {
     position: absolute;
     
-    /* 1. HORIZONTAL CENTER */
     left: 50%;
-    transform: translateX(-50%); /* Moves it left by half its width to center it */
+    transform: translateX(-50%);  
     
-    /* 2. VERTICAL POSITION (The "Little Down") */
-    bottom: 15px; /* Sits 15px up from the bottom edge */
+    bottom: 15px;  
     
-    /* 3. SIZE CONTROLS */
     width: auto !important;
     height: auto !important;
     
-    /* Allow it to be slightly wider since it's at the bottom */
     max-width: 90% !important;
-    max-height: 45% !important; /* Don't let it get too tall */
-    
-    /* 4. VISUALS */
+    max-height: 45% !important;  
     object-fit: contain !important;
-    object-position: bottom center; /* Aligns the image content to bottom center */
-    
+    object-position: bottom center;  
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
     z-index: 5;
     pointer-events: none;
 }
 
-/* 3. HOVER EFFECT (Clean) */
 .movie-card:hover {
     transform: scale(1.05);
     z-index: 10;
@@ -1017,7 +943,6 @@ body {
     
     margin: 0;
 
-    /* Gradient behind text for readability */
     background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
     padding: 40px 10px 10px 10px; 
     
@@ -1025,7 +950,6 @@ body {
     font-size: 0.9rem;
     font-weight: 700;
     
-    /* FIX: Removed ugly text-shadow */
     text-shadow: none; 
     
     z-index: 2;
@@ -1033,7 +957,6 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     
-    /* FIX: Add transition so it fades out smoothly */
     transition: opacity 0.2s ease;
 
     pointer-events: none;
@@ -1043,19 +966,15 @@ body {
     opacity: 0;
 }
 
-/* HOVER STATE: Zoom & Pop */
 .movie-card:hover {
-    transform: scale(1.3); /* Zoom */
-    z-index: 100; /* Bring to front */
+    transform: scale(1.3);  
+    z-index: 100;  
     
-    /* FIX: Softer, larger shadow (Netflix style) */
     box-shadow: 0 14px 28px rgba(0,0,0,0.5), 0 10px 10px rgba(0,0,0,0.4);
     
-    /* Remove delay on hover enter so it pops instantly */
     transition-delay: 0.07s;
 }
 
-/* 2. The Image itself */
 .movie-card img {
     width: 100%;
     height: 100%;
@@ -1063,7 +982,6 @@ body {
     border-radius: 0px;
 }
 
-/* --- THE OVERLAY (Hidden by default) --- */
 .card-overlay {
     position: absolute;
     top: 0;
@@ -1071,7 +989,6 @@ body {
     width: 100%;
     height: 100%;
     
-    /* Darker gradient for the hover state so buttons pop */
     background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, rgba(0,0,0,0.2) 100%);
     border-radius: 0px;
     
@@ -1080,13 +997,12 @@ body {
     justify-content: flex-end;
     padding: 10px;
     
-    opacity: 0; /* Hidden by default */
+    opacity: 0;  
     transition: opacity 0.3s ease;
 
     z-index: 10;
 }
 
-/* Show Overlay on Hover */
 .movie-card:hover .card-overlay {
     opacity: 1;
 }
@@ -1119,17 +1035,15 @@ body {
     color: black;
 }
 
-/* Play button specific style */
 .mini-btn.play {
     background-color: white;
     color: black;
     border: none;
-    font-size: 12px; /* Slightly larger icon */
+    font-size: 12px; 
 }
 
 /* --- CARD TEXT --- */
 .movie-title {
-    /* Reset old styles */
     position: relative; 
     bottom: auto;
     left: auto;
@@ -1142,14 +1056,13 @@ body {
     margin-bottom: 4px;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     
-    /* Truncate long titles */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .card-info {
-    color: #46d369; /* Netflix "Match" Green */
+    color: #46d369;  
     font-size: 10px;
     font-weight: bold;
     margin: 0;
@@ -1158,15 +1071,15 @@ body {
 /* --- FOOTER --- */
 .site-footer {
     width: 100%;
-    background-color: #141414; /* Deep black background */
+    background-color: #141414;  
     padding: 70px 0;
     margin-top: 50px;
-    color: #808080; /* The specific Netflix Grey */
+    color: #808080;  
     font-size: 13px;
 }
 
 .footer-content {
-    max-width: 980px; /* Standard Netflix width */
+    max-width: 980px; 
     margin: 0 auto;
     padding: 0 4%;
 }
@@ -1174,20 +1087,20 @@ body {
 /* 1. SOCIAL ICONS */
 .footer-social {
     display: flex;
-    gap: 25px; /* Space between icons */
+    gap: 25px;  
     margin-bottom: 20px;
 }
 
 .footer-social a {
-    color: white; /* Icons are white, unlike the text */
+    color: white;  
     font-size: 20px;
     text-decoration: none;
 }
 
-/* 2. LINKS GRID */
+/* LINKS GRID */
 .footer-links {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+    grid-template-columns: repeat(4, 1fr);  
     gap: 15px;
     margin-bottom: 30px;
 }
@@ -1195,7 +1108,7 @@ body {
 .footer-column {
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Space between links vertically */
+    gap: 12px;  
 }
 
 .footer-column a {
@@ -1229,9 +1142,9 @@ body {
     margin-top: 10px;
 }
 
-/* --- VIDEO TRAILER MODAL (Animated) --- */
+/* --- VIDEO TRAILER --- */
 .video-modal {
-    display: none; /* Hidden by default */
+    display: none; 
     position: fixed;
     z-index: 9999;
     left: 0;
@@ -1239,26 +1152,22 @@ body {
     width: 100%;
     height: 100%;
     
-    /* 1. GLASS BACKGROUND: See the site behind the video */
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
-    backdrop-filter: blur(8px);           /* Blurs the page behind it */
-    -webkit-backdrop-filter: blur(8px);   /* For Safari support */
+    background-color: rgba(0, 0, 0, 0.7);  
+    backdrop-filter: blur(8px);           
+    -webkit-backdrop-filter: blur(8px);   
     
     align-items: center;
     justify-content: center;
     
-    /* Animation Initial State */
     opacity: 0;
     transition: opacity 0.3s ease-out;
 }
 
-/* This class is added by JS to trigger the fade-in */
 .video-modal.show {
     opacity: 1;
 }
 
 /* --- CUSTOM PLAYER CONTROLS --- */
-/* --- CLEAN VIDEO PLAYER --- */
 .video-container {
     position: relative;
     width: 90%; 
@@ -1269,14 +1178,12 @@ body {
     box-shadow: 0 0 50px rgba(0,0,0,0.9);
     border-radius: 8px;
     
-    /* TRICK: Hides the zoomed-out parts (Logos/Share buttons) */
     overflow: hidden; 
     
     transform: scale(0.8);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* The invisible layer that holds buttons */
 .custom-controls {
     position: absolute;
     bottom: 0;
@@ -1288,12 +1195,11 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
-    opacity: 0; /* Hidden until you hover */
+    opacity: 0;  
     transition: opacity 0.3s;
     z-index: 20;
 }
 
-/* Show controls when mouse is over the video */
 .video-container:hover .custom-controls {
     opacity: 1;
 }
@@ -1309,16 +1215,16 @@ body {
 
 .control-btn:hover {
     transform: scale(1.2);
-    color: #E50914; /* Red hover */
+    color: #E50914;  
 }
 
 .close-btn {
-    margin-left: auto; /* Pushes Close button to the far right */
+    margin-left: auto;  
 }
 
 /* --- PROGRESS BAR --- */
 .progress-container {
-    flex-grow: 1; /* Takes up all remaining space */
+    flex-grow: 1;  
     height: 5px;
     background: rgba(255,255,255,0.3);
     cursor: pointer;
@@ -1327,13 +1233,12 @@ body {
 }
 
 .progress-bar {
-    width: 0%; /* JS will update this */
+    width: 0%;  
     height: 100%;
-    background-color: #E50914; /* Netflix Red */
+    background-color: #E50914;  
     border-radius: 2px;
 }
 
-/* When modal is open, zoom to full size */
 .video-modal.show .video-container {
     transform: scale(1);
 }
@@ -1342,7 +1247,6 @@ body {
     width: 100%;
     height: 100%;
     
-    /* CHANGE: Remove the zoom */
     transform: scale(1); 
     
     transform-origin: center center;
@@ -1350,7 +1254,6 @@ body {
     z-index: 0;
 }
 
-/* --- CINEMATIC BARS (Masking YouTube UI) --- */
 .video-container::before,
 .video-container::after {
     content: '';
@@ -1358,12 +1261,11 @@ body {
     left: 0;
     width: 100%;
     
-    /* Height: 70px is usually perfect to hide YouTube's top/bottom bars */
     height: 85px; 
     
     background: black;
-    z-index: 5; /* Sit ABOVE the video, but BELOW your controls */
-    pointer-events: none; /* Let clicks pass through */
+    z-index: 5;  
+    pointer-events: none;  
 }
 
 /* Top Bar */
@@ -1385,9 +1287,8 @@ body {
     padding: 20px 30px;
     background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
     z-index: 10002;
-    pointer-events: none; /* Let clicks pass through */
+    pointer-events: none;  
     
-    /* FADE LOGIC: Hidden by default, visible on hover */
     opacity: 0; 
     transition: opacity 0.3s;
 }
@@ -1403,10 +1304,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10;      /* Higher than video (0) and bars (5) */
-    cursor: pointer;  /* Shows hand icon */
-    
-    /* Flexbox to center the Big Play Icon */
+    z-index: 10;       
+    cursor: pointer;   
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1418,7 +1317,6 @@ body {
     opacity: 0;
     transform: scale(0.5);
     transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    /* Ensure icon doesn't block the click on the shield */
     pointer-events: none; 
 }
 
@@ -1432,12 +1330,11 @@ body {
     position: absolute;
     top: 20px;
     right: 25px;
-    z-index: 1000; /* Higher than everything else */
+    z-index: 1000;  
     
-    /* FIX: Make it visible immediately */
     opacity: 1; 
     
-    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background: rgba(0, 0, 0, 0.5);  
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -1471,8 +1368,8 @@ body {
     border-top: 5px solid #E50914; /* Netflix Red */
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    z-index: 15; /* Below controls, above background */
-    display: none; /* Hidden by default */
+    z-index: 15;  
+    display: none;  
 }
 
 /* --- TOP 10 ROW STYLING --- */
@@ -1480,9 +1377,9 @@ body {
     display: flex;
     align-items: center;
     position: relative;
-    margin-right: -20px; /* Pull them closer to overlap slightly */
+    margin-right: -20px; 
     cursor: pointer;
-    min-width: 250px; /* Wider to fit number + image */
+    min-width: 250px;  
     height: 160px;
     transition: transform 0.3s;
 }
@@ -1497,10 +1394,10 @@ body {
     font-size: 160px;
     font-weight: 600;
     color: black;
-    -webkit-text-stroke: 4px #595959; /* The outline effect */
+    -webkit-text-stroke: 4px #595959;  
     position: relative;
     line-height: 1;
-    margin-right: -15px; /* Tuck it behind the image */
+    margin-right: -15px; 
     z-index: 1;
     font-family: 'Archivo Black', 'Arial Black', sans-serif;
     letter-spacing: -10px;
@@ -1511,13 +1408,12 @@ body {
     width: 110px;
     height: 160px;
     object-fit: cover;
-    z-index: 2; /* Sits ON TOP of the number */
+    z-index: 2;  
 }
 
 /* --- MORE INFO MODAL --- */
-/* --- MORE INFO MODAL --- */
 .info-modal {
-    display: none; /* HIDDEN BY DEFAULT (Crucial) */
+    display: none;  
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -1528,23 +1424,20 @@ body {
     backdrop-filter: blur(5px);
     overflow-y: auto;
     
-    /* Animation States */
     opacity: 0; 
     transition: opacity 0.3s ease;
     
-    /* Flex Alignment (applied when JS sets display:flex) */
     justify-content: center;
     align-items: center;
 }
 
 .info-modal.show {
-    opacity: 1; /* Fully visible */
+    opacity: 1; 
 }
 
-/* The Box itself */
 .info-content {
     background-color: #181818;
-    margin: 50px auto; /* Centered with top gap */
+    margin: 50px auto;  
     width: 90%;
     max-width: 850px;
     border-radius: 10px;
@@ -1622,11 +1515,11 @@ body {
 }
 
 .info-left {
-    flex: 2; /* Takes up 66% width */
+    flex: 2; 
 }
 
 .info-right {
-    flex: 1; /* Takes up 33% width */
+    flex: 1;  
 }
 
 /* Metadata Text */
@@ -1657,19 +1550,19 @@ body {
 .info-row .label { color: #777; margin-right: 5px; }
 .info-row .value { color: white; }
 
-/* --- INFO MODAL BUTTONS (Side-by-Side Fix) --- */
+/* --- INFO MODAL BUTTONS --- */
 .info-buttons {
-    display: flex;          /* Enables Flexbox */
-    flex-direction: row;    /* Forces items Horizontal */
-    align-items: center;    /* Aligns them vertically center */
-    gap: 15px;              /* Space between Play and My List */
+    display: flex;          
+    flex-direction: row;     
+    align-items: center;     
+    gap: 15px;               
     margin-top: 20px;
 }
 
 /* My List Button Style */
 .btn-list {
     width: 140px; 
-    height: 53px;           /* Match height of Play button */
+    height: 53px;            
     background: rgba(109, 109, 110, 0.7); 
     border-radius: 5px;
     color: #FFFFFF;
@@ -1685,13 +1578,11 @@ body {
     font-weight: 700;
     font-size: 16px;
     
-    /* REMOVED: transform transition for zoom */
     transition: background-color 0.2s; 
 }
 
 .btn-list:hover {
     background-color: rgba(109, 109, 110, 0.4);
-    /* REMOVED: transform: scale(1.05); -> No more zoom */
 }
 
 /* --- TOAST NOTIFICATION (Undo) --- */
@@ -1710,7 +1601,6 @@ body {
     align-items: center;
     gap: 20px;
     
-    /* Animation: Slide down and fade in */
     opacity: 0;
     transform: translateY(-20px);
     transition: all 0.3s ease;
@@ -1729,7 +1619,7 @@ body {
 .toast-undo {
     background: none;
     border: none;
-    color: #E50914; /* Netflix Red */
+    color: #E50914;  
     font-weight: 700;
     cursor: pointer;
     font-size: 14px;
@@ -1752,7 +1642,7 @@ body {
 }
 
 .auth-overlay {
-    background: rgba(0, 0, 0, 0.5); /* Dark tint over the image */
+    background: rgba(0, 0, 0, 0.5);  
     width: 100%;
     min-height: 140vh;
     display: flex;
@@ -1763,7 +1653,7 @@ body {
 
 .login-box {
     margin: auto;
-    background: rgba(0, 0, 0, 0.75); /* Dark semi-transparent box */
+    background: rgba(0, 0, 0, 0.75); 
     padding: 60px 68px 40px;
     width: 450px;
     color: white;
@@ -1791,14 +1681,14 @@ body {
 }
 
 .auth-input:focus {
-    background: #454545; /* Slightly lighter on focus */
+    background: #454545;  
     outline: none;
 }
 
 .btn-submit {
     width: 100%;
     height: 48px;
-    background: var(--netflix-red); /* Uses your global variable */
+    background: var(--netflix-red);  
     color: white;
     border: none;
     border-radius: 4px;
@@ -1810,7 +1700,7 @@ body {
 }
 
 .btn-submit:hover {
-    background: #c11119; /* Darker red on hover */
+    background: #c11119;  
 }
 
 .auth-subtext {
@@ -1828,7 +1718,6 @@ body {
     text-decoration: underline;
 }
 
-/* Flash Error Messages */
 .flash-message {
     background-color: #e87c03;
     color: white;
@@ -1838,10 +1727,6 @@ body {
     font-size: 14px;
 }
 
-/* --- UI SCALING TWEAKS (2x Logo, 0.8x UI) --- */
-
-/* 1. BIGGER LOGO (2x) */
-/* Applies to Login, Signup, and Profiles pages */
 .auth-header .nav-logo, 
 .profile-nav .nav-logo {
     height: 70px !important;
@@ -1856,13 +1741,13 @@ body {
 .recaptcha-text {
     margin-top: 15px;
     font-size: 13px;
-    color: #8c8c8c; /* Specific subtle grey */
+    color: #8c8c8c; 
     line-height: 1.4;
     text-align: left;
 }
 
 .recaptcha-text a {
-    color: #0071eb; /* Link Blue */
+    color: #0071eb; 
     text-decoration: none;
     cursor: pointer;
 }
@@ -1875,13 +1760,11 @@ body {
 .login-footer {
     width: 100%;
     padding: 30px 0;
-    background-color: rgba(0, 0, 0, 0.75); /* Dark semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.75);  
     position: relative;
     z-index: 10;
 }
 
-/* Re-use existing .footer-content max-width if you have it, 
-   otherwise use this to center it */
 .login-footer .footer-content {
     max-width: 1000px;
     margin: 0 auto;
@@ -1898,7 +1781,7 @@ body {
 /* Footer Grid Layout */
 .login-links {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 Columns */
+    grid-template-columns: repeat(4, 1fr);  
     gap: 15px;
     margin-bottom: 30px;
     font-size: 13px;
@@ -1930,7 +1813,7 @@ body {
     background: transparent;
     color: #999;
     border: none;
-    appearance: none; /* Hides default arrow */
+    appearance: none;  
     font-size: 14px;
     padding-right: 20px;
     outline: none;
@@ -1945,51 +1828,44 @@ body {
 /* Mobile Tweak */
 @media (max-width: 740px) {
     .login-links {
-        grid-template-columns: repeat(2, 1fr); /* 2 cols on mobile */
+        grid-template-columns: repeat(2, 1fr);  
     }
 }
 
-/* 2. NORMAL NAVBAR LOGO (Reset for Main Pages) */
+/* 2. NORMAL NAVBAR LOGO */
 .navbar .nav-logo {
-    height: 35px !important; /* Standard Netflix Size */
+    height: 35px !important; 
     width: auto;
 }
 
 
-/* 3. SMALLER PROFILE ELEMENTS (0.8x) */
-/* Shrink the "Who's Watching?" Title */
 .profile-title {
-    font-size: 2.5rem !important; /* Down from 3.5rem */
+    font-size: 2.5rem !important;  
     margin-bottom: 1.5rem !important;
 }
 
-/* Shrink the Avatars (180px -> ~145px) */
 .profiles-body .avatar-wrapper {
     width: 145px !important;
     height: 128px !important;
 }
 
-/* Shrink the Profile Names */
 .profile-name {
     font-size: 1rem !important;
     margin-top: 5px;
 }
 
-/* Shrink the "Manage Profiles" Button */
 .manage-btn {
     font-size: 1rem !important;
     padding: 8px 25px !important;
     margin-top: 20px;
 }
 
-/* Shrink the Grid Gap */
 .profile-grid {
     gap: 1.5rem !important;
 }
 
-/* 4. MANAGE PAGE TWEAKS */
 .add-btn-wrapper i {
-    font-size: 4rem !important; /* Smaller Plus Icon */
+    font-size: 4rem !important;  
 }
 
 /* Mobile */
@@ -2013,18 +1889,16 @@ body {
     align-items: center;
     justify-content: center;
     
-    /* DEFAULT STATE: Transparent & Invisible Border */
     background: transparent;
     border: 1px solid transparent; 
     
     transition: all 0.4s ease;
 }
 
-/* --- ACTIVE STATE (When Clicked) --- */
 .search-box.active {
     background: black;
     border: 1px solid white;
-    padding: 5px 10px; /* Add space for text */
+    padding: 5px 10px;  
 }
 
 /* --- THE SEARCH ICON --- */
@@ -2032,13 +1906,11 @@ body {
     font-size: 1.2rem;
     color: white;
     cursor: pointer;
-    /* Ensure icon acts as the "Button" */
     z-index: 2; 
 }
 
-/* --- THE INPUT FIELD (The Problem Child) --- */
+/* --- THE INPUT FIELD --- */
 .search-input {
-    /* FORCE HIDDEN: No width, no padding, no visibility */
     width: 0 !important;
     padding: 0 !important;
     border: none !important;
@@ -2049,20 +1921,18 @@ body {
     outline: none;
     font-size: 14px;
     
-    /* Animation */
     transition: width 0.4s ease, opacity 0.4s ease;
 }
 
-/* --- EXPAND INPUT (Only when Parent is Active) --- */
 .search-box.active .search-input {
-    width: 240px !important;     /* Netflix Width */
-    padding-left: 10px !important; /* Text Spacing */
+    width: 240px !important;      
+    padding-left: 10px !important;  
     opacity: 1 !important;
 }
 
 /* --- CLEAR BUTTON (X) --- */
 .search-clear {
-    display: none; /* Hidden by default */
+    display: none;  
     font-size: 1rem;
     color: #ccc;
     cursor: pointer;
@@ -2070,22 +1940,22 @@ body {
 }
 
 .navbar.search-mode {
-    background-color: #000000 !important; /* Matches Search Overlay */
-    background-image: none !important;    /* Removes any gradients */
+    background-color: #000000 !important;  
+    background-image: none !important;    
     transition: background-color 0.1s ease;
 }
 
 /* --- FULL SCREEN RESULTS GRID --- */
 .search-overlay {
-    display: none;        /* Hidden by default */
+    display: none;        
     position: fixed;
-    top: 70px;            /* Below Navbar */
+    top: 70px;            
     left: 0;
     width: 100%;
     height: calc(100vh - 70px);
-    background-color: #000000; /* Netflix Background */
+    background-color: #000000; 
     z-index: 2000;
-    overflow-y: auto;     /* Scrollable */
+    overflow-y: auto;      
     padding: 20px 4%;
 }
 
@@ -2099,15 +1969,13 @@ body {
 /* The Grid Layout */
 .search-grid {
     display: grid;
-    /* Responsive columns that fill space */
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    gap: 10px;            /* Tight gap like Netflix */
+    gap: 10px;           
 }
 
-/* Movie Card in Search (Matches your main cards) */
 .search-grid .movie-card {
     width: 100%;
-    aspect-ratio: 16/9;   /* Force standard shape */
+    aspect-ratio: 16/9;   
     height: auto;
     position: relative;
     cursor: pointer;
@@ -2116,44 +1984,39 @@ body {
 
 .search-grid .card-overlay {
     overflow: visible;    
-    opacity: 1 !important;        /* Always visible */
+    opacity: 1 !important;        
     visibility: visible !important;
     background: linear-gradient(
         to top, 
         rgba(0, 0, 0, 0.9) 10%, 
         transparent 100%
-    ); /* Permanent dark gradient at bottom */
+    );  
 }
 
 .search-grid .movie-card img {
-    opacity: 0.7; /* Optional: Slightly darken bg image to make logo pop */
+    opacity: 0.7;  
     transition: opacity 0.3s;
 }
 
 .search-grid .movie-card:hover img {
-    opacity: 1; /* Brighten image on hover */
+    opacity: 1; 
 }
 
 /* --- SEARCH RESULT LOGOS --- */
 .search-logo {
     position: absolute;
     
-    /* 1. HORIZONTAL CENTER */
     left: 50%;
-    transform: translateX(-50%); /* Centers it perfectly */
+    transform: translateX(-50%);  
     
-    /* 2. VERTICAL POSITION */
-    bottom: 10px; /* Sits at the bottom edge */
+    bottom: 10px;  
     
-    /* 3. SIZE CONTROLS */
     width: auto !important;
     height: auto !important;
     
-    /* Constraint: Don't let it get too wide or tall */
     max-width: 85% !important;
     max-height: 40% !important; 
     
-    /* 4. VISUALS */
     object-fit: contain !important;
     object-position: bottom center;
     
@@ -2178,19 +2041,17 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #141414; /* Netflix Black */
-    z-index: 9999; /* Sit on top of EVERYTHING */
+    background-color: #141414; 
+    z-index: 9999;  
     
     display: flex;
     justify-content: center;
     align-items: center;
     
-    /* Smooth fade out transition */
     opacity: 1;
     transition: opacity 0.5s ease-out, visibility 0.5s;
 }
 
-/* Class to hide it */
 #loader-wrapper.loaded {
     opacity: 0;
     visibility: hidden;
@@ -2201,17 +2062,14 @@ body {
     width: 50px;
     height: 50px;
     
-    /* The trick: Transparent border with ONE red side */
     border: 4px solid transparent; 
-    border-top-color: #E50914; /* Netflix Red */
+    border-top-color: #E50914;  
     
-    border-radius: 50%; /* Make it a circle */
+    border-radius: 50%;  
     
-    /* Animation Name | Duration | Timing | Loop */
     animation: spin 1s linear infinite;
 }
 
-/* Define the Spin Animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -2224,8 +2082,8 @@ body {
 
     /* --- 1. NAVBAR --- */
     .navbar {
-        padding: 0 4%; /* Reduce side padding */
-        height: 60px;  /* Slightly smaller height */
+        padding: 0 4%;  
+        height: 60px;   
     }
 
     .nav-left {
