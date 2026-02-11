@@ -4,10 +4,14 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Netflix</title>
+        <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
         <link href="static\styles.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     </head>
     <body>
+        <div id="loader-wrapper">
+            <div class="netflix-spinner"></div>
+        </div>
 
         <nav class="navbar">
             <div class="nav-left">
@@ -121,9 +125,9 @@
                 const box = document.getElementById('searchBox');
                 const input = document.getElementById('searchInput');
                 const clearBtn = document.getElementById('searchClear');
-                        
+
                 box.classList.toggle('active');
-                        
+
                 if (box.classList.contains('active')) {
                     input.focus();
                     // Hide X initially because box is empty
@@ -140,12 +144,15 @@
                 const input = document.getElementById('searchInput');
                 const overlay = document.getElementById('searchOverlay');
                 const clearBtn = document.getElementById('searchClear');
+                const navbar = document.querySelector('.navbar'); // Select Navbar
 
-                // Reset everything
                 input.value = '';            
                 box.classList.remove('active'); 
                 overlay.style.display = 'none'; 
-                clearBtn.style.display = 'none'; // FORCE HIDE
+                clearBtn.style.display = 'none';
+
+                // *** REVERT NAVBAR ***
+                navbar.classList.remove('search-mode'); // Makes it transparent again
             }
         
             // 3. HANDLE TYPING (The Logic)
@@ -154,52 +161,64 @@
                 const grid = document.getElementById('searchGrid');
                 const title = document.getElementById('resultsTitle');
                 const clearBtn = document.getElementById('searchClear');
+                const navbar = document.querySelector('.navbar');
 
-                if (query.length > 0) {
-                    clearBtn.style.display = 'block';
-                } else {
-                    clearBtn.style.display = 'none';
-                }
-            
-                // Show/Hide X button
+                // Toggle 'X' button
                 clearBtn.style.display = query.length > 0 ? 'block' : 'none';
-            
-                // Clear previous timer
+
                 clearTimeout(searchDebounce);
-            
-                // If empty, hide overlay and return
+
+                // 1. If empty, hide everything
                 if (!query.trim()) {
                     overlay.style.display = 'none';
+                    navbar.classList.remove('search-mode');
                     return;
                 }
             
-                // 500ms Delay (Debounce)
+                // 2. Fetch Data
                 searchDebounce = setTimeout(() => {
                     fetch(`/search?q=${query}`)
                         .then(res => res.json())
                         .then(movies => {
-                            grid.innerHTML = ''; // Clear old results
-                            overlay.style.display = 'block'; // Show overlay
+                            grid.innerHTML = '';
+                            overlay.style.display = 'block';
+                            navbar.classList.add('search-mode');
 
                             if (movies.length > 0) {
-                                title.innerText = `More Titles Related to "${query}"`;
+                                title.innerText = `Results for "${query}"`;
 
                                 movies.forEach(movie => {
-                                    const html = `
+                                    // --- LOGO LOGIC START ---
+                                    let contentHTML = '';
+
+                                    // Check if logo_path is valid (not null/empty)
+                                    if (movie.logo_path) {
+                                        contentHTML = `
+                                            <img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" 
+                                                 class="search-logo" 
+                                                 alt="${movie.title}">
+                                        `;
+                                    } else {
+                                        // Fallback to Text Title
+                                        contentHTML = `<p class="movie-title">${movie.title}</p>`;
+                                    }
+                                    // --- LOGO LOGIC END ---
+                                
+                                    const card = `
                                         <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.id})">
                                             <img src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" 
+                                                 class="bg-image"
                                                  onerror="this.src='/static/images/placeholder.jpg'">
 
                                             <div class="card-overlay">
-                                                <p class="movie-title">${movie.title}</p>
+                                                ${contentHTML}
                                             </div>
                                         </div>
                                     `;
-                                    grid.innerHTML += html;
+                                    grid.innerHTML += card;
                                 });
                             } else {
-                                title.innerText = `Your search for "${query}" did not have any matches.`;
-                                grid.innerHTML = '<p style="color: grey;">Suggestions:<ul><li>Try different keywords</li><li>Looking for a movie or TV show?</li></ul></p>';
+                                title.innerText = `No matches found for "${query}"`;
                             }
                         });
                 }, 500);
@@ -215,6 +234,16 @@
                 if (!isClickInside && input.value === '') {
                     box.classList.remove('active');
                 }
+            });
+            /* --- HIDE LOADER WHEN PAGE IS READY --- */
+            window.addEventListener('load', function() {
+                const loader = document.getElementById('loader-wrapper');
+                
+                // Optional: Add a small delay so the animation is seen for at least 0.5s
+                // (Prevents it from flickering too fast on fast internet)
+                setTimeout(() => {
+                    loader.classList.add('loaded');
+                }, 500);
             });
         </script>
 
@@ -313,7 +342,9 @@
                     <img id="info-backdrop" src="" alt="">
 
                     <div class="info-header-overlay">
-                        <h1 id="info-title">Movie Title</h1>
+                        <img id="modal-logo" class="hero-logo" style="display: none;" alt="Movie Logo">
+    
+                        <h1 id="modal-title" class="hero-title" style="display: none;"></h1>
 
                         <div class="info-buttons">
 

@@ -505,7 +505,7 @@ def new_popular():
 
 @app.route('/get_info/<media_type>/<int:tmdb_id>')
 def get_info(media_type, tmdb_id):
-    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&language=en-US&append_to_response=credits"
+    url = f"https://api.themoviedb.org/3/{media_type}/{tmdb_id}?api_key={TMDB_API_KEY}&language=en-US&append_to_response=credits,images&include_image_language=en,null"
     
     try:
         response = requests.get(url)
@@ -519,14 +519,11 @@ def get_info(media_type, tmdb_id):
 @app.route('/search')
 def search():
     query = request.args.get('q', '').strip()
-    
-    # If empty query, return nothing
     if not query:
         return jsonify([])
 
     conn = get_db_connection()
-    # Search for Title matching the query (Case insensitive with LIKE)
-    # We limit to 20 results to keep it fast
+    # Fetch results
     results = conn.execute("""
         SELECT * FROM movies 
         WHERE title LIKE ? 
@@ -535,7 +532,6 @@ def search():
     """, ('%' + query + '%',)).fetchall()
     conn.close()
 
-    # Convert row objects to a list of dictionaries (JSON compatible)
     movies_list = []
     for movie in results:
         movies_list.append({
@@ -543,11 +539,12 @@ def search():
             'title': movie['title'],
             'media_type': movie['media_type'],
             'backdrop_path': movie['backdrop_path'],
-            'poster_path': movie['poster_path'],
-            'age_rating': movie['age_rating'] or 'n/a'
+            'logo_path': movie['logo_path'],    # <--- THIS LINE IS REQUIRED
+            'age_rating': movie['age_rating']
         })
 
     return jsonify(movies_list)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

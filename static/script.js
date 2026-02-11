@@ -199,10 +199,12 @@ function seekVideo(event) {
 /* --- MORE INFO MODAL LOGIC --- */
 function openMoreInfo(mediaType, tmdbId) {
     const modal = document.getElementById('info-modal');
-    modal.style.display = 'block';
     
-    // Slight delay for animation
-    setTimeout(() => { modal.classList.add('show'); }, 10);
+    // KEY FIX: Use 'flex' to maintain your CSS centering
+    modal.style.display = 'flex'; 
+    
+    // Add opacity class after a tiny delay for the animation to catch
+    setTimeout(() => {modal.classList.add('show');}, 10);
 
     // 1. Fetch Details from Backend
     fetch(`/get_info/${mediaType}/${tmdbId}`)
@@ -212,7 +214,29 @@ function openMoreInfo(mediaType, tmdbId) {
 
             // 2. Populate Data
             document.getElementById('info-backdrop').src = `https://image.tmdb.org/t/p/original${data.backdrop_path}`;
-            document.getElementById('info-title').innerText = data.title || data.name;
+            
+            const logoImg = document.getElementById('modal-logo');
+            const titleText = document.getElementById('modal-title');
+
+            // --- FIX START: Extract Logo from the new "images" structure ---
+            let logoPath = null;
+            if (data.images && data.images.logos && data.images.logos.length > 0) {
+                logoPath = data.images.logos[0].file_path;
+            }
+            // --- FIX END ---
+
+            if (logoPath) {
+                // HAS LOGO: Show Image, Hide Text
+                logoImg.src = `https://image.tmdb.org/t/p/w500${logoPath}`;
+                logoImg.style.display = 'block';
+                titleText.style.display = 'none';
+            } else {
+                // NO LOGO: Hide Image, Show Text
+                logoImg.style.display = 'none';
+                titleText.innerText = data.title || data.name; // Handle Movie vs TV
+                titleText.style.display = 'block';
+            }
+
             document.getElementById('info-overview').innerText = data.overview;
             document.getElementById('info-year').innerText = (data.release_date || data.first_air_date || "").substring(0,4);
             
@@ -223,7 +247,7 @@ function openMoreInfo(mediaType, tmdbId) {
             document.getElementById('info-runtime').innerText = `${hours}h ${minutes}m`;
 
             // Genres
-            const genres = data.genres.map(g => g.name).join(', ');
+            const genres = data.genres ? data.genres.map(g => g.name).join(', ') : "N/A";
             document.getElementById('info-genres').innerText = genres;
 
             // Cast (Top 3)
@@ -234,42 +258,64 @@ function openMoreInfo(mediaType, tmdbId) {
 
             // 3. Configure the "Play" button
             const playBtn = document.getElementById('info-play-btn');
-            const title = (data.title || data.name).replace(/'/g, ""); // Remove apostrophes
+            const title = (data.title || data.name || "").replace(/'/g, ""); // Remove apostrophes
             playBtn.setAttribute('onclick', `closeMoreInfo(); playTrailer('${mediaType}', ${tmdbId}, '${title}')`);
 
-            // --- 4. NEW: Configure the "My List" button ---
+            // 4. Configure the "My List" button
             const listBtn = document.getElementById('info-list-btn');
             
             // This updates the onclick to include the specific ID and Type
             listBtn.setAttribute('onclick', `toggleMyList(event, this, '${mediaType}', ${tmdbId})`);
             
-            // Optional: Reset button visual state to "Add" every time you open a new modal
-            // (Unless you add a check to see if it's already saved)
-            const icon = listBtn.querySelector('i');
-            icon.className = 'fas fa-plus';
+            // Reset button visual state
             listBtn.innerHTML = '<i class="fas fa-plus"></i> My List';
         })
         .catch(err => console.error(err));
 }
 
+/* --- 1. CLOSE FUNCTION --- */
 function closeMoreInfo() {
     const modal = document.getElementById('info-modal');
+    
+    // Fade out first
     modal.classList.remove('show');
-    setTimeout(() => { modal.style.display = 'none'; }, 300);
+    
+    // Wait for animation (300ms) then hide
+    setTimeout(() => {
+        modal.style.display = 'none';
+    }, 300);
+    
+    // Stop video if playing
+    const videoContainer = document.getElementById('trailer-container');
+    if (videoContainer) videoContainer.innerHTML = ''; 
 }
 
-/* --- CLOSE MODALS ON CLICK OUTSIDE --- */
+
+window.addEventListener('click', function(event) {
+    const modal = document.getElementById('info-modal');
+    
+    if (event.target === modal) {
+        closeMoreInfo();
+    }
+});
+
+/* --- 2. CLOSE ON CLICK OUTSIDE (Must be outside functions) --- */
 window.onclick = function(event) {
-    // 1. Handle More Info Modal
+    
+    // Get the modals
     const infoModal = document.getElementById('info-modal');
-    if (event.target == infoModal) {
+    const videoModal = document.getElementById('video-modal'); // If you have a video player
+
+    // Check if the user clicked strictly on the dark background (the modal wrapper)
+    // and NOT on the card content inside it.
+    
+    if (event.target === infoModal) {
         closeMoreInfo();
     }
 
-    // 2. Handle Video Player Modal (NEW)
-    const videoModal = document.getElementById('video-modal');
-    if (event.target == videoModal) {
-        closeVideo();
+    if (videoModal && event.target === videoModal) {
+        // Assuming you have a closeVideo function defined elsewhere
+        closeVideo(); 
     }
 }
 

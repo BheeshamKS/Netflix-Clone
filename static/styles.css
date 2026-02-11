@@ -1515,23 +1515,30 @@ body {
 }
 
 /* --- MORE INFO MODAL --- */
+/* --- MORE INFO MODAL --- */
 .info-modal {
-    display: none; /* Hidden by default */
+    display: none; /* HIDDEN BY DEFAULT (Crucial) */
     position: fixed;
-    z-index: 10000;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Dark backdrop */
+    background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
-    overflow-y: auto; /* Allow scrolling if content is long */
-    opacity: 0;
-    transition: opacity 0.3s;
+    overflow-y: auto;
+    
+    /* Animation States */
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+    
+    /* Flex Alignment (applied when JS sets display:flex) */
+    justify-content: center;
+    align-items: center;
 }
 
 .info-modal.show {
-    opacity: 1;
+    opacity: 1; /* Fully visible */
 }
 
 /* The Box itself */
@@ -1546,6 +1553,7 @@ body {
     overflow: hidden;
     transform: scale(0.9);
     transition: transform 0.3s;
+
 }
 
 .info-modal.show .info-content {
@@ -1999,22 +2007,7 @@ body {
 
 
 /* --- NETFLIX SEARCH BAR ANIMATION --- */
-.search-box {
-    display: flex;
-    align-items: center;
-    
-    /* Key: Transparent and No Border by default */
-    background: transparent;
-    border: 1px solid transparent; 
-    
-    /* Key: No padding on the container itself in idle mode */
-    padding: 0;
-    
-    transition: all 0.4s ease;
-    margin-right: 20px;
-}
 
-/* --- 2. SEARCH INPUT (IDLE) --- */
 .search-box {
     display: flex;
     align-items: center;
@@ -2023,10 +2016,8 @@ body {
     /* DEFAULT STATE: Transparent & Invisible Border */
     background: transparent;
     border: 1px solid transparent; 
-    padding: 5px; /* Just enough for the icon */
     
     transition: all 0.4s ease;
-    margin-right: 20px;
 }
 
 /* --- ACTIVE STATE (When Clicked) --- */
@@ -2078,6 +2069,12 @@ body {
     margin-left: 5px;
 }
 
+.navbar.search-mode {
+    background-color: #000000 !important; /* Matches Search Overlay */
+    background-image: none !important;    /* Removes any gradients */
+    transition: background-color 0.1s ease;
+}
+
 /* --- FULL SCREEN RESULTS GRID --- */
 .search-overlay {
     display: none;        /* Hidden by default */
@@ -2086,7 +2083,7 @@ body {
     left: 0;
     width: 100%;
     height: calc(100vh - 70px);
-    background-color: #141414; /* Netflix Background */
+    background-color: #000000; /* Netflix Background */
     z-index: 2000;
     overflow-y: auto;     /* Scrollable */
     padding: 20px 4%;
@@ -2117,14 +2114,239 @@ body {
     transition: transform 0.3s;
 }
 
-.search-grid .movie-card:hover {
-    transform: scale(1.05);
-    z-index: 10;
+.search-grid .card-overlay {
+    overflow: visible;    
+    opacity: 1 !important;        /* Always visible */
+    visibility: visible !important;
+    background: linear-gradient(
+        to top, 
+        rgba(0, 0, 0, 0.9) 10%, 
+        transparent 100%
+    ); /* Permanent dark gradient at bottom */
 }
 
 .search-grid .movie-card img {
+    opacity: 0.7; /* Optional: Slightly darken bg image to make logo pop */
+    transition: opacity 0.3s;
+}
+
+.search-grid .movie-card:hover img {
+    opacity: 1; /* Brighten image on hover */
+}
+
+/* --- SEARCH RESULT LOGOS --- */
+.search-logo {
+    position: absolute;
+    
+    /* 1. HORIZONTAL CENTER */
+    left: 50%;
+    transform: translateX(-50%); /* Centers it perfectly */
+    
+    /* 2. VERTICAL POSITION */
+    bottom: 10px; /* Sits at the bottom edge */
+    
+    /* 3. SIZE CONTROLS */
+    width: auto !important;
+    height: auto !important;
+    
+    /* Constraint: Don't let it get too wide or tall */
+    max-width: 85% !important;
+    max-height: 40% !important; 
+    
+    /* 4. VISUALS */
+    object-fit: contain !important;
+    object-position: bottom center;
+    
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+    z-index: 5;
+    pointer-events: none;
+}
+
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+}
+
+/* --- LOADING SCREEN OVERLAY --- */
+#loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #141414; /* Netflix Black */
+    z-index: 9999; /* Sit on top of EVERYTHING */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    /* Smooth fade out transition */
+    opacity: 1;
+    transition: opacity 0.5s ease-out, visibility 0.5s;
+}
+
+/* Class to hide it */
+#loader-wrapper.loaded {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* --- THE RED SPINNER --- */
+.netflix-spinner {
+    width: 50px;
+    height: 50px;
+    
+    /* The trick: Transparent border with ONE red side */
+    border: 4px solid transparent; 
+    border-top-color: #E50914; /* Netflix Red */
+    
+    border-radius: 50%; /* Make it a circle */
+    
+    /* Animation Name | Duration | Timing | Loop */
+    animation: spin 1s linear infinite;
+}
+
+/* Define the Spin Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+/* MOBILE RESPONSIVENESS (Max-Width: 768px) */
+
+@media screen and (max-width: 768px) {
+
+    /* --- 1. NAVBAR --- */
+    .navbar {
+        padding: 0 4%; /* Reduce side padding */
+        height: 60px;  /* Slightly smaller height */
+    }
+
+    .nav-left {
+        gap: 10px;
+    }
+
+    .logo {
+        height: 25px; /* Smaller Logo */
+    }
+
+    /* Hide text links on mobile (Netflix style) */
+    .nav-links {
+        display: none; 
+    }
+
+    /* --- 2. HERO SECTION --- */
+    .hero {
+        height: 60vh; /* Not full screen, let rows show sooner */
+        background-position: center top;
+    }
+
+    .hero-content {
+        width: 100%; /* Use full width */
+        padding-bottom: 80px; /* Lift text up */
+    }
+
+    .hero-title {
+        font-size: 2rem; /* Shrink title */
+        max-width: 90%;
+    }
+
+    .hero-desc {
+        font-size: 0.9rem;
+        max-width: 100%;
+        
+        /* Limit to 3 lines of text */
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .hero-buttons .btn {
+        padding: 0.6rem 1.2rem; /* Smaller buttons */
+        font-size: 0.9rem;
+    }
+
+    /* --- 3. MOVIE ROWS --- */
+    .row-header {
+        font-size: 1.1rem;
+        margin-left: 4%;
+    }
+
+    .row {
+        padding: 0 4%; /* Align with header */
+        gap: 8px;      /* Tighter gap */
+    }
+
+    .movie-card {
+        min-width: 120px; /* Smaller cards for mobile */
+        height: 180px;    /* Maintain aspect ratio */
+    }
+    
+    /* Ensure title on cards is readable */
+    .movie-title {
+        font-size: 0.8rem;
+    }
+
+    /* --- 4. SEARCH BAR FIX --- */
+    .search-box.active .search-input {
+        width: 150px !important; /* Smaller expansion width */
+    }
+    
+    .search-box {
+        margin-right: 5px; /* Tighter spacing */
+    }
+
+    /* --- 5. SEARCH RESULTS GRID --- */
+    .search-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 Columns on mobile */
+        gap: 10px;
+    }
+
+    .search-overlay {
+        padding: 20px 10px; /* Less padding */
+        top: 60px; /* Match new navbar height */
+    }
+
+    /* --- 6. MODAL (MORE INFO) --- */
+    .info-content {
+        width: 100%;      /* Full Width */
+        height: 100%;     /* Full Height */
+        margin: 0;        /* No margin */
+        border-radius: 0; /* Square corners */
+        max-width: none;
+        overflow-y: scroll; /* Allow scrolling inside */
+    }
+
+    .info-header {
+        height: 300px; /* Shorter header image */
+    }
+
+    .info-title {
+        font-size: 1.8rem; /* Smaller modal title */
+    }
+    
+    /* Stack the modal info vertically */
+    .info-grid {
+        flex-direction: column; 
+        padding: 20px;
+    }
+
+    .info-right {
+        margin-top: 20px;
+        padding-left: 0;
+        border-left: none; /* Remove divider */
+    }
+
+    .close-info-btn {
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.5); /* Make it easier to see */
+    }
 }
