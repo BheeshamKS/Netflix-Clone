@@ -30,10 +30,13 @@ def load_user(user_id):
     return None
 
 def get_db_connection():
-    conn = sqlite3.connect('netflix.db')
-    conn.row_factory = sqlite3.Row  
-    return conn
+    basedir = os.path.abspath(os.path.dirname(__file__))
 
+    db_path = os.path.join(basedir, 'netflix.db')
+
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
 # --- AUTH ROUTES ---
 
 @app.route('/signup', methods=['GET', 'POST'])
