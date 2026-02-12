@@ -1,6 +1,6 @@
 # Netflix Clone
 
-## Visit: [Here](https://bheeshamks.pythonanywhere.com)
+## Visit: <a href="https://bheeshamks.pythonanywhere.com" target="_blank">Here</a>
 
 #### Video Demo: [Click Here](https://youtu.be/qkeoSfoD3f0)
 ## Description:
