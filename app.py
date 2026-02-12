@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 import sqlite3
 import random
