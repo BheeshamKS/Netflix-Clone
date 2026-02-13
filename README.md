@@ -82,5 +82,44 @@ Why separate the seed.py script? I debated fetching movie data in real-time ever
 
 The "Logo" Logic: Standard movie apps just show a poster. To achieve the premium "Netflix" look, I needed the title to be an image (logo), not text. I designed the database schema to store a logo_path and wrote specific frontend logic: if a logo exists, show the image; if not, fallback to text. This small detail significantly elevated the visual quality of the project.
 
+## Installation & Setup
+To run this project locally on your machine, follow these steps:
+
+### 1. Install Dependencies
+Make sure you have Python installed. Navigate to the project directory in your terminal and install the required Python libraries using the `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Configure the TMDB API Key
+This project requires data from The Movie Database (TMDB).
+
+Create a free account at TMDB and generate an API API Key.
+
+In the root directory of this project, create a new file named `config.py`.
+
+Inside `config.py`, add your API key like this:
+
+```bash
+TMDB_API_KEY = "your_actual_api_key_here"
+```
+
+### 3. Seed the Database
+Before running the app, you need to populate the database with movie data and create the tables. Run the seeding script:
+
+```bash
+python seed.py
+```
+(Wait for the script to finish fetching the data. It will print a success message when the `netflix.db` file is fully populated).
+
+### 4. Run the Application
+Start the Flask server:
+
+```bash
+flask run
+```
+Open your browser and go to http://127.0.0.1:5000 to view the clone.
+
 ## Conclusion
 This project was a deep dive into full-stack development. It required coordinating a Python backend with a complex database schema while maintaining a high standard of visual fidelity on the frontend. It demonstrates proficiency in API integration, database design, and responsive web development.
