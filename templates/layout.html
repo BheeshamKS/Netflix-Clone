@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>Netflix</title>
         <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
         <link href="static\styles.css" rel="stylesheet">
@@ -15,7 +15,11 @@
 
         <nav class="navbar">
             <div class="nav-left">
-                <img href="/" src="/static/images/netflix_logo.svg" alt="Logo" class="nav-logo">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="{{ url_for('static', filename='/images/Netflix_N.png') }}">
+                    
+                    <img class="nav-logo" src="{{ url_for('static', filename='images/netflix_logo.svg') }}" alt="Netflix">
+                </picture>
                 
                 <ul class="nav-links">
                     <li>
@@ -398,5 +402,19 @@
                 }
             }
         </script>
+        <div class="mobile-bottom-nav">
+            <a href="/" class="nav-item">
+                <span>🏠</span>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/new_popular" class="nav-item">
+                <span>🔥</span>
+                <span class="nav-label">New & Hot</span>
+            </a>
+            <a href="/my-list" class="nav-item">
+                <span>😊</span>
+                <span class="nav-label">My Netflix</span>
+            </a>
+        </div>
     </body>
 </html>

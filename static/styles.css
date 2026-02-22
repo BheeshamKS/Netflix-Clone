@@ -2075,136 +2075,207 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Hide mobile nav on desktop */
+.mobile-bottom-nav { display: none; }
 
-/* MOBILE RESPONSIVENESS (Max-Width: 768px) */
+/* ========================================= */
+/* TRUE MOBILE APP UI (Max-Width: 768px)     */
+/* ========================================= */
 
 @media screen and (max-width: 768px) {
 
-    /* --- 1. NAVBAR --- */
+    /* 0. KILL HORIZONTAL WIGGLE */
+    html, body {
+        overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0;
+        position: relative;
+    }
+
+    * {
+        box-sizing: border-box !important;
+    }
+    
+    /* 1. BODY & LAYOUT */
+    body {
+        padding-bottom: 70px; /* Prevent bottom nav from hiding content */
+    }
+
+    /* 2. TOP NAVBAR (Transparent, App Style) */
     .navbar {
-        padding: 0 4%;  
-        height: 60px;   
+        padding: 15px 4%;
+        height: auto;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
+        position: absolute; 
     }
 
-    .nav-left {
-        gap: 10px;
-    }
-
-    .logo {
-        height: 25px; /* Smaller Logo */
-    }
-
-    /* Hide text links on mobile (Netflix style) */
     .nav-links {
         display: none; 
     }
 
-    /* --- 2. HERO SECTION --- */
+    .nav-logo {
+        height: 32px !important; 
+    }
+
+    /* 3. MOBILE BOTTOM NAVIGATION */
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65px;
+        background-color: rgba(18, 18, 18, 0.95); 
+        backdrop-filter: blur(10px); 
+        justify-content: space-around;
+        align-items: center;
+        z-index: 9999;
+        border-top: 1px solid #333;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #808080;
+        text-decoration: none;
+        gap: 4px;
+        font-size: 1.2rem; 
+    }
+
+    .nav-item:hover, .nav-item:active {
+        color: white;
+    }
+
+    .nav-label {
+        font-size: 0.65rem;
+        font-weight: 500;
+    }
+
+    /* 4. HERO SECTION */
     .hero {
-        height: 60vh; /* Not full screen, let rows show sooner */
-        background-position: center top;
+        height: 75vh; 
+        background-position: center;
+        display: flex;
+        align-items: flex-end; 
     }
 
     .hero-content {
-        width: 100%; /* Use full width */
-        padding-bottom: 80px; /* Lift text up */
+        width: 100%;
+        text-align: center; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 30px;
+        background: linear-gradient(to top, #141414 10%, rgba(20,20,20,0.5) 50%, transparent 100%);
     }
 
     .hero-title {
-        font-size: 2rem; /* Shrink title */
-        max-width: 90%;
+        font-size: 2.2rem;
+        margin-bottom: 10px;
     }
 
     .hero-desc {
-        font-size: 0.9rem;
-        max-width: 100%;
-        
-        /* Limit to 3 lines of text */
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        display: none; 
+    }
+
+    .hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        width: 90%;
     }
 
     .hero-buttons .btn {
-        padding: 0.6rem 1.2rem; /* Smaller buttons */
-        font-size: 0.9rem;
+        flex: 1; 
+        padding: 0.8rem 0;
+        font-size: 1rem;
+        border-radius: 4px;
     }
 
-    /* --- 3. MOVIE ROWS --- */
+    /* 5. MOVIE ROWS (Touch Scrolling & Spacing) */
+    .rows-container {
+        margin-top: 50px !important; 
+    }
+
     .row-header {
-        font-size: 1.1rem;
-        margin-left: 4%;
+        margin-top: 0px !important;  
+        margin-bottom: 30px !important; 
     }
 
     .row {
-        padding: 0 4%; /* Align with header */
-        gap: 8px;      /* Tighter gap */
+        padding: 0 4%;
+        padding-left: 4% !important;
+        gap: 7px !important;
+        margin-bottom: 15px !important; 
+        overflow-x: auto;
+        scroll-snap-type: x mandatory; 
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; 
+    }
+    
+    .row::-webkit-scrollbar { 
+        display: none; 
     }
 
+    /* 6. MOVIE CARDS (Vertical Posters) */
     .movie-card {
-        min-width: 120px; /* Smaller cards for mobile */
-        height: 180px;    /* Maintain aspect ratio */
-    }
-    
-    /* Ensure title on cards is readable */
-    .movie-title {
-        font-size: 0.8rem;
-    }
-
-    /* --- 4. SEARCH BAR FIX --- */
-    .search-box.active .search-input {
-        width: 150px !important; /* Smaller expansion width */
-    }
-    
-    .search-box {
-        margin-right: 5px; /* Tighter spacing */
+        scroll-snap-align: start;
+        scroll-margin-left: 7px !important;
+        min-width: 106px !important; 
+        width: 106px !important;
+        height: 152px !important;
+        aspect-ratio: 2 / 3 !important;
+        border-radius: 2px;
     }
 
-    /* --- 5. SEARCH RESULTS GRID --- */
-    .search-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 Columns on mobile */
-        gap: 10px;
+    .movie-card picture,
+    .movie-card .bg-image {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        display: block !important;
     }
 
-    .search-overlay {
-        padding: 20px 10px; /* Less padding */
-        top: 60px; /* Match new navbar height */
+    .movie-card .card-logo,
+    .movie-card .movie-title {
+        display: none !important;
     }
 
-    /* --- 6. MODAL (MORE INFO) --- */
+    .movie-card:hover {
+        transform: none !important;
+        border: none !important;
+        z-index: 1 !important;
+    }
+
+    /* 7. MODAL FIXES */
     .info-content {
-        width: 100%;      /* Full Width */
-        height: 100%;     /* Full Height */
-        margin: 0;        /* No margin */
-        border-radius: 0; /* Square corners */
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        border-radius: 0;
         max-width: none;
-        overflow-y: scroll; /* Allow scrolling inside */
+        overflow-y: scroll;
+        padding-bottom: 80px; 
     }
 
     .info-header {
-        height: 300px; /* Shorter header image */
+        height: 40vh; 
     }
 
     .info-title {
-        font-size: 1.8rem; /* Smaller modal title */
+        font-size: 1.8rem;
     }
     
-    /* Stack the modal info vertically */
     .info-grid {
-        flex-direction: column; 
-        padding: 20px;
+        flex-direction: column;
+        padding: 15px;
     }
 
     .info-right {
-        margin-top: 20px;
+        margin-top: 15px;
         padding-left: 0;
-        border-left: none; /* Remove divider */
-    }
-
-    .close-info-btn {
-        top: 10px;
-        right: 10px;
-        background: rgba(0,0,0,0.5); /* Make it easier to see */
+        border-left: none;
     }
 }

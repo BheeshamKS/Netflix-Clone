@@ -2,7 +2,21 @@
 
 {% block main %}
 
-    <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
+<style>
+    /* DYNAMIC HERO IMAGES (Must stay in HTML to process Python variables) */
+    .hero-dynamic {
+        background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');
+    }
+
+    @media screen and (max-width: 768px) {
+        .hero-dynamic {
+            background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.poster_path }}') !important;
+            background-position: center top !important; 
+        }
+    }
+</style>
+
+    <header class="hero hero-dynamic">
         <div class="hero-content">
             {% if featured_movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w500{{ featured_movie.logo_path }}" 
@@ -42,31 +56,27 @@
             {% for movie in popular_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                     
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
@@ -86,36 +96,30 @@
             {% for movie in action_movies[:5] %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Netflix • {{ movie.age_rating }}</p>
@@ -130,36 +134,30 @@
             {% for movie in trending_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Netflix • {{ movie.age_rating }}</p>
@@ -174,36 +172,30 @@
             {% for movie in new_releases %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Netflix • {{ movie.age_rating }}</p>
@@ -218,36 +210,30 @@
             {% for movie in anime_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Anime • {{ movie.age_rating }}</p>
@@ -262,36 +248,30 @@
             {% for movie in bollywood_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
@@ -306,36 +286,30 @@
             {% for movie in scifi_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Sci-Fi • {{ movie.age_rating }}</p>
@@ -350,36 +324,30 @@
             {% for movie in kdrama_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">K-Dramas • {{ movie.age_rating }}</p>
@@ -394,36 +362,30 @@
             {% for movie in action_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
                     {% endif %}
 
                     <div class="card-overlay">
-
                         <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
-                            <i class="fas fa-play"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    
-                        <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
-                        </button>
-                        
-                    </div>
-                    
+                            <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ movie.media_type }}', {{ movie.tmdb_id }}, '{{ movie.title | replace("'", "") }}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleMyList(event, this, '{{ movie.media_type }}', {{ movie.tmdb_id }})">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
+                                <i class="far fa-thumbs-up"></i> 
+                            </button>
+                        </div>
                         {% if not movie.logo_path %}
                             <p class="movie-title">{{ movie.title }}</p>
                         {% endif %}
-
                         <div class="card-meta">
                             <p class="movie-title">{{ movie.title }}</p>
                             <p class="card-info">Action • {{ movie.age_rating }}</p>
