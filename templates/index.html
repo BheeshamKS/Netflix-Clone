@@ -29,12 +29,18 @@
             <p class="hero-desc">{{ featured_movie.overview }}</p>
 
             <div class="hero-buttons">
+                <button class="btn mobile-my-list-btn" onclick="toggleMyList(event, this, '{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }})">
+                    <span class="btn-icon">＋</span>
+                    <span class="btn-text">My List</span>
+                </button>
+
                 <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
                     <span class="play-icon">▶</span> Play
                 </button>
 
                 <button class="btn btn-info" onclick="openMoreInfo('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }})">
-                    <span class="info-icon">ⓘ</span> More Info
+                    <span class="info-icon">ⓘ</span> 
+                    <span class="btn-text"><span class="hide-on-mobile">More </span>Info</span>
                 </button>
             </div>
         </div>
