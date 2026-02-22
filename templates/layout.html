@@ -1,135 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Netflix</title>
-        <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
-        <link href="static\styles.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    </head>
-    <body>
-        <div id="loader-wrapper">
-            <div class="netflix-spinner"></div>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Netflix</title>
+    <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
+    <link href="static\styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div id="loader-wrapper">
+        <div class="netflix-spinner"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <picture>
+                <source media="(max-width: 768px)" srcset="{{ url_for('static', filename='/images/Netflix_N.png') }}">
+
+                <img class="nav-logo" src="{{ url_for('static', filename='images/netflix_logo.svg') }}" alt="Netflix">
+            </picture>
+
+            <ul class="nav-links">
+                <li>
+                    <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('tv_shows') }}"
+                        class="{{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('movies') }}"
+                        class="{{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('new_popular') }}"
+                        class="{{ 'active' if request.endpoint == 'new_popular' else '' }}">New & Popular</a>
+                </li>
+
+                <li>
+                    <a href="{{ url_for('my_list') }}"
+                        class="{{ 'active' if request.endpoint == 'my_list' else '' }}">My List</a>
+                </li>
+            </ul>
         </div>
 
-        <nav class="navbar">
-            <div class="nav-left">
-                <picture>
-                    <source media="(max-width: 768px)" srcset="{{ url_for('static', filename='/images/Netflix_N.png') }}">
-                    
-                    <img class="nav-logo" src="{{ url_for('static', filename='images/netflix_logo.svg') }}" alt="Netflix">
-                </picture>
-                
-                <ul class="nav-links">
-                    <li>
-                        <a href="/" class="{{ 'active' if request.endpoint == 'index' else '' }}">Home</a>
-                    </li>
+        <div class="nav-right">
+            <div class="search-box" id="searchBox">
+                <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
 
-                    <li>
-                        <a href="{{ url_for('tv_shows') }}" class="{{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
-                    </li>
+                <input type="text" id="searchInput" class="search-input" placeholder="Titles, people, genres"
+                    autocomplete="off" oninput="handleSearch(this.value)">
 
-                    <li>
-                        <a href="{{ url_for('movies') }}" class="{{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('new_popular') }}" class="{{ 'active' if request.endpoint == 'new_popular' else '' }}">New & Popular</a>
-                    </li>
-
-                    <li>
-                        <a href="{{ url_for('my_list') }}" class="{{ 'active' if request.endpoint == 'my_list' else '' }}">My List</a>
-                    </li>
-                </ul>
+                <i class="fas fa-times search-clear" id="searchClear" onclick="closeSearch()"
+                    style="display: none;"></i>
             </div>
 
-            <div class="nav-right">
-                <div class="search-box" id="searchBox">
-                    <i class="fas fa-search search-icon" onclick="toggleSearch()"></i>
-
-                    <input type="text" 
-                           id="searchInput" 
-                           class="search-input"
-                           placeholder="Titles, people, genres" 
-                           autocomplete="off"
-                           oninput="handleSearch(this.value)">
-
-                    <i class="fas fa-times search-clear" 
-                       id="searchClear" 
-                       onclick="closeSearch()" 
-                       style="display: none;"></i>
-                </div>
-
-                <div id="searchOverlay" class="search-overlay">
-                    <div class="search-content">
-                        <h3 id="resultsTitle" class="results-header"></h3>
-                        <div class="search-grid" id="searchGrid">
-                            </div>
+            <div id="searchOverlay" class="search-overlay">
+                <div class="search-content">
+                    <h3 id="resultsTitle" class="results-header"></h3>
+                    <div class="search-grid" id="searchGrid">
                     </div>
                 </div>
+            </div>
 
-                {% if current_user.is_authenticated %}
-                    <i class="fas fa-bell nav-icon"></i>
-                    <div class="profile-menu" onclick="toggleProfileMenu()">
-    
-                        {% if active_profile %}
-                            <div class="avatar-wrapper nav-size avatar-{{ active_profile.avatar }}">
-                                <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
-                            </div>
-                        {% else %}
-                            <div class="avatar-wrapper nav-size">
-                                <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
-                            </div>
-                        {% endif %}
+            {% if current_user.is_authenticated %}
+            <span class="hide-on-mobile">
+                <i class="fa-solid fa-bell nav-icon"></i>
+            </span>
+            <div class="profile-menu" onclick="toggleProfileMenu()">
 
-                        <i class="fas fa-caret-down profile-arrow"></i>
-                    
-                        <div class="dropdown-content" id="profileDropdown">
-
-                            {% for profile in all_profiles %}
-                            <a href="{{ url_for('set_profile', profile_id=profile.id) }}" class="dropdown-item profile-dropdown-item">
-
-                                <div class="avatar-wrapper nav-size avatar-{{ profile.avatar }}">
-                                    <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="Smile">
-                                </div>
-
-                                <span>{{ profile.name }}</span>
-                            </a>
-                            {% endfor %}
-                        
-                            <a href="{{ url_for('manage_profiles') }}" class="dropdown-link text-link">Manage Profiles</a>
-
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-link text-link">Account</a>
-                            <a href="#" class="dropdown-link text-link">Help Center</a>
-
-                            <a href="{{ url_for('logout') }}" class="dropdown-link sign-out-link text-link">Sign out of Netflix</a>
-                        </div>
-                    </div>
+                {% if active_profile %}
+                <div class="avatar-wrapper nav-size avatar-{{ active_profile.avatar }}">
+                    <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
+                </div>
                 {% else %}
-                    <a href="{{ url_for('login') }}" class="btn-play" style="width: 100px; height: 35px; font-size: 14px; text-decoration: none;">Sign In</a>
-                {% endif %}
-            </div>
-            
-            <div class="mobile-sub-nav">
-                <a href="/tv_shows" class="sub-nav-btn">TV Shows</a>
-                <a href="/movies" class="sub-nav-btn">Movies</a>
-            </div>
-        </nav> 
-        <div id="searchResults" class="search-results-container">
-            <div class="search-grid" id="searchGrid">
+                <div class="avatar-wrapper nav-size">
+                    <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="User">
                 </div>
+                {% endif %}
+
+                <i class="fas fa-caret-down profile-arrow"></i>
+
+                <div class="dropdown-content" id="profileDropdown">
+
+                    {% for profile in all_profiles %}
+                    <a href="{{ url_for('set_profile', profile_id=profile.id) }}"
+                        class="dropdown-item profile-dropdown-item">
+
+                        <div class="avatar-wrapper nav-size avatar-{{ profile.avatar }}">
+                            <img src="{{ url_for('static', filename='images/user_avatar.png') }}" alt="Smile">
+                        </div>
+
+                        <span>{{ profile.name }}</span>
+                    </a>
+                    {% endfor %}
+
+                    <a href="{{ url_for('manage_profiles') }}" class="dropdown-link text-link">Manage Profiles</a>
+
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-link text-link">Account</a>
+                    <a href="#" class="dropdown-link text-link">Help Center</a>
+
+                    <a href="{{ url_for('logout') }}" class="dropdown-link sign-out-link text-link">Sign out of
+                        Netflix</a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn-play"
+                style="width: 100px; height: 35px; font-size: 14px; text-decoration: none;">Sign In</a>
+            {% endif %}
         </div>
 
-        <main>
-            {% block main %}{% endblock %}
-        </main>
+        <div class="mobile-sub-nav">
+            <a href="/tv_shows" class="sub-nav-btn">TV Shows</a>
+            <a href="/movies" class="sub-nav-btn">Movies</a>
+        </div>
+    </nav>
+    <div id="searchResults" class="search-results-container">
+        <div class="search-grid" id="searchGrid">
+        </div>
+    </div>
 
-        <script>
-            let searchDebounce;
+    <main>
+        {% block main %}{% endblock %}
+    </main>
 
-            function toggleSearch() {
+    <script>
+        let searchDebounce;
+
+        function toggleSearch() {
+            if (window.innerWidth <= 768) {
+                const overlay = document.getElementById('mobile-search-overlay');
+                overlay.classList.toggle('active');
+
+                // Lock the background from scrolling while searching
+                if (overlay.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('mobile-search-input').focus(); // Auto-selects the input
+                } else {
+                    document.body.style.overflow = 'auto';
+                    // NEW: Completely clear the mobile search when clicking "Cancel"
+                    document.getElementById('mobile-search-input').value = '';
+                    document.getElementById('mobile-search-results-overlay').style.display = 'none';
+                    document.getElementById('mobile-searchGrid').innerHTML = '';
+                }
+            } else {
                 const box = document.getElementById('searchBox');
                 const input = document.getElementById('searchInput');
                 const clearBtn = document.getElementById('searchClear');
@@ -138,69 +159,78 @@
 
                 if (box.classList.contains('active')) {
                     input.focus();
-                    clearBtn.style.display = 'none'; 
+                    clearBtn.style.display = 'none';
                 } else {
                     closeSearch();
                 }
+                document.querySelector('.navbar').classList.toggle('search-is-open');
             }
-        
-            function closeSearch() {
-                const box = document.getElementById('searchBox');
-                const input = document.getElementById('searchInput');
-                const overlay = document.getElementById('searchOverlay');
-                const clearBtn = document.getElementById('searchClear');
-                const navbar = document.querySelector('.navbar');  
+        }
 
-                input.value = '';            
-                box.classList.remove('active'); 
-                overlay.style.display = 'none'; 
-                clearBtn.style.display = 'none';
+        function closeSearch() {
+            const box = document.getElementById('searchBox');
+            const input = document.getElementById('searchInput');
+            const overlay = document.getElementById('searchOverlay');
+            const clearBtn = document.getElementById('searchClear');
+            const navbar = document.querySelector('.navbar');
 
-                navbar.classList.remove('search-mode');  
-            }
-        
-            function handleSearch(query) {
-                const overlay = document.getElementById('searchOverlay');
-                const grid = document.getElementById('searchGrid');
-                const title = document.getElementById('resultsTitle');
-                const clearBtn = document.getElementById('searchClear');
-                const navbar = document.querySelector('.navbar');
+            input.value = '';
+            box.classList.remove('active');
+            overlay.style.display = 'none';
+            clearBtn.style.display = 'none';
 
-                clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+            navbar.classList.remove('search-mode');
+        }
 
-                clearTimeout(searchDebounce);
+        function handleSearch(query) {
+            // NEW: Detect if we are on a phone or desktop
+            const isMobile = window.innerWidth <= 768;
 
-                if (!query.trim()) {
-                    overlay.style.display = 'none';
-                    navbar.classList.remove('search-mode');
-                    return;
-                }
+            // NEW: Pick the correct HTML containers based on the device
+            const overlay = isMobile ? document.getElementById('mobile-search-results-overlay') : document.getElementById('searchOverlay');
+            const grid = isMobile ? document.getElementById('mobile-searchGrid') : document.getElementById('searchGrid');
+            const title = isMobile ? document.getElementById('mobile-resultsTitle') : document.getElementById('resultsTitle');
             
-                searchDebounce = setTimeout(() => {
-                    fetch(`/search?q=${query}`)
-                        .then(res => res.json())
-                        .then(movies => {
-                            grid.innerHTML = '';
-                            overlay.style.display = 'block';
-                            navbar.classList.add('search-mode');
+            const clearBtn = document.getElementById('searchClear');
+            const navbar = document.querySelector('.navbar');
 
-                            if (movies.length > 0) {
-                                title.innerText = `Results for "${query}"`;
+            if (!isMobile && clearBtn) {
+                clearBtn.style.display = query.length > 0 ? 'block' : 'none';
+            }
 
-                                movies.forEach(movie => {
-                                    let contentHTML = '';
+            clearTimeout(searchDebounce);
 
-                                    if (movie.logo_path) {
-                                        contentHTML = `
+            if (!query.trim()) {
+                overlay.style.display = 'none';
+                if (!isMobile) navbar.classList.remove('search-mode');
+                return;
+            }
+
+            searchDebounce = setTimeout(() => {
+                fetch(`/search?q=${query}`)
+                    .then(res => res.json())
+                    .then(movies => {
+                        grid.innerHTML = '';
+                        overlay.style.display = 'block';
+                        if (!isMobile) navbar.classList.add('search-mode');
+
+                        if (movies.length > 0) {
+                            title.innerText = `Results for "${query}"`;
+
+                            movies.forEach(movie => {
+                                let contentHTML = '';
+
+                                if (movie.logo_path) {
+                                    contentHTML = `
                                             <img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" 
                                                  class="search-logo" 
                                                  alt="${movie.title}">
                                         `;
-                                    } else {
-                                        contentHTML = `<p class="movie-title">${movie.title}</p>`;
-                                    }
-                                
-                                    const card = `
+                                } else {
+                                    contentHTML = `<p class="movie-title">${movie.title}</p>`;
+                                }
+
+                                const card = `
                                         <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.id})">
                                             <img src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" 
                                                  class="bg-image"
@@ -211,215 +241,231 @@
                                             </div>
                                         </div>
                                     `;
-                                    grid.innerHTML += card;
-                                });
-                            } else {
-                                title.innerText = `No matches found for "${query}"`;
-                            }
-                        });
-                }, 500);
-            }
-        
-            document.addEventListener('click', function(event) {
-                const box = document.getElementById('searchBox');
-                const isClickInside = box.contains(event.target);
-                const input = document.getElementById('searchInput');
-
-                if (!isClickInside && input.value === '') {
-                    box.classList.remove('active');
-                }
-            });
-            window.addEventListener('load', function() {
-                const loader = document.getElementById('loader-wrapper');
-
-                setTimeout(() => {
-                    loader.classList.add('loaded');
-                }, 500);
-            });
-        </script>
-
-        <footer class="site-footer">
-            <div class="footer-content">
-
-                <div class="footer-social">
-                    <a href="https://www.facebook.com/PolyBlend3D/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/polyblend_3d/" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="https://x.com/BheeshamSajnani" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.youtube.com/@polyblend_3d" target="_blank"><i class="fab fa-youtube"></i></a>
-                </div>
-            
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <a href="#">Audio and Subtitles</a>
-                        <a href="#">Media Centre</a>
-                        <a href="#">Privacy</a>
-                        <a href="#">Contact Us</a>
-                    </div>
-                
-                    <div class="footer-column">
-                        <a href="#">Audio Description</a>
-                        <a href="#">Investor Relations</a>
-                        <a href="#">Legal Notices</a>
-                    </div>
-                
-                    <div class="footer-column">
-                        <a href="#">Help Centre</a>
-                        <a href="#">Jobs</a>
-                        <a href="#">Cookie Preferences</a>
-                    </div>
-                
-                    <div class="footer-column">
-                        <a href="#">Gift Cards</a>
-                        <a href="#">Terms of Use</a>
-                        <a href="#">Corporate Information</a>
-                    </div>
-                </div>
-            
-                <button class="service-code-btn">Service Code</button>
-
-                <div class="copyright-text">
-                    &copy; 2026 Netflix Clone, Inc.
-                </div>
-            </div>
-        </footer>
-
-        <div id="video-modal" class="video-modal">
-            <div class="video-container" id="video-container">
-    
-                <div class="video-header">
-                    <h2 id="player-title">Movie Title</h2>
-                </div>
-            
-                <div class="close-video-btn" onclick="closeVideo()">
-                    <i class="fas fa-times"></i>
-                </div>
-            
-                <div id="click-shield" onclick="togglePlay()">
-                    <i class="fas fa-play big-play-icon"></i>
-                </div>
-
-                <div id="loading-spinner" class="loading-spinner"></div>
-                
-                <div id="youtube-player"></div>
-            
-                <div class="custom-controls" id="custom-controls">
-                    <button class="control-btn" id="play-pause-btn" onclick="togglePlay()">
-                        <i class="fas fa-pause"></i>
-                    </button>
-                
-                    <div class="progress-container" onclick="seekVideo(event)">
-                        <div class="progress-bar" id="progress-bar"></div>
-                    </div>
-                
-                    <button class="control-btn" id="mute-btn" onclick="toggleMute()">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-
-                    <button class="control-btn" onclick="toggleFullscreen()">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div id="info-modal" class="info-modal">
-            <div class="info-content">
-                
-                <div class="close-info-btn" onclick="closeMoreInfo()">
-                    <i class="fas fa-times"></i>
-                </div>
-            
-                <div class="info-header">
-                    <img id="info-backdrop" src="" alt="">
-
-                    <div class="info-header-overlay">
-                        <img id="modal-logo" class="hero-logo" style="display: none;" alt="Movie Logo">
-    
-                        <h1 id="modal-title" class="hero-title" style="display: none;"></h1>
-
-                        <div class="info-buttons">
-
-                            <button id="info-play-btn" class="btn btn-play" onclick="">
-                                <span class="play-icon">▶</span> Play
-                            </button>
-                        
-                            <button id="info-list-btn" class="btn btn-list">
-                                <i class="fas fa-plus"></i> My List
-                            </button>
-
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="info-grid">
-                    
-                    <div class="info-left">
-                        <div class="info-meta">
-                            <span id="info-match" class="match-score">98% Match</span>
-                            <span id="info-year">2024</span>
-                            <span id="info-age" class="age-box">12+</span>
-                            <span id="info-runtime">2h 15m</span>
-                        </div>
-                        <p id="info-overview">Description goes here...</p>
-                    </div>
-                
-                    <div class="info-right">
-                        <div class="info-row">
-                            <span class="label">Cast:</span>
-                            <span id="info-cast" class="value">Actor 1, Actor 2</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Genres:</span>
-                            <span id="info-genres" class="value">Action, Sci-Fi</span>
-                        </div>
-                    </div>
-                
-                </div>
-            </div>
-        </div>
-
-        <script src="https://www.youtube.com/iframe_api"></script>
-
-        <script src="/static/script.js"></script>
-
-        <script>
-            function toggleProfileMenu() {
-                document.getElementById("profileDropdown").classList.toggle("show");
-
-                document.querySelector(".profile-menu").classList.toggle("open");
-            }
-        
-            window.onclick = function(event) {
-                if (!event.target.closest('.profile-menu')) {
-                    var dropdowns = document.getElementsByClassName("dropdown-content");
-                    var arrows = document.getElementsByClassName("profile-menu");
-
-                    for (var i = 0; i < dropdowns.length; i++) {
-                        var openDropdown = dropdowns[i];
-                        if (openDropdown.classList.contains('show')) {
-                            openDropdown.classList.remove('show');
+                                grid.innerHTML += card;
+                            });
+                        } else {
+                            title.innerText = `No matches found for "${query}"`;
                         }
-                    }
+                    });
+            }, 500);
+        }
 
-                    for (var i = 0; i < arrows.length; i++) {
-                        arrows[i].classList.remove('open');
+        document.addEventListener('click', function (event) {
+            const box = document.getElementById('searchBox');
+            const isClickInside = box.contains(event.target);
+            const input = document.getElementById('searchInput');
+
+            if (!isClickInside && input.value === '') {
+                box.classList.remove('active');
+            }
+        });
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('loader-wrapper');
+
+            setTimeout(() => {
+                loader.classList.add('loaded');
+            }, 500);
+        });
+    </script>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+
+            <div class="footer-social">
+                <a href="https://www.facebook.com/PolyBlend3D/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/polyblend_3d/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://x.com/BheeshamSajnani" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.youtube.com/@polyblend_3d" target="_blank"><i class="fab fa-youtube"></i></a>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-column">
+                    <a href="#">Audio and Subtitles</a>
+                    <a href="#">Media Centre</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Contact Us</a>
+                </div>
+
+                <div class="footer-column">
+                    <a href="#">Audio Description</a>
+                    <a href="#">Investor Relations</a>
+                    <a href="#">Legal Notices</a>
+                </div>
+
+                <div class="footer-column">
+                    <a href="#">Help Centre</a>
+                    <a href="#">Jobs</a>
+                    <a href="#">Cookie Preferences</a>
+                </div>
+
+                <div class="footer-column">
+                    <a href="#">Gift Cards</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Corporate Information</a>
+                </div>
+            </div>
+
+            <button class="service-code-btn">Service Code</button>
+
+            <div class="copyright-text">
+                &copy; 2026 Netflix Clone, Inc.
+            </div>
+        </div>
+    </footer>
+
+    <div id="video-modal" class="video-modal">
+        <div class="video-container" id="video-container">
+
+            <div class="video-header">
+                <h2 id="player-title">Movie Title</h2>
+            </div>
+
+            <div class="close-video-btn" onclick="closeVideo()">
+                <i class="fas fa-times"></i>
+            </div>
+
+            <div id="click-shield" onclick="togglePlay()">
+                <i class="fas fa-play big-play-icon"></i>
+            </div>
+
+            <div id="loading-spinner" class="loading-spinner"></div>
+
+            <div id="youtube-player"></div>
+
+            <div class="custom-controls" id="custom-controls">
+                <button class="control-btn" id="play-pause-btn" onclick="togglePlay()">
+                    <i class="fas fa-pause"></i>
+                </button>
+
+                <div class="progress-container" onclick="seekVideo(event)">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+
+                <button class="control-btn" id="mute-btn" onclick="toggleMute()">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+
+                <button class="control-btn" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-modal" class="info-modal">
+        <div class="info-content">
+
+            <div class="close-info-btn" onclick="closeMoreInfo()">
+                <i class="fas fa-times"></i>
+            </div>
+
+            <div class="info-header">
+                <img id="info-backdrop" src="" alt="">
+
+                <div class="info-header-overlay">
+                    <img id="modal-logo" class="hero-logo" style="display: none;" alt="Movie Logo">
+
+                    <h1 id="modal-title" class="hero-title" style="display: none;"></h1>
+
+                    <div class="info-buttons">
+
+                        <button id="info-play-btn" class="btn btn-play" onclick="">
+                            <span class="play-icon">▶</span> Play
+                        </button>
+
+                        <button id="info-list-btn" class="btn btn-list">
+                            <i class="fas fa-plus"></i> My List
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-grid">
+
+                <div class="info-left">
+                    <div class="info-meta">
+                        <span id="info-match" class="match-score">98% Match</span>
+                        <span id="info-year">2024</span>
+                        <span id="info-age" class="age-box">12+</span>
+                        <span id="info-runtime">2h 15m</span>
+                    </div>
+                    <p id="info-overview">Description goes here...</p>
+                </div>
+
+                <div class="info-right">
+                    <div class="info-row">
+                        <span class="label">Cast:</span>
+                        <span id="info-cast" class="value">Actor 1, Actor 2</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Genres:</span>
+                        <span id="info-genres" class="value">Action, Sci-Fi</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script src="/static/script.js"></script>
+
+    <script>
+        function toggleProfileMenu() {
+            document.getElementById("profileDropdown").classList.toggle("show");
+
+            document.querySelector(".profile-menu").classList.toggle("open");
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.closest('.profile-menu')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var arrows = document.getElementsByClassName("profile-menu");
+
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
                     }
                 }
+
+                for (var i = 0; i < arrows.length; i++) {
+                    arrows[i].classList.remove('open');
+                }
             }
-        </script>
-        <div class="mobile-bottom-nav">
-            <a href="/" class="nav-item">
-                <span>🏠</span>
-                <span class="nav-label">Home</span>
-            </a>
-            <a href="/new_popular" class="nav-item">
-                <span>🔥</span>
-                <span class="nav-label">New & Hot</span>
-            </a>
-            <a href="/my-list" class="nav-item">
-                <span>😊</span>
-                <span class="nav-label">My Netflix</span>
-            </a>
+        }
+    </script>
+    <div class="mobile-bottom-nav">
+        <a href="/" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="/new_and_hot" class="nav-item">
+            <i class="fa-solid fa-fire"></i>
+            <span class="nav-label">New & Hot</span>
+        </a>
+        <a href="/my_list" class="nav-item">
+            <i class="fa-regular fa-square-plus"></i>
+            <span class="nav-label">My List</span>
+        </a>
+    </div>
+
+    <div id="mobile-search-overlay" class="mobile-search-overlay">
+        <div class="mobile-search-header">
+            <div class="mobile-search-bar">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="mobile-search-input" placeholder="Search" onkeyup="handleSearch(this.value)">
+            </div>
+            <button class="cancel-search-btn" onclick="toggleSearch()">Cancel</button>
         </div>
-    </body>
+
+        <div id="mobile-search-results-overlay" class="mobile-search-results" style="display: none;">
+            <h3 id="mobile-resultsTitle" style="color: white; margin-bottom: 15px;"></h3>
+            <div id="mobile-searchGrid" class="search-grid"></div>
+        </div>
+    </div>
+</body>
+
 </html>
