@@ -2,17 +2,18 @@
 
 {% block main %}
 
-    <div style="padding-top: 100px; padding-left: 4%; padding-right: 4%;">
-        <h1 style="color: white; font-size: 2rem; margin-bottom: 20px;">My List</h1>
+    <div class="category-page" style="padding-left: 4%; padding-right: 4%;">
+        
+        <h1 class="hide-on-mobile" style="color: white; font-size: 2rem; margin-bottom: 20px;">My List</h1>
 
         <div id="my-list-container" class="row" style="flex-wrap: wrap; gap: 10px; {% if not saved_items %}display: none;{% endif %}">
             {% for movie in saved_items %}
             <div class="movie-card" id="card-{{ movie.tmdb_id }}" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
                 
-                <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                     alt="{{ movie.title }}" 
-                     class="bg-image" 
-                     loading="lazy">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                </picture>
 
                 {% if movie.logo_path %}
                     <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">

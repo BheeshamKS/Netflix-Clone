@@ -2201,7 +2201,7 @@ body {
 
   /* Base style for the sub-nav links */
   .sub-nav-btn {
-    color: #b3b3b3 !important; /* Faded gray for inactive items */
+    color: #e3e3e3 !important; /* Faded gray for inactive items */
     text-decoration: none !important;
     font-size: 0.9rem !important;
     font-weight: 500 !important;
