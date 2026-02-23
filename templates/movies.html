@@ -2,9 +2,11 @@
 
 {% block main %}
 
-    <span class="category-header">Movies</span>
+<div class="category-page">
 
-    <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
+    <span class="category-header hide-on-mobile">Movies</span>
+
+    <header class="hero desktop-hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
         <div class="hero-content">
             {% if featured_movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w500{{ featured_movie.logo_path }}" 
@@ -37,17 +39,17 @@
         <div class="hero-fade-bottom"></div>
     </header>
 
-    <div class="rows-container">
+    <div class="rows-container category-rows">
 
         <h3 class="row-header">Trending Now</h3>
         <div class="row">
             {% for movie in trending_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
@@ -88,10 +90,10 @@
             {% for movie in bollywood_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
@@ -132,10 +134,10 @@
             {% for movie in action_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
@@ -176,10 +178,10 @@
             {% for movie in new_releases %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
@@ -220,10 +222,10 @@
             {% for movie in popular_movies %}
                 <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
-                    <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" 
-                         alt="{{ movie.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ movie.poster_path }}">
+                        <img src="https://image.tmdb.org/t/p/w300{{ movie.backdrop_path }}" alt="{{ movie.title }}" class="bg-image" loading="lazy">
+                    </picture>
 
                     {% if movie.logo_path %}
                         <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
@@ -261,4 +263,5 @@
 
     </div>
 
+</div>
 {% endblock %}

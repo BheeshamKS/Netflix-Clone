@@ -118,8 +118,11 @@
         </div>
 
         <div class="mobile-sub-nav">
-            <a href="/tv_shows" class="sub-nav-btn">TV Shows</a>
-            <a href="/movies" class="sub-nav-btn">Movies</a>
+            <a href="{{ url_for('tv_shows') }}" 
+               class="sub-nav-btn {{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
+               
+            <a href="{{ url_for('movies') }}" 
+               class="sub-nav-btn {{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
         </div>
     </nav>
     <div id="searchResults" class="search-results-container">
@@ -438,15 +441,17 @@
         }
     </script>
     <div class="mobile-bottom-nav">
-        <a href="/" class="nav-item">
+        <a href="/" class="nav-item {{ 'active' if request.endpoint == 'index' else '' }}">
             <i class="fa-solid fa-house"></i>
             <span class="nav-label">Home</span>
         </a>
-        <a href="/new_and_hot" class="nav-item">
+
+        <a href="{{ url_for('new_popular') }}" class="nav-item {{ 'active' if request.endpoint == 'new_popular' else '' }}">
             <i class="fa-solid fa-fire"></i>
             <span class="nav-label">New & Hot</span>
         </a>
-        <a href="/my_list" class="nav-item">
+
+        <a href="{{ url_for('my_list') }}" class="nav-item {{ 'active' if request.endpoint == 'my_list' else '' }}">
             <i class="fa-regular fa-square-plus"></i>
             <span class="nav-label">My List</span>
         </a>

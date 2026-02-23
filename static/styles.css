@@ -2140,6 +2140,10 @@ body {
   display: inline;
 }
 
+.mobile-page-title {
+  display: none;
+}
+
 /* ========================================= */
 /* TRUE MOBILE APP UI (Max-Width: 768px)     */
 /* ========================================= */
@@ -2195,17 +2199,28 @@ body {
     padding-left: 5px !important;
   }
 
-  /* 3. Style the links (Netflix Mobile Style) */
+  /* Base style for the sub-nav links */
   .sub-nav-btn {
-    color: white !important;
+    color: #b3b3b3 !important; /* Faded gray for inactive items */
     text-decoration: none !important;
     font-size: 0.9rem !important;
-    font-weight: 300 !important;
+    font-weight: 500 !important;
+    padding: 6px 16px !important;
+    border-radius: 30px !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease;
+  }
+
+  /* The Highlighted "Active" State */
+  .sub-nav-btn.active {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid white !important;
   }
 
   /* Small tap effect */
   .sub-nav-btn:active {
-    background: rgba(255, 255, 255, 0.2) !important;
+    transform: scale(0.95) !important;
   }
 
   /* 3. MOBILE BOTTOM NAVIGATION */
@@ -2544,5 +2559,32 @@ body {
     margin-top: 15px;
     padding-left: 0;
     border-left: none;
+  }
+
+  /* --- TV SHOW / MOVIE CATEGORY PAGES --- */
+
+  /* 1. Hide the giant hero banner */
+  .desktop-hero {
+    display: none !important;
+  }
+
+  /* 2. Push everything down so the transparent navbar doesn't cover it */
+  .category-page {
+    padding-top: 120px !important;
+  }
+
+  /* 3. Style the bold new header */
+  .mobile-page-title {
+    display: block !important;
+    color: white !important;
+    font-size: 1.4rem !important;
+    font-weight: bold !important;
+    padding: 0 4% 15px 4% !important;
+    margin: 0 !important;
+  }
+
+  /* 4. Reset the Home page negative margin so rows sit normally */
+  .category-rows {
+    margin-top: 0 !important;
   }
 }

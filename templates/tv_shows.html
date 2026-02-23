@@ -2,26 +2,30 @@
 
 {% block main %}
 
-    <span class="category-header">TV Shows</span>
+<div class="category-page">
 
-    <header class="hero" style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
+    <span class="category-header hide-on-mobile">TV Shows</span>
+
+    <header class="hero desktop-hero"
+        style="background-image: url('https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}');">
         <div class="hero-content">
             {% if featured_movie.logo_path %}
-                <img src="https://image.tmdb.org/t/p/w500{{ featured_movie.logo_path }}" 
-                    alt="{{ featured_movie.title }}" 
-                    class="hero-logo">
+            <img src="https://image.tmdb.org/t/p/w500{{ featured_movie.logo_path }}" alt="{{ featured_movie.title }}"
+                class="hero-logo">
             {% else %}
-                <h1 class="hero-title">{{ featured_movie.title }}</h1>
+            <h1 class="hero-title">{{ featured_movie.title }}</h1>
             {% endif %}
 
             <p class="hero-desc">{{ featured_movie.overview }}</p>
 
             <div class="hero-buttons">
-                <button class="btn btn-play" onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
+                <button class="btn btn-play"
+                    onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
                     <span class="play-icon">▶</span> Play
                 </button>
 
-                <button class="btn btn-info" onclick="openMoreInfo('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }})">
+                <button class="btn btn-info"
+                    onclick="openMoreInfo('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }})">
                     <span class="info-icon">ⓘ</span> More Info
                 </button>
             </div>
@@ -37,51 +41,50 @@
         <div class="hero-fade-bottom"></div>
     </header>
 
-    <div class="rows-container">
-        
+    <div class="rows-container category-rows">
+
         <h3 class="row-header">US TV Dramas</h3>
         <div class="row">
             {% for show in us_tv_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
-                         alt="{{ show.title }}" 
-                         class="bg-image" 
-                         loading="lazy">
 
-                    {% if show.logo_path %}
-                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
-                    {% endif %}
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                </picture>
+
+                {% if show.logo_path %}
+                <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play"
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleMyList(event, this, 'tv', {{ show.tmdb_id }})">
                             <i class="fas fa-plus"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
-                            <i class="far fa-thumbs-up"></i> 
+                            <i class="far fa-thumbs-up"></i>
                         </button>
-                        
+
                     </div>
 
                     {% if not show.logo_path %}
-                        <p class="movie-title">{{ show.title }}</p>
+                    <p class="movie-title">{{ show.title }}</p>
                     {% endif %}
-                    <div class="card-meta">    
+                    <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Series • {{ show.age_rating }}</p>
                     </div>
-                    
+
                 </div>
-                    
 
             </div>
-                    
             {% endfor %}
         </div>
 
@@ -89,33 +92,36 @@
         <div class="row">
             {% for show in kdramas %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
-                         alt="{{ show.title }}" 
-                         loading="lazy">
+                
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                </picture>
 
-                    {% if show.logo_path %}
-                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
-                    {% endif %}
+                {% if show.logo_path %}
+                <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play"
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleMyList(event, this, 'tv', {{ show.tmdb_id }})">
                             <i class="fas fa-plus"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
                             <i class="far fa-thumbs-up"></i> </button>
-                        
+
                     </div>
 
                     {% if not show.logo_path %}
-                        <p class="movie-title">{{ show.title }}</p>
+                    <p class="movie-title">{{ show.title }}</p>
                     {% endif %}
-                    <div class="card-meta">    
+                    <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">K-Drama • {{ show.age_rating }}</p>
                     </div>
@@ -128,32 +134,35 @@
         <div class="row">
             {% for show in anime_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
-                        alt="{{ show.title }}" 
-                        loading="lazy">
+                
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                </picture>
 
-                    {% if show.logo_path %}
-                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
-                    {% endif %}
+                {% if show.logo_path %}
+                <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play"
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleMyList(event, this, 'tv', {{ show.tmdb_id }})">
                             <i class="fas fa-plus"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
                             <i class="far fa-thumbs-up"></i> </button>
-                        
+
                     </div>
                     {% if not show.logo_path %}
-                        <p class="movie-title">{{ show.title }}</p>
+                    <p class="movie-title">{{ show.title }}</p>
                     {% endif %}
-                    <div class="card-meta">    
+                    <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Series • {{ show.age_rating }}</p>
                     </div>
@@ -166,32 +175,35 @@
         <div class="row">
             {% for show in scifi_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" 
-                        alt="{{ show.title }}" 
-                        loading="lazy">
+                
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                </picture>
 
-                    {% if show.logo_path %}
-                        <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
-                    {% endif %}
+                {% if show.logo_path %}
+                <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% endif %}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
-                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                        <button class="mini-btn play"
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
                             <i class="fas fa-play"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleMyList(event, this, 'tv', {{ show.tmdb_id }})">
                             <i class="fas fa-plus"></i>
                         </button>
-                    
+
                         <button class="mini-btn" onclick="toggleCardIcon(event, this, 'like')">
                             <i class="far fa-thumbs-up"></i> </button>
-                        
+
                     </div>
                     {% if not show.logo_path %}
-                        <p class="movie-title">{{ show.title }}</p>
+                    <p class="movie-title">{{ show.title }}</p>
                     {% endif %}
-                    <div class="card-meta">    
+                    <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Sci-Fi • {{ show.age_rating }}</p>
                     </div>
