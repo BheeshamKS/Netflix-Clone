@@ -118,11 +118,11 @@
         </div>
 
         <div class="mobile-sub-nav">
-            <a href="{{ url_for('tv_shows') }}" 
-               class="sub-nav-btn {{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
-               
-            <a href="{{ url_for('movies') }}" 
-               class="sub-nav-btn {{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
+            <a href="{{ url_for('tv_shows') }}"
+                class="sub-nav-btn {{ 'active' if request.endpoint == 'tv_shows' else '' }}">TV Shows</a>
+
+            <a href="{{ url_for('movies') }}"
+                class="sub-nav-btn {{ 'active' if request.endpoint == 'movies' else '' }}">Movies</a>
         </div>
     </nav>
     <div id="searchResults" class="search-results-container">
@@ -193,7 +193,7 @@
             const overlay = isMobile ? document.getElementById('mobile-search-results-overlay') : document.getElementById('searchOverlay');
             const grid = isMobile ? document.getElementById('mobile-searchGrid') : document.getElementById('searchGrid');
             const title = isMobile ? document.getElementById('mobile-resultsTitle') : document.getElementById('resultsTitle');
-            
+
             const clearBtn = document.getElementById('searchClear');
             const navbar = document.querySelector('.navbar');
 
@@ -367,20 +367,7 @@
 
                 <div class="info-header-overlay">
                     <img id="modal-logo" class="hero-logo" style="display: none;" alt="Movie Logo">
-
                     <h1 id="modal-title" class="hero-title" style="display: none;"></h1>
-
-                    <div class="info-buttons">
-
-                        <button id="info-play-btn" class="btn btn-play" onclick="">
-                            <span class="play-icon">▶</span> Play
-                        </button>
-
-                        <button id="info-list-btn" class="btn btn-list">
-                            <i class="fas fa-plus"></i> My List
-                        </button>
-
-                    </div>
                 </div>
             </div>
 
@@ -393,6 +380,17 @@
                         <span id="info-age" class="age-box">12+</span>
                         <span id="info-runtime">2h 15m</span>
                     </div>
+
+                    <div class="info-buttons">
+                        <button id="info-play-btn" class="btn btn-play" onclick="">
+                            <i class="play-icon">▶</i> Play
+                        </button>
+
+                        <button id="info-list-btn" class="btn btn-list">
+                            <i class="fas fa-plus"></i> My List
+                        </button>
+                    </div>
+
                     <p id="info-overview">Description goes here...</p>
                 </div>
 
@@ -446,7 +444,8 @@
             <span class="nav-label">Home</span>
         </a>
 
-        <a href="{{ url_for('new_popular') }}" class="nav-item {{ 'active' if request.endpoint == 'new_popular' else '' }}">
+        <a href="{{ url_for('new_popular') }}"
+            class="nav-item {{ 'active' if request.endpoint == 'new_popular' else '' }}">
             <i class="fa-solid fa-fire"></i>
             <span class="nav-label">New & Hot</span>
         </a>

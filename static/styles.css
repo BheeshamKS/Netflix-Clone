@@ -1166,7 +1166,7 @@ body {
 .video-modal {
   display: none;
   position: fixed;
-  z-index: 9999;
+  z-index: 10001;
   left: 0;
   top: 0;
   width: 100%;
@@ -1439,7 +1439,7 @@ body {
 .info-modal {
   display: none;
   position: fixed;
-  z-index: 1000;
+  z-index: 10000;
   left: 0;
   top: 0;
   width: 100%;
@@ -2280,7 +2280,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: calc(100vh - 65px); /* Exactly stops where your bottom nav starts */
+    height: 100vh !important; /* Exactly stops where your bottom nav starts */
     background-color: #000000;
     z-index: 8000; /* High enough to cover everything but the bottom nav */
   }
@@ -2586,5 +2586,76 @@ body {
   /* 4. Reset the Home page negative margin so rows sit normally */
   .category-rows {
     margin-top: 0 !important;
+  }
+
+  /* Hide the manual fullscreen button on mobile */
+  .control-btn[onclick="toggleFullscreen()"] {
+    display: none !important;
+  }
+
+  /* --- MOBILE INFO MODAL BUTTONS (Stacked UI) --- */
+
+  .info-header-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Pushes everything to the bottom */
+    padding: 20px;
+    background: linear-gradient(
+      to top,
+      rgba(17, 17, 17, 1) 10%,
+      rgba(17, 17, 17, 0) 100%
+    );
+  }
+
+  .info-buttons {
+    display: flex;
+    flex-direction: column; /* Stacks the buttons vertically */
+    gap: 6px !important; /* Space between the Play and My List buttons */
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  /* Base styling for both buttons in the modal */
+  .info-buttons .btn {
+    width: 100%;
+    
+    /* NEW: Force the exact height and strip out global overrides */
+    height: 33px !important; 
+    min-height: 0 !important;
+    line-height: 1 !important;
+    padding: 0 !important; 
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px; 
+    font-size: 0.95rem !important;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* The White Play Button */
+  .info-buttons .btn-play {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  .info-buttons .btn-play i,
+  .info-buttons .btn-play .play-icon {
+    color: black !important; /* Forces the play triangle to be black */
+    margin-right: 2px !important;
+    font-style: normal;
+  }
+
+  /* The Dark Gray My List Button */
+  .info-buttons .btn-list {
+    background-color: #2b2b2b !important; /* Native app dark gray */
+    color: white !important;
+  }
+
+  .info-buttons .btn-list i {
+    color: white !important;
+    margin-right: 4px !important;
   }
 }

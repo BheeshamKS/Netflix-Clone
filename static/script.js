@@ -31,6 +31,7 @@ function playTrailer(mediaType, tmdbId, title) {
     modal.style.display = 'flex';
     void modal.offsetWidth; 
     modal.classList.add('show');
+    enterMobileFullscreen();
 
     // Fetch Trailer
     fetch(`/get_trailer/${mediaType}/${tmdbId}`)
@@ -79,6 +80,7 @@ document.addEventListener('keydown', function(event) {
     }
     
     const modal = document.getElementById('video-modal');
+
     if ((event.code === "Space" || event.key === " ") && modal.style.display === 'flex') {
         event.preventDefault(); // Stop the page from scrolling down
         togglePlay();
@@ -129,19 +131,66 @@ function toggleMute() {
 }
 
 function toggleFullscreen() {
-    const videoContainer = document.querySelector('.video-container');
-    if (!document.fullscreenElement) {
-        if (videoContainer.requestFullscreen) videoContainer.requestFullscreen();
-        else if (videoContainer.webkitRequestFullscreen) videoContainer.webkitRequestFullscreen();
+    // We want to make the whole container fullscreen, not just the iframe
+    const container = document.getElementById('video-container');
+    const icon = document.querySelector('.fa-expand') || document.querySelector('.fa-compress');
+
+    // Check if we are already in fullscreen
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        
+        // 1. Enter Fullscreen
+        if (container.requestFullscreen) {
+            container.requestFullscreen().then(lockLandscape);
+        } else if (container.webkitRequestFullscreen) { /* Safari support */
+            container.webkitRequestFullscreen();
+            lockLandscape();
+        }
+        
+        // Change icon to compress
+        if (icon) {
+            icon.classList.remove('fa-expand');
+            icon.classList.add('fa-compress');
+        }
+
     } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        
+        // 2. Exit Fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen().then(unlockOrientation);
+        } else if (document.webkitExitFullscreen) { /* Safari support */
+            document.webkitExitFullscreen();
+            unlockOrientation();
+        }
+        
+        // Change icon back to expand
+        if (icon) {
+            icon.classList.remove('fa-compress');
+            icon.classList.add('fa-expand');
+        }
+    }
+}
+
+function unlockOrientation() {
+    // Release the rotation lock when exiting fullscreen
+    if (screen.orientation && screen.orientation.unlock) {
+        screen.orientation.unlock();
     }
 }
 
 function closeVideo() {
     const modal = document.getElementById('video-modal');
     modal.classList.remove('show');
+
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().then(unlockOrientation);
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+            unlockOrientation();
+        }
+    } else {
+        unlockOrientation(); // Just in case it's locked but not fullscreen
+    }
     
     // Stop the progress bar loop
     if (updateInterval) clearInterval(updateInterval);
@@ -187,6 +236,37 @@ function seekVideo(event) {
     const container = document.querySelector('.progress-container');
     const newTime = (event.offsetX / container.offsetWidth) * player.getDuration();
     player.seekTo(newTime, true);
+}
+
+function enterMobileFullscreen() {
+    if (window.innerWidth <= 768) {
+        const container = document.getElementById('video-container'); 
+        
+        // 1. Standard browsers (Android/Chrome)
+        if (container.requestFullscreen) {
+            container.requestFullscreen()
+                .then(() => {
+                    // Wait for the fullscreen promise to resolve BEFORE locking
+                    lockLandscape();
+                })
+                .catch(e => console.log("Fullscreen error:", e));
+        } 
+        // 2. Safari / iOS
+        else if (container.webkitRequestFullscreen) { 
+            container.webkitRequestFullscreen();
+            // Safari doesn't use promises here, so we force a tiny 200ms delay
+            setTimeout(lockLandscape, 200); 
+        }
+    }
+}
+
+function lockLandscape() {
+    // Try to force the phone into landscape mode
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(function(error) {
+            console.log("Orientation lock not supported by this device.", error);
+        });
+    }
 }
 
 /* --- MORE INFO MODAL LOGIC --- */
