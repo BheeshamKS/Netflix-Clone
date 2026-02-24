@@ -20,7 +20,8 @@
 
             <div class="hero-buttons">
                 <button class="btn btn-play"
-                    onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}')">
+                    onclick="playTrailer('{{ featured_movie.media_type }}', {{ featured_movie.tmdb_id }}, '{{ featured_movie.title | replace("'", "") }}'
+                    )">
                     <span class="play-icon">▶</span> Play
                 </button>
 
@@ -50,7 +51,8 @@
 
                 <picture>
                     <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
-                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}"
+                        class="bg-image" loading="lazy">
                 </picture>
 
                 {% if show.logo_path %}
@@ -60,7 +62,8 @@
                 <div class="card-overlay">
                     <div class="card-buttons">
                         <button class="mini-btn play"
-                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}'
+                            )">
                             <i class="fas fa-play"></i>
                         </button>
 
@@ -92,10 +95,11 @@
         <div class="row">
             {% for show in kdramas %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                
+
                 <picture>
                     <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
-                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}"
+                        class="bg-image" loading="lazy">
                 </picture>
 
                 {% if show.logo_path %}
@@ -105,7 +109,8 @@
                 <div class="card-overlay">
                     <div class="card-buttons">
                         <button class="mini-btn play"
-                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}'
+                            )">
                             <i class="fas fa-play"></i>
                         </button>
 
@@ -134,10 +139,11 @@
         <div class="row">
             {% for show in anime_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                
+
                 <picture>
                     <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
-                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}"
+                        class="bg-image" loading="lazy">
                 </picture>
 
                 {% if show.logo_path %}
@@ -147,7 +153,8 @@
                 <div class="card-overlay">
                     <div class="card-buttons">
                         <button class="mini-btn play"
-                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}'
+                            )">
                             <i class="fas fa-play"></i>
                         </button>
 
@@ -175,10 +182,11 @@
         <div class="row">
             {% for show in scifi_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
-                
+
                 <picture>
                     <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300{{ show.poster_path }}">
-                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}" class="bg-image" loading="lazy">
+                    <img src="https://image.tmdb.org/t/p/w300{{ show.backdrop_path }}" alt="{{ show.title }}"
+                        class="bg-image" loading="lazy">
                 </picture>
 
                 {% if show.logo_path %}
@@ -188,7 +196,8 @@
                 <div class="card-overlay">
                     <div class="card-buttons">
                         <button class="mini-btn play"
-                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}')">
+                            onclick="event.stopPropagation(); playTrailer('{{ show.media_type }}', {{ show.tmdb_id }}, '{{ show.title | replace("'", "") }}'
+                            )">
                             <i class="fas fa-play"></i>
                         </button>
 
@@ -214,4 +223,4 @@
 
     </div>
 
-{% endblock %}
+    {% endblock %}

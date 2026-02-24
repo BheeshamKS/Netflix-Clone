@@ -8,6 +8,13 @@
     <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
     <link href="static\styles.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://image.tmdb.org">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    {% if featured_movie %}
+        <link rel="preload" as="image" href="https://image.tmdb.org/t/p/original{{ featured_movie.backdrop_path }}" media="(min-width: 769px)">
+        <link rel="preload" as="image" href="https://image.tmdb.org/t/p/w780{{ featured_movie.poster_path }}" media="(max-width: 768px)">
+    {% endif %}
 </head>
 
 <body>
@@ -409,9 +416,9 @@
         </div>
     </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="https://www.youtube.com/iframe_api" defer></script>
 
-    <script src="/static/script.js"></script>
+    <script src="/static/script.js" defer></script>
 
     <script>
         function toggleProfileMenu() {

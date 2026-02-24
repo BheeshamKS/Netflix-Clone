@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sign Up - Netflix</title>
     <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
     <link href="/static/styles.css" rel="stylesheet">
 </head>
-<body class="auth-body">
-    <div class="auth-header">
-        <a href="/">
-            <img src="/static/images/netflix_logo.svg" alt="Netflix" class="nav-logo">
-        </a>
-    </div>
 
+<body class="auth-body">
     <div class="auth-overlay">
+        <div class="auth-header">
+            <a href="/">
+                <img src="/static/images/netflix_logo.svg" alt="Netflix" class="nav-logo">
+            </a>
+        </div>
+
         <div class="login-box">
             
             {% with messages = get_flashed_messages() %}

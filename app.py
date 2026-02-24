@@ -1,5 +1,7 @@
 import os
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
+from flask_caching import Cache
+from flask_compress import Compress
 import sqlite3
 import random
 import requests
@@ -9,6 +11,14 @@ from config import TMDB_API_KEY
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key' 
+
+# --- NEW CACHE CONFIGURATION ---
+app.config['CACHE_TYPE'] = 'SimpleCache' 
+app.config['CACHE_DEFAULT_TIMEOUT'] = 3600 # 1 hour
+cache = Cache(app)
+
+# initialize compress
+Compress(app)
 
 # --- LOGIN SETUP ---
 login_manager = LoginManager()
@@ -329,6 +339,25 @@ def my_list():
     conn.close()
     return render_template('my_list.html', saved_items=saved_items)
 
+# Memorizes the heavy database scanning for 1 hour
+@cache.cached(timeout=3600, key_prefix='homepage_categories')
+def get_homepage_categories():
+    conn = get_db_connection()
+    categories = {
+        'popular': conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall(),
+        'trending': conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall(),
+        'new_releases': conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall(),
+        'anime': conn.execute("SELECT * FROM movies WHERE genre='anime'").fetchall(),
+        'us_tv': conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall(),
+        'bollywood': conn.execute("SELECT * FROM movies WHERE genre='bollywood'").fetchall(),
+        'scifi': conn.execute("SELECT * FROM movies WHERE genre='scifi_horror'").fetchall(),
+        'kdrama': conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall(),
+        'action': conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
+    }
+    conn.close()
+    
+    return {k: [dict(row) for row in v] for k, v in categories.items()}
+
 @app.route('/')
 def index():
     if not current_user.is_authenticated:
@@ -336,13 +365,13 @@ def index():
         
     if 'profile_id' not in session:
         return redirect(url_for('browse_profiles'))
+    
+    cats = get_homepage_categories()
 
-    conn = get_db_connection()
-
-    featured_movie = conn.execute('SELECT * FROM movies ORDER BY RANDOM() LIMIT 1').fetchone()
-
-    if featured_movie is None:
-        featured_movie = {
+    if cats['popular']:
+        featured = random.choice(cats['popular'])
+    else:
+        featured = {
             'title': 'No Movies Found',
             'overview': 'Please run python seed.py to load movies.',
             'backdrop_path': 'https://wallpapers.com/images/hd/netflix-background-gs7hjuwvv2g0e9fj.jpg',
@@ -351,34 +380,17 @@ def index():
             'age_rating': 'N/A'
         }
     
-    popular = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
-    trending = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
-    new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
-    anime = conn.execute("SELECT * FROM movies WHERE genre='anime'").fetchall()
-    us_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
-    bollywood = conn.execute("SELECT * FROM movies WHERE genre='bollywood'").fetchall()
-    scifi = conn.execute("SELECT * FROM movies WHERE genre='scifi_horror'").fetchall()
-    kdrama = conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall()
-    action = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
-
-    if popular:
-        featured = random.choice(popular)
-    else:
-        featured = None
-
-    conn.close()
-    
     return render_template('index.html', 
                            featured_movie=featured,
-                           popular_movies=popular,
-                           trending_movies=trending,
-                           new_releases=new_releases,
-                           anime_movies=anime,
-                           us_tv_movies=us_tv,
-                           bollywood_movies=bollywood,
-                           scifi_movies=scifi,
-                           kdrama_movies=kdrama,
-                           action_movies=action)
+                           popular_movies=cats['popular'],
+                           trending_movies=cats['trending'],
+                           new_releases=cats['new_releases'],
+                           anime_movies=cats['anime'],
+                           us_tv_movies=cats['us_tv'],
+                           bollywood_movies=cats['bollywood'],
+                           scifi_movies=cats['scifi'],
+                           kdrama_movies=cats['kdrama'],
+                           action_movies=cats['action'])
 
 @app.route('/tvshows')
 @login_required
