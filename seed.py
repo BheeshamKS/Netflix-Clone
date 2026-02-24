@@ -196,9 +196,21 @@ def save_to_db():
     # Fetch TV (Sci-Fi & Fantasy)
     fetch_and_save("with_genres=10765", "tv", "scifi_horror") 
 
+    print(f"\nSUCCESS! Database seeded with {total_added} Netflix-verified titles.")
+
+    # ==========================================
+    # DATABASE OPTIMIZATION (Speed Boost)
+    # ==========================================
+    print("Optimizing database for lightning-fast loads...")
+    
+    # Create an index on the genre column so the homepage categories load instantly.
+    # We use "IF NOT EXISTS" so it safely skips this if the index is already built.
+    conn.execute('CREATE INDEX IF NOT EXISTS idx_movie_genre ON movies(genre);')
+    
     conn.commit()
     conn.close()
-    print(f"\nSUCCESS! Database seeded with {total_added} Netflix-verified titles.")
+    
+    print("Database indexing complete! Your Netflix clone is ready to fly.")
 
 if __name__ == "__main__":
     save_to_db()
