@@ -331,9 +331,10 @@ def my_list():
 
     saved_items = conn.execute("""
         SELECT movies.* FROM mylist 
-        JOIN movies ON mylist.tmdb_id = movies.tmdb_id AND mylist.media_type = movies.media_type
+        JOIN movies ON mylist.tmdb_id = movies.tmdb_id 
+        AND mylist.media_type = movies.media_type
         WHERE mylist.profile_id = ?
-        GROUP BY movies.tmdb_id
+        GROUP BY movies.tmdb_id, movies.media_type
     """, (profile_id,)).fetchall()
     
     conn.close()
@@ -344,15 +345,15 @@ def my_list():
 def get_homepage_categories():
     conn = get_db_connection()
     categories = {
-        'popular': conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall(),
-        'trending': conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall(),
-        'new_releases': conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall(),
-        'anime': conn.execute("SELECT * FROM movies WHERE genre='anime'").fetchall(),
-        'us_tv': conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall(),
-        'bollywood': conn.execute("SELECT * FROM movies WHERE genre='bollywood'").fetchall(),
-        'scifi': conn.execute("SELECT * FROM movies WHERE genre='scifi_horror'").fetchall(),
-        'kdrama': conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall(),
-        'action': conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
+        'popular': conn.execute("SELECT * FROM movies WHERE genre LIKE '%popular%' LIMIT 20").fetchall(),
+        'trending': conn.execute("SELECT * FROM movies WHERE genre LIKE '%trending%' LIMIT 20").fetchall(),
+        'new_releases': conn.execute("SELECT * FROM movies WHERE genre LIKE '%new_releases%' LIMIT 20").fetchall(),
+        'anime': conn.execute("SELECT * FROM movies WHERE genre LIKE '%anime%' LIMIT 20").fetchall(),
+        'us_tv': conn.execute("SELECT * FROM movies WHERE genre LIKE '%us_tv_drama%' LIMIT 20").fetchall(),
+        'bollywood': conn.execute("SELECT * FROM movies WHERE genre LIKE '%bollywood%' LIMIT 20").fetchall(),
+        'scifi': conn.execute("SELECT * FROM movies WHERE genre LIKE '%scifi_horror%' LIMIT 20").fetchall(),
+        'kdrama': conn.execute("SELECT * FROM movies WHERE genre LIKE '%kdrama%' LIMIT 20").fetchall(),
+        'action': conn.execute("SELECT * FROM movies WHERE genre LIKE '%action%' LIMIT 20").fetchall()
     }
     conn.close()
     
@@ -399,10 +400,10 @@ def tv_shows():
     
     conn = get_db_connection()
 
-    us_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
-    kdrama = conn.execute("SELECT * FROM movies WHERE genre='kdrama'").fetchall()
-    anime = conn.execute("SELECT * FROM movies WHERE genre='anime'").fetchall()
-    scifi = conn.execute("SELECT * FROM movies WHERE genre='scifi_horror'").fetchall()
+    us_tv = conn.execute("SELECT * FROM movies WHERE genre LIKE '%us_tv_drama%' LIMIT 20").fetchall()
+    kdrama = conn.execute("SELECT * FROM movies WHERE genre LIKE '%kdrama%' LIMIT 20").fetchall()
+    anime = conn.execute("SELECT * FROM movies WHERE genre LIKE '%anime%' LIMIT 20").fetchall()
+    scifi = conn.execute("SELECT * FROM movies WHERE genre LIKE '%scifi_horror%' LIMIT 20").fetchall()
     
     if us_tv:
         featured = random.choice(us_tv)
@@ -427,11 +428,11 @@ def movies():
 
     conn = get_db_connection()
 
-    popular = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
-    action = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
-    bollywood = conn.execute("SELECT * FROM movies WHERE genre='bollywood'").fetchall()
-    new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
-    trending = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
+    popular = conn.execute("SELECT * FROM movies WHERE genre LIKE '%popular%' LIMIT 20").fetchall()
+    action = conn.execute("SELECT * FROM movies WHERE genre LIKE '%action%' LIMIT 20").fetchall()
+    bollywood = conn.execute("SELECT * FROM movies WHERE genre lIKE '%bollywood%' LIMIT 20").fetchall()
+    new_releases = conn.execute("SELECT * FROM movies WHERE genre LIKE '%new_releases%' LIMIT 20").fetchall()
+    trending = conn.execute("SELECT * FROM movies WHERE genre LIKE '%trending%' LIMIT 20").fetchall()
 
     if trending:
         featured = random.choice(trending)
@@ -486,11 +487,17 @@ def new_popular():
     
     conn = get_db_connection()
 
-    new_releases = conn.execute("SELECT * FROM movies WHERE genre='new_releases'").fetchall()
-    trending_movies = conn.execute("SELECT * FROM movies WHERE genre='trending'").fetchall()
-    top_tv = conn.execute("SELECT * FROM movies WHERE genre='us_tv_drama'").fetchall()
-    coming_soon = conn.execute("SELECT * FROM movies WHERE genre='popular'").fetchall()
-    worth_wait = conn.execute("SELECT * FROM movies WHERE genre='action'").fetchall()
+    # Use LIKE '%...%' to find genres in your multi-tag database
+    new_releases = conn.execute("SELECT * FROM movies WHERE genre LIKE '%new_releases%' LIMIT 20").fetchall()
+    
+    # Filter by media_type to ensure accuracy in the Top 10 sections
+    trending_movies = conn.execute("SELECT * FROM movies WHERE media_type='movie' AND genre LIKE '%trending%'").fetchall()
+    
+    # We use us_tv_drama as your source for the Top 10 TV row
+    top_tv = conn.execute("SELECT * FROM movies WHERE media_type='tv' AND genre LIKE '%us_tv_drama%'").fetchall()
+    
+    coming_soon = conn.execute("SELECT * FROM movies WHERE genre LIKE '%popular%' LIMIT 20").fetchall()
+    worth_wait = conn.execute("SELECT * FROM movies WHERE genre LIKE '%action%' LIMIT 20").fetchall()
 
     conn.close()
 
@@ -514,6 +521,43 @@ def get_info(media_type, tmdb_id):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/movies/<genre>')
+@login_required
+def api_movies(genre):
+    # Get the requested page from the URL (e.g., ?page=2). Default is 1.
+    page = int(request.args.get('page', 1))
+    per_page = 20
+    
+    # Calculate how many movies to skip
+    offset = (page - 1) * per_page
+
+    conn = get_db_connection()
+    
+    # Fetch the exact chunk of movies needed using LIKE and OFFSET
+    query = "SELECT * FROM movies WHERE genre LIKE ? LIMIT ? OFFSET ?"
+    movies = conn.execute(query, (f"%{genre}%", per_page, offset)).fetchall()
+    
+    conn.close()
+
+    # Send it back to the JavaScript as JSON data
+    movies_list = []
+    for movie in movies:
+        movies_list.append({
+            'tmdb_id': movie['tmdb_id'],
+            'title': movie['title'],
+            'poster_path': movie['poster_path'],
+            
+            # --- THESE 3 LINES FIX THE UNDEFINED ERROR ---
+            'backdrop_path': movie['backdrop_path'], 
+            'logo_path': movie['logo_path'],         
+            'age_rating': movie['age_rating'],       
+            
+            'media_type': movie['media_type']
+        })
+
+    return jsonify(movies_list)
+
+
 @app.route('/search')
 def search():
     query = request.args.get('q', '').strip()
@@ -532,12 +576,13 @@ def search():
     movies_list = []
     for movie in results:
         movies_list.append({
-            'id': movie['tmdb_id'],
+            'tmdb_id': movie['tmdb_id'],
             'title': movie['title'],
-            'media_type': movie['media_type'],
-            'backdrop_path': movie['backdrop_path'],
-            'logo_path': movie['logo_path'],   
-            'age_rating': movie['age_rating']
+            'poster_path': movie['poster_path'],
+            'backdrop_path': movie['backdrop_path'], # NEW
+            'logo_path': movie['logo_path'],         # NEW
+            'age_rating': movie['age_rating'],       # NEW
+            'media_type': movie['media_type']
         })
 
     return jsonify(movies_list)

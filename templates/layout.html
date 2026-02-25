@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Netflix</title>
     <link rel="icon" type="image/png" href="/static/images/Netflix_N.png">
-    <link href="static\styles.css" rel="stylesheet">
+    <link href="static\styles.css?v=1" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://image.tmdb.org">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
@@ -241,7 +241,7 @@
                                 }
 
                                 const card = `
-                                        <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.id})">
+                                        <div class="movie-card" onclick="openMoreInfo('${movie.media_type}', ${movie.tmdb_id})">
                                             <img src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" 
                                                  class="bg-image"
                                                  onerror="this.src='/static/images/placeholder.jpg'">

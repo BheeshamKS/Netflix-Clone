@@ -7,7 +7,7 @@
     <div class="rows-container category-rows">
 
         <h3 class="row-header">New on Netflix</h3>
-        <div class="row">
+        <div class="row" id="new_releases">
             {% for movie in new_releases %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
@@ -76,7 +76,7 @@
         </div>
 
         <h3 class="row-header">Coming This Week</h3>
-        <div class="row">
+        <div class="row" id="action">
             {% for movie in coming_soon %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 
@@ -123,7 +123,7 @@
         </div>
 
         <h3 class="row-header">Worth the Wait</h3>
-        <div class="row">
+        <div class="row" id="popular">
             {% for movie in worth_wait %}
             <div class="movie-card" onclick="openMoreInfo('{{ movie.media_type }}', {{ movie.tmdb_id }})">
 

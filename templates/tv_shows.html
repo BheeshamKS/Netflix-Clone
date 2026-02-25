@@ -45,7 +45,7 @@
     <div class="rows-container category-rows">
 
         <h3 class="row-header">US TV Dramas</h3>
-        <div class="row">
+        <div class="row" id="us_tv_drama">
             {% for show in us_tv_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
 
@@ -92,7 +92,7 @@
         </div>
 
         <h3 class="row-header">K-Dramas</h3>
-        <div class="row">
+        <div class="row" id="kdrama">
             {% for show in kdramas %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
 
@@ -136,7 +136,7 @@
         </div>
 
         <h3 class="row-header">Anime</h3>
-        <div class="row">
+        <div class="row" id="anime">
             {% for show in anime_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
 
@@ -179,7 +179,7 @@
         </div>
 
         <h3 class="row-header">Sci-Fi & Horror</h3>
-        <div class="row">
+        <div class="row" id="scifi_horror">
             {% for show in scifi_shows %}
             <div class="movie-card" onclick="openMoreInfo('{{ show.media_type }}', {{ show.tmdb_id }})">
 
