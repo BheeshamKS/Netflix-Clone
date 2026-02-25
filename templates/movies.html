@@ -57,6 +57,8 @@
 
                 {% if movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ movie.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -78,10 +80,6 @@
                         </button>
 
                     </div>
-
-                    {% if not movie.logo_path %}
-                    <p class="movie-title">{{ movie.title }}</p>
-                    {% endif %}
 
                     <div class="card-meta">
                         <p class="movie-title">{{ movie.title }}</p>
@@ -105,6 +103,8 @@
 
                 {% if movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ movie.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -126,11 +126,7 @@
                         </button>
 
                     </div>
-
-                    {% if not movie.logo_path %}
-                    <p class="movie-title">{{ movie.title }}</p>
-                    {% endif %}
-
+ 
                     <div class="card-meta">
                         <p class="movie-title">{{ movie.title }}</p>
                         <p class="card-info">Bollywood • {{ movie.age_rating }}</p>
@@ -153,6 +149,8 @@
 
                 {% if movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ movie.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -174,11 +172,7 @@
                         </button>
 
                     </div>
-
-                    {% if not movie.logo_path %}
-                    <p class="movie-title">{{ movie.title }}</p>
-                    {% endif %}
-
+  
                     <div class="card-meta">
                         <p class="movie-title">{{ movie.title }}</p>
                         <p class="card-info">Action • {{ movie.age_rating }}</p>
@@ -201,6 +195,8 @@
 
                 {% if movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ movie.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -222,11 +218,7 @@
                         </button>
 
                     </div>
-
-                    {% if not movie.logo_path %}
-                    <p class="movie-title">{{ movie.title }}</p>
-                    {% endif %}
-
+ 
                     <div class="card-meta">
                         <p class="movie-title">{{ movie.title }}</p>
                         <p class="card-info">New Release • {{ movie.age_rating }}</p>
@@ -249,6 +241,8 @@
 
                 {% if movie.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ movie.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ movie.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -270,10 +264,6 @@
                         </button>
 
                     </div>
-
-                    {% if not movie.logo_path %}
-                    <p class="movie-title">{{ movie.title }}</p>
-                    {% endif %}
 
                     <div class="card-meta">
                         <p class="movie-title">{{ movie.title }}</p>

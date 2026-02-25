@@ -601,7 +601,8 @@ async function loadMoreMovies(row, sentinel) {
                     <img src="https://image.tmdb.org/t/p/w300${movie.backdrop_path}" alt="${movie.title}" class="bg-image">
                 </picture>
 
-                ${hasLogo ? `<img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" class="card-logo">` : ''}
+                ${hasLogo ? `<img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" class="card-logo">` 
+                          : `<p class="default-title">${movie.title}</p>`}
 
                 <div class="card-overlay">
                     <div class="card-buttons">
@@ -615,8 +616,6 @@ async function loadMoreMovies(row, sentinel) {
                             <i class="far fa-thumbs-up"></i>
                         </button>
                     </div>
-
-                    ${!hasLogo ? `<p class="movie-title">${movie.title}</p>` : ''}
 
                     <div class="card-meta">
                         <p class="movie-title">${movie.title}</p>

@@ -57,6 +57,8 @@
 
                 {% if show.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ show.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -76,10 +78,7 @@
                         </button>
 
                     </div>
-
-                    {% if not show.logo_path %}
-                    <p class="movie-title">{{ show.title }}</p>
-                    {% endif %}
+ 
                     <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Series • {{ show.age_rating }}</p>
@@ -104,6 +103,8 @@
 
                 {% if show.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ show.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -122,10 +123,7 @@
                             <i class="far fa-thumbs-up"></i> </button>
 
                     </div>
-
-                    {% if not show.logo_path %}
-                    <p class="movie-title">{{ show.title }}</p>
-                    {% endif %}
+ 
                     <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">K-Drama • {{ show.age_rating }}</p>
@@ -148,6 +146,8 @@
 
                 {% if show.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ show.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -166,9 +166,7 @@
                             <i class="far fa-thumbs-up"></i> </button>
 
                     </div>
-                    {% if not show.logo_path %}
-                    <p class="movie-title">{{ show.title }}</p>
-                    {% endif %}
+                     
                     <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Series • {{ show.age_rating }}</p>
@@ -191,6 +189,8 @@
 
                 {% if show.logo_path %}
                 <img src="https://image.tmdb.org/t/p/w300{{ show.logo_path }}" class="card-logo">
+                {% else %}
+                <p class="default-title">{{ show.title }}</p>
                 {% endif %}
 
                 <div class="card-overlay">
@@ -209,9 +209,7 @@
                             <i class="far fa-thumbs-up"></i> </button>
 
                     </div>
-                    {% if not show.logo_path %}
-                    <p class="movie-title">{{ show.title }}</p>
-                    {% endif %}
+                     
                     <div class="card-meta">
                         <p class="movie-title">{{ show.title }}</p>
                         <p class="card-info">Sci-Fi • {{ show.age_rating }}</p>
