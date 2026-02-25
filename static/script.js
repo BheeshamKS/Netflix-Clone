@@ -529,3 +529,107 @@ function toggleCardIcon(event, btn, type) {
 }
 
 
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Target '.row' instead of '.movie-row' based on your HTML
+    const rows = document.querySelectorAll('.row');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const row = entry.target.parentElement;
+                loadMoreMovies(row, entry.target);
+            }
+        });
+    }, {
+        root: null,
+        rootMargin: '0px 300px 0px 0px',
+        threshold: 0.1
+    });
+
+    rows.forEach(row => {
+        row.setAttribute('data-page', '1');
+        
+        // Grab the ID you added to the HTML (e.g., "popular")
+        let genre = row.id; 
+        if (!genre) return; // Skip rows that don't have an ID
+        
+        row.setAttribute('data-genre', genre);
+
+        const sentinel = document.createElement('div');
+        sentinel.className = 'scroll-sentinel';
+        sentinel.style.minWidth = "10px";
+        sentinel.style.height = "100%";
+        sentinel.style.background = "transparent";
+        sentinel.style.flexShrink = "0"; 
+
+        row.appendChild(sentinel);
+        observer.observe(sentinel);
+    });
+});
+
+async function loadMoreMovies(row, sentinel) {
+    const genre = row.getAttribute('data-genre');
+    let currentPage = parseInt(row.getAttribute('data-page'));
+    const nextPage = currentPage + 1;
+
+    try {
+        const response = await fetch(`/api/movies/${genre}?page=${nextPage}`);
+        const movies = await response.json();
+
+        if (movies.length === 0) {
+            sentinel.remove(); 
+            return;
+        }
+
+        movies.forEach(movie => {
+            const movieCard = document.createElement('div');
+            movieCard.className = 'movie-card';
+            
+            // Reattach the openMoreInfo onclick event
+            movieCard.onclick = () => openMoreInfo(movie.media_type, movie.tmdb_id);
+            
+            // Escape apostrophes in titles
+            const safeTitle = movie.title ? movie.title.replace(/'/g, "") : "";
+
+            // Strict check to ensure Python didn't send a fake "None" string for the logo
+            const hasLogo = movie.logo_path && movie.logo_path !== "None" && movie.logo_path !== "null";
+
+            // Replicate exact HTML structure
+            movieCard.innerHTML = `
+                <picture>
+                    <source media="(max-width: 768px)" srcset="https://image.tmdb.org/t/p/w300${movie.poster_path}">
+                    <img src="https://image.tmdb.org/t/p/w300${movie.backdrop_path}" alt="${movie.title}" class="bg-image">
+                </picture>
+
+                ${hasLogo ? `<img src="https://image.tmdb.org/t/p/w300${movie.logo_path}" class="card-logo">` 
+                          : `<p class="default-title">${movie.title}</p>`}
+
+                <div class="card-overlay">
+                    <div class="card-buttons">
+                        <button class="mini-btn play" onclick="event.stopPropagation(); playTrailer('${movie.media_type}', ${movie.tmdb_id}, '${safeTitle}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="mini-btn" onclick="event.stopPropagation(); toggleMyList(event, this, '${movie.media_type}', ${movie.tmdb_id})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="mini-btn" onclick="event.stopPropagation(); toggleCardIcon(event, this, 'like')">
+                            <i class="far fa-thumbs-up"></i>
+                        </button>
+                    </div>
+
+                    <div class="card-meta">
+                        <p class="movie-title">${movie.title}</p>
+                        <p class="card-info">Netflix • ${movie.age_rating || 'N/A'}</p>
+                    </div>
+                </div>
+            `;
+            
+            row.insertBefore(movieCard, sentinel);
+        });
+
+        row.setAttribute('data-page', nextPage);
+
+    } catch (error) {
+        console.error("Error fetching more movies:", error);
+    }
+}

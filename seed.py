@@ -5,8 +5,8 @@ from config import TMDB_API_KEY
 
 # --- CONFIGURATION ---
 NETFLIX_PROVIDER_ID = 8  
-REGIONS = ["US", "IN"]   
-PAGES_TO_FETCH = 5        
+REGIONS = ["US", "IN", "GB", "CA", "AU", "JP", "KR"]
+PAGES_TO_FETCH = 500 
 
 def get_db_connection():
     conn = sqlite3.connect('netflix.db')
@@ -55,10 +55,12 @@ def get_real_certification(media_type, tmdb_id):
 
 def save_to_db():
     conn = get_db_connection()
-    print("Starting Netflix-Only Database Update...")
+    print("Starting Netflix-Only Database Update (Targeting 10,000+)...")
 
+    # 1. DROP MOVIES TABLE TO START FRESH
     conn.execute("DROP TABLE IF EXISTS movies")
     
+    # 2. CREATE ALL TABLES
     conn.execute("""
         CREATE TABLE IF NOT EXISTS movies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,7 +78,7 @@ def save_to_db():
         )
     """)
 
-    # Ensure other tables exist (just in case)
+    # Ensure other tables exist (User/Profiles/Mylist are safely kept)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,8 +129,13 @@ def save_to_db():
                     response = requests.get(url)
                     if response.status_code == 200:
                         data = response.json()
+                        results = data.get('results', [])
                         
-                        for item in data.get('results', []):
+                        if not results:
+                            print(f" [Ran out of movies. Skipping rest of {region}] ")
+                            break 
+                        
+                        for item in results:
                             tmdb_id = item.get('id')
                             title = item.get('title') or item.get('name')
                             overview = item.get('overview')
@@ -140,36 +147,50 @@ def save_to_db():
                             if not poster or not backdrop or not title:
                                 continue
 
-                            # Check if exists (Avoid re-fetching details)
-                            exists = conn.execute("SELECT 1 FROM movies WHERE tmdb_id = ?", (tmdb_id,)).fetchone()
-                            if not exists:
-                                logo = get_logo(media_type, tmdb_id)
-                                age_rating = get_real_certification(media_type, tmdb_id)
+                            # --- UPGRADED MULTI-GENRE CHECK ---
+                            existing_movie = conn.execute("SELECT genre FROM movies WHERE tmdb_id = ?", (tmdb_id,)).fetchone()
+                            
+                            if existing_movie:
+                                current_genres = existing_movie['genre']
+                                # If it exists but doesn't have this genre yet, append it with a comma!
+                                if genre_tag not in current_genres.split(','):
+                                    new_genres = current_genres + f",{genre_tag}"
+                                    conn.execute("UPDATE movies SET genre = ? WHERE tmdb_id = ?", (new_genres, tmdb_id))
+                                continue # Skip downloading logos again!
+                            
+                            # If we reach here, it's a brand new movie!
+                            logo = get_logo(media_type, tmdb_id)
+                            age_rating = get_real_certification(media_type, tmdb_id)
 
-                                try:
-                                    conn.execute("""
-                                        INSERT OR IGNORE INTO movies 
-                                        (tmdb_id, title, overview, poster_path, backdrop_path, logo_path, release_date, vote_average, media_type, genre, age_rating)
-                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                                    """, (tmdb_id, title, overview, poster, backdrop, logo, date, rating, media_type, genre_tag, age_rating))
-                                    
-                                    total_added += 1
-                                    print(".", end="", flush=True)
-                                except sqlite3.Error:
-                                    pass
+                            try:
+                                conn.execute("""
+                                    INSERT INTO movies 
+                                    (tmdb_id, title, overview, poster_path, backdrop_path, logo_path, release_date, vote_average, media_type, genre, age_rating)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                                """, (tmdb_id, title, overview, poster, backdrop, logo, date, rating, media_type, genre_tag, age_rating))
+                                
+                                total_added += 1
+                                print(".", end="", flush=True)
+                            except sqlite3.Error:
+                                pass
                 except Exception as e:
                     print(f"Error: {e}")
                 
-                time.sleep(0.1) 
-            print("") 
+                time.sleep(0.25) # Standard API delay
+                
+                # API Breather every 10 pages
+                if page % 10 == 0:
+                    conn.commit()
+                    print(f"\n--- Pausing to let the API rest (Page {page}) ---")
+                    time.sleep(2) 
 
     # --- 4. EXECUTE MAPPED QUERIES ---
     
-    # 1. TRENDING (Now includes Top TV Shows so big hits appear)
+    # 1. TRENDING
     fetch_and_save("sort_by=popularity.desc", "movie", "trending")
-    fetch_and_save("sort_by=popularity.desc", "tv", "trending") # Added TV here!
+    fetch_and_save("sort_by=popularity.desc", "tv", "trending")
 
-    # 2. POPULAR (Movies)
+    # 2. POPULAR
     fetch_and_save("sort_by=popularity.desc&vote_count.gte=1000", "movie", "popular")
 
     # 3. NEW RELEASES
@@ -191,22 +212,29 @@ def save_to_db():
     fetch_and_save("with_original_language=ko", "tv", "kdrama")
 
     # 9. SCI-FI & HORROR 
-    # Fetch Movies (Sci-Fi + Horror)
     fetch_and_save("with_genres=878,27", "movie", "scifi_horror")
-    # Fetch TV (Sci-Fi & Fantasy)
     fetch_and_save("with_genres=10765", "tv", "scifi_horror") 
+
+    # 10. COMEDY (Feeds directly into Popular)
+    fetch_and_save("with_genres=35", "movie", "popular")
+
+    # 11. THRILLER (Feeds directly into Sci-Fi & Horror)
+    fetch_and_save("with_genres=53", "movie", "scifi_horror")
+
+    # 12. ROMANCE (Feeds directly into Trending)
+    fetch_and_save("with_genres=10749", "movie", "trending")
+
+    # 13. DOCUMENTARY (Feeds directly into New Releases)
+    fetch_and_save("with_genres=99", "movie", "new_releases")
+
+    # 14. ACTION & ADVENTURE TV (Feeds directly into Action)
+    fetch_and_save("with_genres=10759", "tv", "action")
 
     print(f"\nSUCCESS! Database seeded with {total_added} Netflix-verified titles.")
 
-    # ==========================================
-    # DATABASE OPTIMIZATION (Speed Boost)
-    # ==========================================
+
     print("Optimizing database for lightning-fast loads...")
-    
-    # Create an index on the genre column so the homepage categories load instantly.
-    # We use "IF NOT EXISTS" so it safely skips this if the index is already built.
     conn.execute('CREATE INDEX IF NOT EXISTS idx_movie_genre ON movies(genre);')
-    
     conn.commit()
     conn.close()
     

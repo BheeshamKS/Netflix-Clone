@@ -2421,11 +2421,10 @@ body.auth-body {
 
   /* Hide desktop elements completely on mobile */
   .hero-desc,
-  .hero-logo,
-  .hero-title,
+  .hero .hero-logo,
+  .hero .hero-title,
   .hero-actions,
   .hide-on-mobile {
-    /* <--- Added this to hide "More " */
     display: none !important;
   }
 
@@ -2601,6 +2600,31 @@ body.auth-body {
 
   .info-title {
     font-size: 1.8rem;
+  }
+
+  .info-header-overlay {
+    display: flex !important; /* Forces it to show */
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 15px !important;
+    background: linear-gradient(to top, #181818 0%, transparent 100%);
+  }
+
+  #modal-logo {
+    max-width: 150px !important; /* Shrinks the logo so it fits on a phone */
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  #modal-title {
+    font-size: 22px !important; /* Shrinks the backup text title */
+    margin-bottom: 10px;
+  }
+
+  /* Ensure the backdrop image doesn't push the text out of bounds */
+  .info-header {
+    min-height: 200px;
   }
 
   .info-grid {
